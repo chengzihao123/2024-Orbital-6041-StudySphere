@@ -20,9 +20,6 @@ export default function Login() {
           <div className="flex flex-col w-full items-center pt-3">
             <div className="text-7xl font-semibold mt-4">Welcome to</div>
             <MainLogo />
-            <h1>
-            <Link href="/todo">Go to Todo</Link>
-            </h1>
           </div>
         </div>
       </div>
