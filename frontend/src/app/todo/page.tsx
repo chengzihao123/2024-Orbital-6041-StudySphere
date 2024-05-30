@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { SetStateAction, useEffect, useState } from "react";
 import TodoItem from "../../components/TodoItem";
 
@@ -46,37 +47,40 @@ function Page() {
   };
 
   return (
-    <div className="container">
-      <div className="heading">
-        <h1 className="text-red-500">TO-DO-APP</h1>
+    <div>
+      <div style={{ position: "absolute", top: 0, right: 0 }}>
+        <Link href="/">⬅️go back</Link>
       </div>
+      <div className="container">
+        <div className="heading">
+          <h1 className="text-red-500">TO-DO-APP</h1>
+        </div>
 
-      <div className="form mt-4 flex items-center justify-center">
-  <input
-    type="text"
-    value={input}
-    onChange={handleChange}
-    className="py-2 px-4 mr-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-    placeholder="Enter task..."
-  />
-  <button
-    onClick={addItem}
-    className="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-  >
-    ADD
-  </button>
-</div>
-
-
-      <div className="todolist mt-8">
-        {items.map((item: { _id: string; name: string }) => (
-          <TodoItem
-            key={item._id}
-            name={item.name}
-            id={item._id}
-            setItems={setItems}
+        <div className="form mt-4 flex items-center justify-center">
+          <input
+            type="text"
+            value={input}
+            onChange={handleChange}
+            className="py-2 px-4 mr-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            placeholder="Enter task..."
           />
-        ))}
+          <button
+            onClick={addItem}
+            className="py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            ADD
+          </button>
+        </div>
+        <div className="todolist mt-8">
+          {items.map((item: { _id: string; name: string }) => (
+            <TodoItem
+              key={item._id}
+              name={item.name}
+              id={item._id}
+              setItems={setItems}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
