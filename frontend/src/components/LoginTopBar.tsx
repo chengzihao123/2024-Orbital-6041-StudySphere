@@ -8,7 +8,7 @@ export default function LoginTopBar() {
           href="/study"
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-full"
         >
-          Button
+          Study
         </Link>
       </div>
       <h1 className="text-lg font-bold text-white mr-7 hover:text-xl cursor-pointer">
