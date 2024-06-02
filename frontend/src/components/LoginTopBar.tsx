@@ -20,7 +20,7 @@ export default function LoginTopBar() {
       <h1 className="text-lg font-bold text-white mr-7 hover:text-xl cursor-pointer">
         Login
       </h1>
-      <h1 className="text-lg font-bold text-white hover:text-xl cursor-pointer">
+      <h1 className="text-lg font-bold text-white hover:text-xl cursor-pointer w-20">
         sign up
       </h1>
     </div>
