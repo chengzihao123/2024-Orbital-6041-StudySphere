@@ -13,7 +13,6 @@ const Terms: React.FC = () => {
         Nullam in dui mauris. Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut 
         eleifend nibh porttitor.
       </p>
-      {/* Add more terms content as needed */}
     </div>
   );
 };

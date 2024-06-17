@@ -1,7 +1,6 @@
-// app/privacy/page.tsx
 "use client";
 import React from 'react';
-import Privacy from '../../components/Auth/Privacy'; // Adjust path as needed
+import Privacy from '../../components/Auth/Privacy'; 
 
 const PrivacyPage = () => {
   return <Privacy />;

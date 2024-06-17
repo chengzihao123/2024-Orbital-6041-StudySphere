@@ -1,6 +1,6 @@
 "use client";
 import React, { useRef } from 'react';
-import { useRouter } from 'next/navigation'; // Use Next.js navigation hook
+import { useRouter } from 'next/navigation'; 
 import { useAuth } from './AuthContext';
 
 const Login: React.FC = () => {
@@ -15,8 +15,9 @@ const Login: React.FC = () => {
       try {
         await login(emailRef.current.value, passwordRef.current.value);
         router.push('/todos');
-      } catch {
+      } catch (error) {
         alert("Failed to log in");
+        console.error("Error logging in:", error);
       }
     }
   };
@@ -49,15 +50,21 @@ const Login: React.FC = () => {
         <form onSubmit={handleSubmit}>
           <input
             type="email"
+            id="email"
+            name="email"
             ref={emailRef}
             placeholder="Email"
+            autoComplete="email"
             className="w-full mb-4 p-2 border border-gray-300 rounded"
             required
           />
           <input
             type="password"
+            id="password"
+            name="password"
             ref={passwordRef}
             placeholder="Password"
+            autoComplete="current-password"
             className="w-full mb-4 p-2 border border-gray-300 rounded"
             required
           />

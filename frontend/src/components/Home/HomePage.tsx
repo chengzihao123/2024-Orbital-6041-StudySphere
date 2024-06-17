@@ -51,7 +51,10 @@ const HomePage: React.FC = () => {
           <p className="text-lg text-black mb-4">
             Transform Your Study Experience Now
           </p>
-          <Link href="/login" className="bg-black text-white py-2 px-4 rounded inline-block">
+          <Link
+            href="/login"
+            className="bg-black text-white py-2 px-4 rounded inline-block"
+          >
             Enter Study Sphere
           </Link>
         </div>
@@ -59,15 +62,21 @@ const HomePage: React.FC = () => {
         <form onSubmit={handleSubmit}>
           <input
             type="email"
+            id="email"
+            name="email"
             ref={emailRef}
             placeholder="Email"
+            autoComplete="email"
             className="w-full mb-4 p-2 border border-gray-300 rounded"
             required
           />
           <input
             type="password"
+            id="password"
+            name="password"
             ref={passwordRef}
             placeholder="Password"
+            autoComplete="new-password"
             className="w-full mb-4 p-2 border border-gray-300 rounded"
             required
           />
@@ -80,7 +89,11 @@ const HomePage: React.FC = () => {
           onClick={handleGoogleSignIn}
           className="w-full bg-white text-black py-2 border border-gray-300 rounded flex items-center justify-center"
         >
-          <img src="/images/google-icon.png" alt="Google" className="h-6 mr-2" />
+          <img
+            src="/images/google-icon.png"
+            alt="Google"
+            className="h-6 mr-2"
+          />
           Google
         </button>
         <p className="text-xs text-gray-600 mt-4">

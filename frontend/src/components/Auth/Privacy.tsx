@@ -11,7 +11,6 @@ const Privacy: React.FC = () => {
       <p className="mb-4">
         Nullam in dui mauris. Vivamus hendrerit arcu sed erat molestie vehicula. Sed auctor neque eu tellus rhoncus ut eleifend nibh porttitor.
       </p>
-      {/* Add more privacy policy content as needed */}
     </div>
   );
 };

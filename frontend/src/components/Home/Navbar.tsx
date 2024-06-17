@@ -5,14 +5,14 @@ import { useAuth } from "../Auth/AuthContext";
 import { useRouter } from 'next/navigation';
 
 const Navbar: React.FC = () => {
-  const { currentUser, logout } = useAuth() || {}; // Null check for useAuth hook
+  const { currentUser, logout } = useAuth() || {};
   const router = useRouter();
 
   const handleLogout = async () => {
     try {
       if (logout) {
         await logout();
-        router.push("/"); // Redirect to home page after logout
+        router.push("/"); 
       }
     } catch (error) {
       console.error("Failed to logout", error);
@@ -38,7 +38,7 @@ const Navbar: React.FC = () => {
               <Link href="/study" className="text-gray-300 hover:text-white">
                 Study
               </Link>
-              {/* Uncomment if needed
+              {/* 
               <Link href="/timer" className="text-gray-300 hover:text-white">
                 Timer
               </Link>

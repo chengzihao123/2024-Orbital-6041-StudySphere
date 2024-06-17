@@ -1,7 +1,22 @@
-"use client";
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, signInWithPopup, GoogleAuthProvider, User, UserCredential } from 'firebase/auth';
-import { auth } from '../../../firebase/firebase';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+import {
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  signInWithPopup,
+  GoogleAuthProvider,
+  User,
+  UserCredential,
+} from "firebase/auth";
+import { auth } from "../../../firebase/firebase";
+import { set } from "firebase/database";
 
 type AuthContextType = {
   currentUser: User | null;
@@ -43,6 +58,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = (): Promise<void> => {
+    setCurrentUser(null);
     return signOut(auth);
   };
 
@@ -52,7 +68,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const result = await signInWithPopup(auth, provider);
       setCurrentUser(result.user);
     } catch (error) {
-      console.error('Failed to log in with Google', error);
+      console.error("Failed to log in with Google", error);
     }
   };
 
@@ -63,7 +79,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     logout,
     loginWithGoogle,
   };
-  
+
   return (
     <AuthContext.Provider value={value}>
       {!loading && children}
