@@ -1,7 +1,6 @@
-// app/terms/page.tsx
 "use client";
 import React from 'react';
-import Terms from '../../components/Auth/Terms'; // Adjust path as needed
+import Terms from '../../components/Auth/Terms'; 
 
 const TermsPage = () => {
   return <Terms />;
