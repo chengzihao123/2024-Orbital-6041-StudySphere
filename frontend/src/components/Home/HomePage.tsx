@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "../Auth/AuthContext";
@@ -9,17 +9,44 @@ const HomePage: React.FC = () => {
   const passwordRef = useRef<HTMLInputElement>(null);
   const auth = useAuth();
   const { signup, loginWithGoogle } = auth || {};
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
   const router = useRouter();
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (emailRef.current && passwordRef.current && signup) {
       try {
+        setError('');
+        setLoading(true);
         await signup(emailRef.current.value, passwordRef.current.value);
         router.push("/todos");
-      } catch (error) {
-        console.error("Failed to create an account", error);
+      } catch (err: any) {
+        // handle specific firebase errors
+        if (err.code === 'auth/email-already-in-use') {
+          setError('The email address is already in use by another account.');
+        } else if (err.code === 'auth/invalid-email') {
+          setError('The email address is not valid.');
+        } else if (err.code === 'auth/weak-password') {
+          setError('The password is too weak. Length should be at least 6 characters.');
+        } else {
+          setError('Failed to create an account');
+        }
+
+        // clear the input fields
+        if (emailRef.current) emailRef.current.value = '';
+        if (passwordRef.current) passwordRef.current.value = '';
+
+        setShowPopup(true); 
+        console.error(err);
       }
+
+      setLoading(false);
     }
   };
 
@@ -30,7 +57,9 @@ const HomePage: React.FC = () => {
         router.push("/todos");
       }
     } catch (error) {
-      console.error("Failed to log in with Google", error);
+      setError('Failed to log in with Google');
+      setShowPopup(true); 
+      console.error(error);
     }
   };
 
@@ -53,7 +82,7 @@ const HomePage: React.FC = () => {
           </p>
           <Link
             href="/login"
-            className="bg-black text-white py-2 px-4 rounded inline-block"
+            className="bg-black text-white py-2 px-4 rounded inline-block hover:bg-gray-600"
           >
             Enter Study Sphere
           </Link>
@@ -80,7 +109,11 @@ const HomePage: React.FC = () => {
             className="w-full mb-4 p-2 border border-gray-300 rounded"
             required
           />
-          <button className="w-full bg-black text-white py-2 rounded">
+          <button
+            className="w-full bg-black text-white py-2 rounded hover:bg-gray-600"
+            type="submit"
+            disabled={loading}
+          >
             Sign up with email
           </button>
         </form>
@@ -108,6 +141,21 @@ const HomePage: React.FC = () => {
           .
         </p>
       </div>
+
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75">
+          <div className="bg-white p-4 rounded-lg shadow-lg max-w-md">
+            <h2 className="text-lg font-semibold text-black mb-4">Error</h2>
+            <p>{error}</p>
+            <button
+              onClick={handleClosePopup}
+              className="mt-4 bg-black text-white py-2 px-4 rounded hover:bg-gray-600"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
