@@ -16,18 +16,19 @@ export default function UserSetStudyTimer({
   closeHandler,
   backgroundImages,
 }: UserSetStudyTimerProps) {
-  // const [showAdditionalSetting, setAdditionalSetting] = useState(false);
-  // const [additionalSettings, setAdditionalSettings] = useState({
-  //   backgroundImage: "",
-  //   backgroundMusic: "",
-  // });
   const dispatch: AppDispatch = useDispatch();
   const { showAdditionalSetting } = useSelector(
     (state: RootState) => state.timer
   );
+
+  const [minutes, setMinutes] = useState(0);
+  const [seconds, setSeconds] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+
   const handleMoreSettings = () => {
     dispatch(setShowAdditionalSetting(true));
   };
+
   const handleCloseSettings = () => {
     dispatch(setShowAdditionalSetting(false));
   };
@@ -37,7 +38,17 @@ export default function UserSetStudyTimer({
     backgroundMusic: string;
   }) => {
     handleCloseSettings();
-    setBackgroundSettings(settings);
+    dispatch(setBackgroundSettings(settings));
+  };
+
+  const handleMinutesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMinutes(Number(e.target.value));
+    if (error) setError(null); // Clear error when user changes input
+  };
+
+  const handleSecondsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSeconds(Number(e.target.value));
+    if (error) setError(null); // Clear error when user changes input
   };
 
   return (
@@ -53,7 +64,8 @@ export default function UserSetStudyTimer({
               type="number"
               id="minutes"
               name="minutes"
-              defaultValue={0}
+              value={minutes}
+              onChange={handleMinutesChange}
               min="0"
               max="59"
               className="p-2 border rounded w-20"
@@ -67,13 +79,15 @@ export default function UserSetStudyTimer({
               type="number"
               id="seconds"
               name="seconds"
-              defaultValue={0}
+              value={seconds}
+              onChange={handleSecondsChange}
               min="0"
               max="59"
               className="p-2 border rounded w-20"
             />
           </div>
         </div>
+        {error && <p className="text-red-500">{error}</p>}
         <div className="px-1 ">
           <h1
             className="hover:cursor-pointer hover:text-blue-500"

@@ -1,19 +1,20 @@
 "use client";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import {
   setIsFullscreen,
   setIsUserTime,
   setCountdownSeconds,
-  setBackgroundSettings,
 } from "@/store/slice";
 import CountdownTimer from "@/components/Timer";
 import UserSetStudyTimer from "@/components/UserSetStudyTimer";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import TimeZeroAlert from "@/components/Modal/TimeZeroAlert"; // Import the Modal component
 
 export default function Study() {
+  const [showAlert, setShowAlert] = useState(false); // State for showing alert
   const backgroundImages = ["", "autumn", "grass", "sea", "mountain", "moon"];
 
   const backgroundImagesMap: { [key: string]: string } = {
@@ -26,6 +27,7 @@ export default function Study() {
       "https://images.pexels.com/photos/36478/amazing-beautiful-beauty-blue.jpg",
     moon: "https://images.pexels.com/photos/884788/pexels-photo-884788.jpeg",
   };
+
   const dispatch: AppDispatch = useDispatch();
   const { isFullscreen, isUserTime, countdownSeconds, backgroundSettings } =
     useSelector((state: RootState) => state.timer);
@@ -43,9 +45,6 @@ export default function Study() {
   };
 
   useEffect(() => {
-    // setIsFullscreen(false);
-    // setUserTime(false);
-    // setCountdownSecond(0);
     if (isFullscreen) {
       handleFullscreenToggle();
     }
@@ -70,6 +69,12 @@ export default function Study() {
     const seconds = Number(
       (form.elements.namedItem("seconds") as HTMLInputElement).value
     );
+
+    if (minutes === 0 && seconds === 0) {
+      setShowAlert(true); // Show alert if both minutes and seconds are zero
+      return;
+    }
+
     const totalSeconds = minutes * 60 + seconds;
     handleCountdownChange(totalSeconds);
     handleUserTimeToggle();
@@ -85,8 +90,6 @@ export default function Study() {
   };
 
   const exitFullscreen = () => {
-    // setIsFullscreen(false);
-    // setUserTime(false);
     handleFullscreenToggle();
     if (isUserTime) {
       handleUserTimeToggle();
@@ -95,7 +98,6 @@ export default function Study() {
   };
 
   const handleCloseForm = () => {
-    // setUserTime(false);
     handleUserTimeToggle();
   };
 
@@ -159,6 +161,7 @@ export default function Study() {
             </div>
           </div>
         )}
+
         {isUserTime && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-6 rounded shadow-lg max-h-screen overflow-y-auto">
@@ -169,6 +172,13 @@ export default function Study() {
               />
             </div>
           </div>
+        )}
+
+        {showAlert && (
+          <TimeZeroAlert
+            message="Time can't be set as 0. Please enter a valid time."
+            onClose={() => setShowAlert(false)}
+          />
         )}
       </div>
     </ProtectedRoute>

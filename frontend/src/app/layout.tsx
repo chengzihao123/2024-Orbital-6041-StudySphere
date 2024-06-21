@@ -4,9 +4,19 @@ import Head from "next/head";
 import { AuthProvider } from "@/components/Auth/AuthContext";
 import "./globals.css";
 import Navbar from "@/components/Home/Navbar";
-import { store } from "../store/store";
-import { Provider } from "react-redux";
+import { store, RootState } from "../store/store";
+import { Provider, useSelector } from "react-redux";
 
+const LayoutContent = ({ children }: { children: React.ReactNode }) => {
+  const { isFullscreen } = useSelector((state: RootState) => state.timer);
+
+  return (
+    <>
+      {!isFullscreen && <Navbar />}
+      <div className="container mx-auto mt-4">{children}</div>
+    </>
+  );
+};
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
@@ -16,8 +26,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
       <body>
         <AuthProvider>
           <Provider store={store}>
-            <Navbar />
-            <div className="container mx-auto mt-4">{children}</div>
+            <LayoutContent>{children}</LayoutContent>
           </Provider>
         </AuthProvider>
       </body>
