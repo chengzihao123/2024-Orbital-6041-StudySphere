@@ -1,20 +1,19 @@
 "use client";
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import CountdownTimer from "@/components/Study/Timer";
-import UserSetStudyTimer from "@/components/Study/UserSetStudyTimer";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/store/store";
+import {
+  setIsFullscreen,
+  setIsUserTime,
+  setCountdownSeconds,
+  setBackgroundSettings,
+} from "@/store/slice";
+import CountdownTimer from "@/components/Timer";
+import UserSetStudyTimer from "@/components/UserSetStudyTimer";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function Study() {
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isUserTime, setUserTime] = useState(false);
-  const [countdownSecond, setCountdownSecond] = useState(0);
-  const [backgroundSettings, setBackgroundSettings] = useState({
-    backgroundImage: "",
-    backgroundMusic: "",
-  });
-
-  // to be replaced by the backend
   const backgroundImages = ["", "autumn", "grass", "sea", "mountain", "moon"];
 
   const backgroundImagesMap: { [key: string]: string } = {
@@ -27,15 +26,39 @@ export default function Study() {
       "https://images.pexels.com/photos/36478/amazing-beautiful-beauty-blue.jpg",
     moon: "https://images.pexels.com/photos/884788/pexels-photo-884788.jpeg",
   };
+  const dispatch: AppDispatch = useDispatch();
+  const { isFullscreen, isUserTime, countdownSeconds, backgroundSettings } =
+    useSelector((state: RootState) => state.timer);
+
+  const handleFullscreenToggle = () => {
+    dispatch(setIsFullscreen(!isFullscreen));
+  };
+
+  const handleUserTimeToggle = () => {
+    dispatch(setIsUserTime(!isUserTime));
+  };
+
+  const handleCountdownChange = (seconds: number) => {
+    dispatch(setCountdownSeconds(seconds));
+  };
 
   useEffect(() => {
-    setIsFullscreen(false);
-    setUserTime(false);
-    setCountdownSecond(0);
+    // setIsFullscreen(false);
+    // setUserTime(false);
+    // setCountdownSecond(0);
+    if (isFullscreen) {
+      handleFullscreenToggle();
+    }
+    if (isUserTime) {
+      handleUserTimeToggle();
+    }
+    handleCountdownChange(0);
   }, []);
 
   const userSetTime = () => {
-    setUserTime(true);
+    if (!isUserTime) {
+      handleUserTimeToggle();
+    }
   };
 
   const handleSubmitForm = (e: React.FormEvent<HTMLFormElement>) => {
@@ -48,8 +71,8 @@ export default function Study() {
       (form.elements.namedItem("seconds") as HTMLInputElement).value
     );
     const totalSeconds = minutes * 60 + seconds;
-    setCountdownSecond(totalSeconds);
-    setUserTime(false);
+    handleCountdownChange(totalSeconds);
+    handleUserTimeToggle();
     enterFullscreen();
   };
 
@@ -58,24 +81,22 @@ export default function Study() {
     if (!document.fullscreenElement) {
       elem.requestFullscreen();
     }
-    setIsFullscreen(true);
+    handleFullscreenToggle();
   };
 
   const exitFullscreen = () => {
-    setIsFullscreen(false);
-    setUserTime(false);
+    // setIsFullscreen(false);
+    // setUserTime(false);
+    handleFullscreenToggle();
+    if (isUserTime) {
+      handleUserTimeToggle();
+    }
     document.exitFullscreen();
   };
 
   const handleCloseForm = () => {
-    setUserTime(false);
-  };
-
-  const handleSettingsSubmit = (settings: {
-    backgroundImage: string;
-    backgroundMusic: string;
-  }) => {
-    setBackgroundSettings(settings);
+    // setUserTime(false);
+    handleUserTimeToggle();
   };
 
   const getBackgroundImageUrl = (imageName: string) => {
@@ -124,7 +145,7 @@ export default function Study() {
               <div className="inline-block">
                 <CountdownTimer
                   onTimeUp={exitFullscreen}
-                  initialTime={countdownSecond}
+                  initialTime={countdownSeconds}
                 />
               </div>
               <div className="inline-block float-right">
@@ -145,7 +166,6 @@ export default function Study() {
                 submitHandler={handleSubmitForm}
                 closeHandler={handleCloseForm}
                 backgroundImages={backgroundImages}
-                onSubmit={handleSettingsSubmit}
               />
             </div>
           </div>

@@ -1,41 +1,43 @@
+"use client";
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/store/store";
+import { setBackgroundSettings, setShowAdditionalSetting } from "@/store/slice";
 import AdditionalSettingsModal from "./Modal/AdditionalSetting";
 
 type UserSetStudyTimerProps = {
   submitHandler: (e: React.FormEvent<HTMLFormElement>) => void;
   closeHandler: () => void;
   backgroundImages: string[];
-  onSubmit: (settings: {
-    backgroundImage: string;
-    backgroundMusic: string;
-  }) => void;
 };
 
 export default function UserSetStudyTimer({
   submitHandler,
   closeHandler,
   backgroundImages,
-  onSubmit,
 }: UserSetStudyTimerProps) {
-  const [showAdditionalSetting, setAdditionalSetting] = useState(false);
-  const [additionalSettings, setAdditionalSettings] = useState({
-    backgroundImage: "",
-    backgroundMusic: "",
-  });
+  // const [showAdditionalSetting, setAdditionalSetting] = useState(false);
+  // const [additionalSettings, setAdditionalSettings] = useState({
+  //   backgroundImage: "",
+  //   backgroundMusic: "",
+  // });
+  const dispatch: AppDispatch = useDispatch();
+  const { showAdditionalSetting } = useSelector(
+    (state: RootState) => state.timer
+  );
   const handleMoreSettings = () => {
-    setAdditionalSetting(true);
+    dispatch(setShowAdditionalSetting(true));
   };
   const handleCloseSettings = () => {
-    setAdditionalSetting(false);
+    dispatch(setShowAdditionalSetting(false));
   };
 
   const handleSettingsSubmit = (settings: {
     backgroundImage: string;
     backgroundMusic: string;
   }) => {
-    setAdditionalSetting(false);
-    setAdditionalSettings(settings);
-    onSubmit(settings);
+    handleCloseSettings();
+    setBackgroundSettings(settings);
   };
 
   return (
