@@ -11,7 +11,7 @@ export interface TimerState {
   showAdditionalSetting: boolean;
 }
 
-const initialState: TimerState = {
+const initialTimerState: TimerState = {
   isFullscreen: false,
   isUserTime: false,
   countdownSeconds: 0,
@@ -24,7 +24,7 @@ const initialState: TimerState = {
 
 export const timerSlice = createSlice({
   name: "timer",
-  initialState,
+  initialState: initialTimerState,
   reducers: {
     setIsFullscreen(state, action: PayloadAction<boolean>) {
       state.isFullscreen = action.payload;

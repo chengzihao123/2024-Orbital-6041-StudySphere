@@ -7,11 +7,12 @@ import {
   setIsFullscreen,
   setIsUserTime,
   setCountdownSeconds,
-} from "@/store/slice";
-import CountdownTimer from "@/components/Timer";
-import UserSetStudyTimer from "@/components/UserSetStudyTimer";
+} from "@/store/timerSlice";
+import CountdownTimer from "@/components/Study/Timer";
+import UserSetStudyTimer from "@/components/Study/UserSetStudyTimer";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import TimeZeroAlert from "@/components/Modal/TimeZeroAlert"; // Import the Modal component
+import FullScreenNavBar from "@/components/Study/FullScreenNavBar";
 
 export default function Study() {
   const [showAlert, setShowAlert] = useState(false); // State for showing alert
@@ -29,8 +30,9 @@ export default function Study() {
   };
 
   const dispatch: AppDispatch = useDispatch();
-  const { isFullscreen, isUserTime, countdownSeconds, backgroundSettings } =
-    useSelector((state: RootState) => state.timer);
+  const { isFullscreen, isUserTime, countdownSeconds } = useSelector(
+    (state: RootState) => state.timer
+  );
 
   const handleFullscreenToggle = () => {
     dispatch(setIsFullscreen(!isFullscreen));
@@ -143,20 +145,25 @@ export default function Study() {
               width: "100vw",
             }}
           >
-            <div className="p-5">
-              <div className="inline-block">
-                <CountdownTimer
-                  onTimeUp={exitFullscreen}
-                  initialTime={countdownSeconds}
-                />
+            <div className="p-5 relative">
+              <div className="flex justify-between items-center">
+                <div className="flex-shrink-0">
+                  <CountdownTimer
+                    onTimeUp={exitFullscreen}
+                    initialTime={countdownSeconds}
+                  />
+                </div>
+                <div className="flex-shrink-0">
+                  <button
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-full"
+                    onClick={exitFullscreen}
+                  >
+                    End Study
+                  </button>
+                </div>
               </div>
-              <div className="inline-block float-right">
-                <button
-                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-full"
-                  onClick={exitFullscreen}
-                >
-                  End Study
-                </button>
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                <FullScreenNavBar />
               </div>
             </div>
           </div>

@@ -1,6 +1,9 @@
-import React, { useState, ChangeEvent } from 'react';
-import { doc, deleteDoc, updateDoc } from 'firebase/firestore';
-import { firestore } from '../../../firebase/firebase';
+import React, { useState, ChangeEvent } from "react";
+import { doc, deleteDoc, updateDoc } from "firebase/firestore";
+import { firestore } from "../../../firebase/firebase";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "../../store/store";
+import { setCompleted, setStatus } from "../../store/todoSlice";
 
 interface Todo {
   id: string;
@@ -18,35 +21,39 @@ interface TodoItemProps {
 
 // a fc to display a single todo item (used in todolist)
 const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
-  const [status, setStatus] = useState<string>(todo.status);
-  const [priority] = useState<string>(todo.priority);
-  const [completed, setCompleted] = useState<boolean>(todo.completed);
+  const dispatch: AppDispatch = useDispatch();
+  const { todosItems } = useSelector((state: RootState) => state.todo);
+  const index = todosItems.findIndex((item) => item.id === todo.id);
+  const completed = todosItems[index].completed;
+  const priority = todosItems[index].priority;
 
   // deletes todo from firestore
   const handleDelete = async () => {
-    const todoRef = doc(firestore, 'todos', todo.id);
+    const todoRef = doc(firestore, "todos", todo.id);
     await deleteDoc(todoRef);
   };
 
   // updates todo status in firestore
   const handleStatusChange = async (e: ChangeEvent<HTMLSelectElement>) => {
     const newStatus = e.target.value;
-    setStatus(newStatus);
-    const isCompleted = newStatus === 'Completed';
-    setCompleted(isCompleted);
-    const todoRef = doc(firestore, 'todos', todo.id);
+    dispatch(setStatus({ id: todo.id, status: newStatus }));
+    const isCompleted = newStatus === "Completed";
+    dispatch(setCompleted({ id: todo.id, completed: isCompleted }));
+    const todoRef = doc(firestore, "todos", todo.id);
     await updateDoc(todoRef, { status: newStatus, completed: isCompleted });
   };
 
   const getBackgroundColor = (): string => {
-    if (completed) return 'bg-gray-400';
-    if (priority === 'High') return 'bg-pink-200';
-    if (priority === 'Medium') return 'bg-yellow-200';
-    return 'bg-green-200';
+    if (completed) return "bg-gray-400";
+    if (priority === "High") return "bg-pink-200";
+    if (priority === "Medium") return "bg-yellow-200";
+    return "bg-green-200";
   };
 
   return (
-    <div className={`grid grid-cols-6 gap-4 items-center p-4 ${getBackgroundColor()} shadow-md rounded-lg mb-4`}>
+    <div
+      className={`grid grid-cols-6 gap-4 items-center p-4 ${getBackgroundColor()} shadow-md rounded-lg mb-4`}
+    >
       <div className="col-span-2 overflow-hidden">
         <h3 className="text-lg font-semibold text-gray-900">{todo.taskName}</h3>
         <p className="text-sm text-gray-600 truncate">{todo.taskDescription}</p>
@@ -55,7 +62,15 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
         <p className="text-sm text-gray-700">{todo.deadline}</p>
       </div>
       <div className="col-span-1">
-        <p className={`text-sm ${priority === 'High' ? 'text-red-600' : priority === 'Medium' ? 'text-yellow-600' : 'text-green-600'}`}>
+        <p
+          className={`text-sm ${
+            priority === "High"
+              ? "text-red-600"
+              : priority === "Medium"
+              ? "text-yellow-600"
+              : "text-green-600"
+          }`}
+        >
           {priority}
         </p>
       </div>
@@ -72,8 +87,8 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
         </select>
       </div>
       <div className="col-span-1 flex justify-end">
-        <button 
-          onClick={handleDelete} 
+        <button
+          onClick={handleDelete}
           className="text-red-600 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
         >
           Delete

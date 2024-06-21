@@ -1,5 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/store/store";
+import { setTodos } from "@/store/todoSlice";
 import {
   collection,
   query,
@@ -24,21 +27,10 @@ interface Todo {
   taskName: string;
   taskDescription: string;
 }
-
-interface Filter {
-  date: string;
-  priority: string;
-  status: string;
-}
-
 const TodoList: React.FC = () => {
+  const dispatch: AppDispatch = useDispatch();
+  const { todos, filter } = useSelector((state: RootState) => state.todo);
   const { currentUser } = useAuth() || {};
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [filter, setFilter] = useState<Filter>({
-    date: "mostRecent",
-    priority: "all",
-    status: "all",
-  });
   const router = useRouter();
 
   // fetch todos from firestore
@@ -54,7 +46,8 @@ const TodoList: React.FC = () => {
     const unsubscribe = onSnapshot(q, (snapshot) => {
       if (snapshot.empty) {
         console.log("No todos found.");
-        setTodos([]);
+        // setTodos([]);
+        dispatch(setTodos([]));
       } else {
         // map todos from snapshot and update todos state
         const fetchedTodos = snapshot.docs.map((doc) => ({
@@ -75,7 +68,8 @@ const TodoList: React.FC = () => {
           return todo;
         });
 
-        setTodos(updatedTodos);
+        // setTodos(updatedTodos);
+        dispatch(setTodos(updatedTodos));
       }
     });
 
@@ -105,9 +99,13 @@ const TodoList: React.FC = () => {
       })
       .sort((a, b) => {
         if (filter.date === "mostRecent") {
-          return new Date(b.deadline).getTime() - new Date(a.deadline).getTime();
+          return (
+            new Date(b.deadline).getTime() - new Date(a.deadline).getTime()
+          );
         } else {
-          return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
+          return (
+            new Date(a.deadline).getTime() - new Date(b.deadline).getTime()
+          );
         }
       })
       .sort((a, b) => {
@@ -122,7 +120,7 @@ const TodoList: React.FC = () => {
       <div className="md:flex-[2] order-1 md:order-1">
         <AddTodo />
         <div className="block md:hidden mt-4">
-          <TodoFilter filter={filter} setFilter={setFilter} />
+          <TodoFilter />
         </div>
         <div className="mt-6 bg-white p-4 rounded-lg shadow-md">
           <div className="grid grid-cols-6 gap-4 items-center font-bold text-gray-700 mb-4">
@@ -140,7 +138,7 @@ const TodoList: React.FC = () => {
         </div>
       </div>
       <div className="md:flex-[1] order-2 md:order-2 hidden md:block">
-        <TodoFilter filter={filter} setFilter={setFilter} />
+        <TodoFilter />
       </div>
     </div>
   );

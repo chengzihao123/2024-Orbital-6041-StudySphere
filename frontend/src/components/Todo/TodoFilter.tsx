@@ -1,27 +1,15 @@
-import React, { FC, ChangeEvent } from 'react';
+import React, { FC, ChangeEvent } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "../../store/store";
+import { setFilter } from "@/store/todoSlice";
 
-interface TodoFilterProps {
-  filter: {
-    date: string;
-    priority: string;
-    status: string;
-  };
-  setFilter: React.Dispatch<React.SetStateAction<{
-    date: string;
-    priority: string;
-    status: string;
-  }>>;
-}
-
-// a fc to filter todos
-const TodoFilter: FC<TodoFilterProps> = ({ filter, setFilter }) => {
+const TodoFilter = () => {
+  const dispatch: AppDispatch = useDispatch();
+  const { filter } = useSelector((state: RootState) => state.todo);
   // updates filter state when option is selected
   const handleFilterChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFilter(prevFilter => ({
-      ...prevFilter,
-      [name]: value,
-    }));
+    dispatch(setFilter({ [name]: value }));
   };
 
   return (
@@ -29,7 +17,9 @@ const TodoFilter: FC<TodoFilterProps> = ({ filter, setFilter }) => {
       <h2 className="text-lg font-semibold mb-2">Filter Todos</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">Date</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Date
+          </label>
           <select
             name="date"
             value={filter.date}
@@ -41,7 +31,9 @@ const TodoFilter: FC<TodoFilterProps> = ({ filter, setFilter }) => {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Priority</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Priority
+          </label>
           <select
             name="priority"
             value={filter.priority}
@@ -55,7 +47,9 @@ const TodoFilter: FC<TodoFilterProps> = ({ filter, setFilter }) => {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">Status</label>
+          <label className="block text-sm font-medium text-gray-700">
+            Status
+          </label>
           <select
             name="status"
             value={filter.status}
