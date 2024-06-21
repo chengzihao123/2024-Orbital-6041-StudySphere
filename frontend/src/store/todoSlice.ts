@@ -10,15 +10,6 @@ interface Todo {
   taskDescription: string;
 }
 
-interface TodoItems {
-  id: string;
-  taskName: string;
-  taskDescription: string;
-  deadline: string;
-  status: string;
-  priority: string;
-  completed: boolean;
-}
 interface Filter {
   date: string;
   priority: string;
@@ -28,7 +19,6 @@ interface Filter {
 export interface TodoState {
   todos: Todo[];
   filter: Filter;
-  todosItems: TodoItems[];
 }
 
 const initialTodoState: TodoState = {
@@ -38,7 +28,6 @@ const initialTodoState: TodoState = {
     priority: "all",
     status: "all",
   },
-  todosItems: [],
 };
 
 export const todoSlice = createSlice({
@@ -59,18 +48,38 @@ export const todoSlice = createSlice({
       action: PayloadAction<{ id: string; completed: boolean }>
     ) {
       const { id, completed } = action.payload;
-      const index = state.todosItems.findIndex((item) => item.id === id);
-      state.todosItems[index].completed = completed;
+      const index = state.todos.findIndex((item) => item.id === id);
+      if (index !== -1) {
+        state.todos[index].completed = completed;
+      }
     },
     setStatus(state, action: PayloadAction<{ id: string; status: string }>) {
       const { id, status } = action.payload;
-      const index = state.todosItems.findIndex((item) => item.id === id);
-      state.todosItems[index].status = status;
+      const index = state.todos.findIndex((item) => item.id === id);
+      if (index !== -1) {
+        state.todos[index].status = status;
+      }
+    },
+    updateTodo(
+      state,
+      action: PayloadAction<{ id: string; data: Partial<Todo> }>
+    ) {
+      const { id, data } = action.payload;
+      const index = state.todos.findIndex((item) => item.id === id);
+      if (index !== -1) {
+        state.todos[index] = { ...state.todos[index], ...data };
+      }
+    },
+    removeTodo(
+      state,
+      action: PayloadAction<string>
+    ) {
+      state.todos = state.todos.filter((todo) => todo.id !== action.payload);
     },
   },
 });
 
-export const { setTodos, setFilter, setCompleted, setStatus } =
+export const { setTodos, setFilter, setCompleted, setStatus, updateTodo, removeTodo } =
   todoSlice.actions;
 
 export default todoSlice.reducer;
