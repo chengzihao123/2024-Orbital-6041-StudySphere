@@ -41,10 +41,10 @@ const Navbar: React.FC = () => {
               {/* 
               <Link href="/timer" className="text-gray-300 hover:text-white">
                 Timer
-              </Link>
-              <Link href="/chat" className="text-gray-300 hover:text-white">
-                Chat
-              </Link> */}
+              </Link>*/}
+              <Link href="/chatroom" className="text-gray-300 hover:text-white">
+                Community
+              </Link> 
               <button
                 onClick={handleLogout}
                 className="text-gray-300 hover:text-white"
