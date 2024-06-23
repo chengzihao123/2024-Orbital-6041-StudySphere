@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { doc, deleteDoc, updateDoc } from 'firebase/firestore';
-import { useDispatch } from 'react-redux';
-import { firestore } from '../../../firebase/firebase';
-import { removeTodo, updateTodo } from '../../store/todoSlice';
+import React, { useState } from "react";
+import { doc, deleteDoc, updateDoc } from "firebase/firestore";
+import { useDispatch } from "react-redux";
+import { firestore } from "../../../firebase/firebase";
+import { removeTodo, updateTodo } from "../../store/todoSlice";
 
 interface Todo {
   id: string;
@@ -25,49 +25,68 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
 
   const handleDelete = async () => {
     try {
-      const todoRef = doc(firestore, 'todos', todo.id);
+      const todoRef = doc(firestore, "todos", todo.id);
       await deleteDoc(todoRef);
       dispatch(removeTodo(todo.id));
-      alert("Todo deleted successfully!");
+      // alert("Todo deleted successfully!");
     } catch (error) {
       console.error("Error deleting todo:", error);
     }
   };
 
-  const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleStatusChange = async (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const newStatus = e.target.value;
     setStatus(newStatus);
-    const isCompleted = newStatus === 'Completed';
+    const isCompleted = newStatus === "Completed";
     setCompleted(isCompleted);
 
     try {
-      const todoRef = doc(firestore, 'todos', todo.id);
+      const todoRef = doc(firestore, "todos", todo.id);
       await updateDoc(todoRef, { status: newStatus, completed: isCompleted });
-      dispatch(updateTodo({ id: todo.id, data: { status: newStatus, completed: isCompleted } }));
-      alert("Todo status updated successfully!");
+      dispatch(
+        updateTodo({
+          id: todo.id,
+          data: { status: newStatus, completed: isCompleted },
+        })
+      );
+      // alert("Todo status updated successfully!");
     } catch (error) {
       console.error("Error updating todo status:", error);
     }
   };
 
   const getBackgroundColor = () => {
-    if (completed) return 'bg-gray-400';
-    if (todo.priority === 'High') return 'bg-pink-200';
-    if (todo.priority === 'Medium') return 'bg-yellow-200';
-    return 'bg-green-200';
+    if (completed) return "bg-gray-400";
+    if (todo.priority === "High") return "bg-pink-200";
+    if (todo.priority === "Medium") return "bg-yellow-200";
+    return "bg-green-200";
   };
 
   return (
-    <div className={`grid grid-cols-6 gap-4 items-center p-4 ${getBackgroundColor()} shadow-md rounded-lg mb-4`}>
+    <div
+      className={`grid grid-cols-6 gap-4 items-center p-4 ${getBackgroundColor()} shadow-md rounded-lg mb-4`}
+    >
       <div className="col-span-2 overflow-hidden">
         <h3 className="text-lg font-semibold text-gray-900">{todo.taskName}</h3>
         <p className="text-sm text-gray-600 truncate">{todo.taskDescription}</p>
       </div>
       <div className="col-span-1">
-        <p className="text-sm text-gray-700">{new Date(todo.deadline).toLocaleDateString()}</p>
+        <p className="text-sm text-gray-700">
+          {new Date(todo.deadline).toLocaleDateString()}
+        </p>
       </div>
       <div className="col-span-1">
-        <p className={`text-sm ${todo.priority === 'High' ? 'text-red-600' : todo.priority === 'Medium' ? 'text-yellow-600' : 'text-green-600'}`}>
+        <p
+          className={`text-sm ${
+            todo.priority === "High"
+              ? "text-red-600"
+              : todo.priority === "Medium"
+              ? "text-yellow-600"
+              : "text-green-600"
+          }`}
+        >
           {todo.priority}
         </p>
       </div>
@@ -84,8 +103,8 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
         </select>
       </div>
       <div className="col-span-1 flex justify-end">
-        <button 
-          onClick={handleDelete} 
+        <button
+          onClick={handleDelete}
           className="text-red-600 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
         >
           Delete

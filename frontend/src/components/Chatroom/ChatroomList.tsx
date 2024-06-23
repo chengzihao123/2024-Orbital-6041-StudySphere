@@ -1,10 +1,9 @@
 "use client";
-import React, { useEffect, useState } from 'react';
-import { collection, onSnapshot, query, where } from 'firebase/firestore';
-import { firestore } from '../../../firebase/firebase';
-import { useAuth } from '@/components/Auth/AuthContext';
-import Link from 'next/link';
-
+import React, { useEffect, useState } from "react";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { firestore } from "../../../firebase/firebase";
+import { useAuth } from "@/components/Auth/AuthContext";
+import Link from "next/link";
 interface Chatroom {
   id: string;
   name: string;
@@ -18,13 +17,13 @@ const ChatroomList: React.FC = () => {
   useEffect(() => {
     if (currentUser) {
       const q = query(
-        collection(firestore, 'chatrooms'),
-        where('members', 'array-contains', currentUser.uid)
+        collection(firestore, "chatrooms"),
+        where("members", "array-contains", currentUser.uid)
       );
 
       const unsubscribe = onSnapshot(q, (snapshot) => {
         const rooms: Chatroom[] = snapshot.docs.map((doc) => {
-          const data = doc.data() as Omit<Chatroom, 'id'>;
+          const data = doc.data() as Omit<Chatroom, "id">;
           return {
             id: doc.id,
             ...data,

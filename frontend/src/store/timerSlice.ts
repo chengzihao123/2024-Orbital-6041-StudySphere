@@ -1,11 +1,19 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+export type BackgroundImageType =
+  | "autumn"
+  | "grass"
+  | "sea"
+  | "mountain"
+  | "moon"
+  | "";
+
 export interface TimerState {
   isFullscreen: boolean;
   isUserTime: boolean;
   countdownSeconds: number;
   backgroundSettings: {
-    backgroundImage: string;
+    backgroundImage: BackgroundImageType;
     backgroundMusic: string;
   };
   showAdditionalSetting: boolean;
@@ -35,11 +43,11 @@ export const timerSlice = createSlice({
     setCountdownSeconds(state, action: PayloadAction<number>) {
       state.countdownSeconds = action.payload;
     },
-    setBackgroundSettings(
-      state,
-      action: PayloadAction<TimerState["backgroundSettings"]>
-    ) {
-      state.backgroundSettings = action.payload;
+    setBackgroundImage(state, action: PayloadAction<BackgroundImageType>) {
+      state.backgroundSettings.backgroundImage = action.payload;
+    },
+    setBackgroundMusic(state, action: PayloadAction<string>) {
+      state.backgroundSettings.backgroundMusic = action.payload;
     },
     setShowAdditionalSetting(state, action: PayloadAction<boolean>) {
       state.showAdditionalSetting = action.payload;
@@ -52,8 +60,9 @@ export const {
   setIsFullscreen,
   setIsUserTime,
   setCountdownSeconds,
-  setBackgroundSettings,
+  setBackgroundImage,
   setShowAdditionalSetting,
+  setBackgroundMusic,
 } = timerSlice.actions;
 
 export default timerSlice.reducer;

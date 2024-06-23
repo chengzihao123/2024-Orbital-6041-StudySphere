@@ -9,7 +9,7 @@ const HomePage: React.FC = () => {
   const passwordRef = useRef<HTMLInputElement>(null);
   const auth = useAuth();
   const { signup, loginWithGoogle } = auth || {};
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const router = useRouter();
@@ -22,27 +22,29 @@ const HomePage: React.FC = () => {
     e.preventDefault();
     if (emailRef.current && passwordRef.current && signup) {
       try {
-        setError('');
+        setError("");
         setLoading(true);
         await signup(emailRef.current.value, passwordRef.current.value);
         router.push("/todos");
       } catch (err: any) {
         // handle specific firebase errors
-        if (err.code === 'auth/email-already-in-use') {
-          setError('The email address is already in use by another account.');
-        } else if (err.code === 'auth/invalid-email') {
-          setError('The email address is not valid.');
-        } else if (err.code === 'auth/weak-password') {
-          setError('The password is too weak. Length should be at least 6 characters.');
+        if (err.code === "auth/email-already-in-use") {
+          setError("The email address is already in use by another account.");
+        } else if (err.code === "auth/invalid-email") {
+          setError("The email address is not valid.");
+        } else if (err.code === "auth/weak-password") {
+          setError(
+            "The password is too weak. Length should be at least 6 characters."
+          );
         } else {
-          setError('Failed to create an account');
+          setError("Failed to create an account");
         }
 
         // clear the input fields
-        if (emailRef.current) emailRef.current.value = '';
-        if (passwordRef.current) passwordRef.current.value = '';
+        if (emailRef.current) emailRef.current.value = "";
+        if (passwordRef.current) passwordRef.current.value = "";
 
-        setShowPopup(true); 
+        setShowPopup(true);
         console.error(err);
       }
 
@@ -57,8 +59,8 @@ const HomePage: React.FC = () => {
         router.push("/todos");
       }
     } catch (error) {
-      setError('Failed to log in with Google');
-      setShowPopup(true); 
+      setError("Failed to log in with Google");
+      setShowPopup(true);
       console.error(error);
     }
   };
