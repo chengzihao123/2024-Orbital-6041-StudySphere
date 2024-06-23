@@ -1,11 +1,15 @@
 // AdditionalSettingsModal.tsx
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import { BackgroundImageType } from "@/store/timerSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "../../store/store";
+import { setBackgroundImage, setBackgroundMusic } from "../../store/timerSlice";
 
 type AdditionalSettingsModalProps = {
   onClose: () => void;
   backgroundImages: string[];
   onSettingsSubmit: (settings: {
-    backgroundImage: string;
+    backgroundImage: BackgroundImageType;
     backgroundMusic: string;
   }) => void;
 };
@@ -15,20 +19,23 @@ export default function AdditionalSettingsModal({
   backgroundImages,
   onSettingsSubmit,
 }: AdditionalSettingsModalProps) {
-  const [backgroundImage, setBackgroundImage] = useState("");
-  const [backgroundMusic, setBackgroundMusic] = useState("");
+  const dispatch: AppDispatch = useDispatch();
+  const { backgroundImage, backgroundMusic } = useSelector(
+    (state: RootState) => state.timer.backgroundSettings
+  );
 
-  // to be replaced by the backend
   useEffect(() => {
     // Check if there is a previously selected background image in localStorage
-    const savedBackgroundImage = localStorage.getItem("backgroundImage");
-    if (
-      savedBackgroundImage &&
-      backgroundImages.includes(savedBackgroundImage)
-    ) {
-      setBackgroundImage(savedBackgroundImage);
+    // ❗localstorage change to backend storage
+    let savedBackgroundImage = localStorage.getItem("backgroundImage");
+    if (savedBackgroundImage && isBackgroundImageType(savedBackgroundImage)) {
+      dispatch(setBackgroundImage(savedBackgroundImage));
     }
   }, []);
+
+  function isBackgroundImageType(value: string): value is BackgroundImageType {
+    return ["autumn", "grass", "sea", "mountain", "moon", ""].includes(value);
+  }
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -56,10 +63,12 @@ export default function AdditionalSettingsModal({
                 id="backgroundImage"
                 name="backgroundImage"
                 className="p-2 border rounded w-full"
-                value={backgroundImage}
+                value={localStorage.getItem("backgroundImage") || ""}
                 onChange={(e) => {
-                  setBackgroundImage(e.target.value);
-                  localStorage.setItem("backgroundImage", e.target.value); // Save selected image to localStorage
+                  if (isBackgroundImageType(e.target.value)) {
+                    dispatch(setBackgroundImage(e.target.value));
+                    localStorage.setItem("backgroundImage", e.target.value); // Save selected image to localStorage
+                  }
                 }}
               >
                 {backgroundImages.map((image, index) => (

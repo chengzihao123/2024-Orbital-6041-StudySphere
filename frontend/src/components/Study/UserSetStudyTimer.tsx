@@ -3,10 +3,10 @@ import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import {
-  setBackgroundSettings,
   setShowAdditionalSetting,
 } from "@/store/timerSlice";
 import AdditionalSettingsModal from "../Modal/AdditionalSetting";
+import { BackgroundImageType } from "@/store/timerSlice";
 
 type UserSetStudyTimerProps = {
   submitHandler: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -37,11 +37,12 @@ export default function UserSetStudyTimer({
   };
 
   const handleSettingsSubmit = (settings: {
-    backgroundImage: string;
+    backgroundImage: BackgroundImageType;
     backgroundMusic: string;
   }) => {
     handleCloseSettings();
-    dispatch(setBackgroundSettings(settings));
+    localStorage.setItem("backgroundImage", settings.backgroundImage);
+    localStorage.setItem("backgroundMusic", settings.backgroundMusic);
   };
 
   const handleMinutesChange = (e: React.ChangeEvent<HTMLInputElement>) => {

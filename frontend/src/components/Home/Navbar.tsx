@@ -2,7 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import { useAuth } from "../Auth/AuthContext";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 const Navbar: React.FC = () => {
   const { currentUser, logout } = useAuth() || {};
@@ -12,7 +12,7 @@ const Navbar: React.FC = () => {
     try {
       if (logout) {
         await logout();
-        router.push("/"); 
+        router.push("/");
       }
     } catch (error) {
       console.error("Failed to logout", error);
@@ -38,13 +38,9 @@ const Navbar: React.FC = () => {
               <Link href="/study" className="text-gray-300 hover:text-white">
                 Study
               </Link>
-              {/* 
-              <Link href="/timer" className="text-gray-300 hover:text-white">
-                Timer
+              <Link href="/chatroom" className="text-gray-300 hover:text-white">
+                Community
               </Link>
-              <Link href="/chat" className="text-gray-300 hover:text-white">
-                Chat
-              </Link> */}
               <button
                 onClick={handleLogout}
                 className="text-gray-300 hover:text-white"

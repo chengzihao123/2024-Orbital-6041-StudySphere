@@ -2,35 +2,23 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
 import { RootState, AppDispatch } from "@/store/store";
 import {
   setIsFullscreen,
   setIsUserTime,
   setCountdownSeconds,
 } from "@/store/timerSlice";
-import CountdownTimer from "@/components/Study/Timer";
 import UserSetStudyTimer from "@/components/Study/UserSetStudyTimer";
 import ProtectedRoute from "@/components/ProtectedRoute";
-import TimeZeroAlert from "@/components/Modal/TimeZeroAlert"; // Import the Modal component
-import FullScreenNavBar from "@/components/Study/FullScreenNavBar";
-
+import TimeZeroAlert from "@/components/Modal/TimeZeroAlert";
 export default function Study() {
-  const [showAlert, setShowAlert] = useState(false); // State for showing alert
+  const router = useRouter();
+  const [showAlert, setShowAlert] = useState(false);
   const backgroundImages = ["", "autumn", "grass", "sea", "mountain", "moon"];
 
-  const backgroundImagesMap: { [key: string]: string } = {
-    autumn:
-      "https://images.pexels.com/photos/33109/fall-autumn-red-season.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    grass:
-      "https://images.pexels.com/photos/352096/pexels-photo-352096.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    sea: "https://images.pexels.com/photos/1766838/pexels-photo-1766838.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-    mountain:
-      "https://images.pexels.com/photos/36478/amazing-beautiful-beauty-blue.jpg",
-    moon: "https://images.pexels.com/photos/884788/pexels-photo-884788.jpeg",
-  };
-
   const dispatch: AppDispatch = useDispatch();
-  const { isFullscreen, isUserTime, countdownSeconds } = useSelector(
+  const { isFullscreen, isUserTime } = useSelector(
     (state: RootState) => state.timer
   );
 
@@ -89,22 +77,10 @@ export default function Study() {
       elem.requestFullscreen();
     }
     handleFullscreenToggle();
+    router.push("/background");
   };
-
-  const exitFullscreen = () => {
-    handleFullscreenToggle();
-    if (isUserTime) {
-      handleUserTimeToggle();
-    }
-    document.exitFullscreen();
-  };
-
   const handleCloseForm = () => {
     handleUserTimeToggle();
-  };
-
-  const getBackgroundImageUrl = (imageName: string) => {
-    return backgroundImagesMap[imageName] || "";
   };
 
   return (
@@ -128,44 +104,6 @@ export default function Study() {
             <Link href="/" className="text-blue-500 hover:text-blue-700">
               Go back
             </Link>
-          </div>
-        )}
-
-        {isFullscreen && (
-          <div
-            style={{
-              backgroundImage: `url()`,
-              // backgroundImage: `url(${getBackgroundImageUrl(
-              //   backgroundSettings.backgroundImage
-              // )})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              height: "100vh",
-              width: "100vw",
-            }}
-          >
-            <div className="p-5 relative">
-              <div className="flex justify-between items-center">
-                <div className="flex-shrink-0">
-                  <CountdownTimer
-                    onTimeUp={exitFullscreen}
-                    initialTime={countdownSeconds}
-                  />
-                </div>
-                <div className="flex-shrink-0">
-                  <button
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-full"
-                    onClick={exitFullscreen}
-                  >
-                    End Study
-                  </button>
-                </div>
-              </div>
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <FullScreenNavBar />
-              </div>
-            </div>
           </div>
         )}
 

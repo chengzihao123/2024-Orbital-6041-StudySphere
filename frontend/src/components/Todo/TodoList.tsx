@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import { setTodos } from "@/store/todoSlice";
@@ -27,29 +27,28 @@ interface Todo {
   taskName: string;
   taskDescription: string;
 }
+
 const TodoList: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const { todos, filter } = useSelector((state: RootState) => state.todo);
   const { currentUser } = useAuth() || {};
   const router = useRouter();
 
-  // fetch todos from firestore
   useEffect(() => {
     if (!currentUser) {
       router.push("/login");
       return;
     }
+
     const todosCollection = collection(firestore, "todos");
     const q = query(todosCollection, where("userId", "==", currentUser.uid));
-
+    
     // subscribe to todos collection and update todos state
     const unsubscribe = onSnapshot(q, (snapshot) => {
       if (snapshot.empty) {
         console.log("No todos found.");
-        // setTodos([]);
         dispatch(setTodos([]));
       } else {
-        // map todos from snapshot and update todos state
         const fetchedTodos = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...(doc.data() as Omit<Todo, "id">),
@@ -68,13 +67,12 @@ const TodoList: React.FC = () => {
           return todo;
         });
 
-        // setTodos(updatedTodos);
         dispatch(setTodos(updatedTodos));
       }
     });
 
-    return unsubscribe;
-  }, [currentUser, router]);
+    return () => unsubscribe();
+  }, [currentUser, router, dispatch]);
 
   const filterTodos = (todos: Todo[]): Todo[] => {
     return todos

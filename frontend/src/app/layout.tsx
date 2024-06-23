@@ -6,14 +6,17 @@ import "./globals.css";
 import Navbar from "@/components/Home/Navbar";
 import { store, RootState } from "../store/store";
 import { Provider, useSelector } from "react-redux";
+import { FullScreenTopBar } from "@/components/Study/FullScreenTopBar";
 
 const LayoutContent = ({ children }: { children: React.ReactNode }) => {
   const { isFullscreen } = useSelector((state: RootState) => state.timer);
 
   return (
     <>
-      {!isFullscreen && <Navbar />}
-      <div className="container mx-auto mt-4">{children}</div>
+      {!isFullscreen ? <Navbar /> : <FullScreenTopBar />}
+      <div className={`container mx-auto ${!isFullscreen ? "mt-4" : "mt-1"}`}>
+        {children}
+      </div>
     </>
   );
 };

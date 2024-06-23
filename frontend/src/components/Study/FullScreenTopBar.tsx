@@ -1,0 +1,110 @@
+"use client";
+import * as React from "react";
+import Link from "next/link";
+import CountdownTimer from "./Timer";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import Box from "@mui/material/Box";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/store/store";
+import { setIsFullscreen, setIsUserTime } from "@/store/timerSlice";
+
+export const FullScreenTopBar = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { isFullscreen, isUserTime, countdownSeconds } = useSelector(
+    (state: RootState) => state.timer
+  );
+  const [value, setValue] = React.useState("one");
+
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setValue(newValue);
+  };
+
+  const handleFullscreenToggle = () => {
+    dispatch(setIsFullscreen(!isFullscreen));
+  };
+
+  const handleUserTimeToggle = () => {
+    dispatch(setIsUserTime(!isUserTime));
+  };
+
+  const exitFullscreen = () => {
+    handleFullscreenToggle();
+    if (isUserTime) {
+      handleUserTimeToggle();
+    }
+    document.exitFullscreen();
+  };
+
+  return (
+    <nav className="bg-gray-400 p-7 relative w-screen rounded-sm">
+      <div className="container mx-auto flex justify-center items-center h-16">
+        <div className="absolute left-0 top-0 mt-4 ml-4">
+          <CountdownTimer
+            onTimeUp={exitFullscreen}
+            initialTime={countdownSeconds}
+          />
+        </div>
+        <div className="absolute right-5 top-8 mt-4 mr-4">
+          <Link
+            href={"/study"}
+            className="bg-red-500 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-full"
+            onClick={exitFullscreen}
+          >
+            End Study
+          </Link>
+        </div>
+        <Box sx={{ width: "50%" }}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            textColor="secondary"
+            indicatorColor="secondary"
+            aria-label="secondary tabs example"
+            centered
+            sx={{
+              "& .MuiTabs-flexContainer": {
+                justifyContent: "space-between",
+              },
+              "& .MuiTab-root": {
+                minWidth: "100px",
+                flex: 1,
+                fontWeight: "bold",
+                fontSize: "20px",
+                textTransform: "none", // Prevents all-caps
+              },
+              "& .Mui-selected": {
+                color: "primary.main", // Custom color for selected tab
+              },
+              "& .MuiTabs-indicator": {
+                height: 3, // Custom indicator thickness
+              },
+            }}
+          >
+            <Tab
+              value="one"
+              label="None"
+              component={Link}
+              href="/background"
+              onClick={() => setValue("one")}
+            />
+            <Tab
+              value="two"
+              label="Todo"
+              component={Link}
+              href="/todos"
+              onClick={() => setValue("two")}
+            />
+            <Tab
+              value="three"
+              label="Community"
+              component={Link}
+              href="/chatroom"
+              onClick={() => setValue("three")}
+            />
+          </Tabs>
+        </Box>
+      </div>
+    </nav>
+  );
+};
