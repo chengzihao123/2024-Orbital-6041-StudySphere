@@ -51,7 +51,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
           data: { status: newStatus, completed: isCompleted },
         })
       );
-      alert("Todo status updated successfully!");
+      // alert("Todo status updated successfully!");
     } catch (error) {
       console.error("Error updating todo status:", error);
     }
