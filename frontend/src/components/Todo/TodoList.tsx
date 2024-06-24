@@ -28,6 +28,41 @@ interface Todo {
   taskDescription: string;
 }
 
+export const filterTodos = (todos: Todo[], filter: any): Todo[] => {
+  return todos
+    .filter((todo) => {
+      if (
+        filter.priority !== "all" &&
+        todo.priority.toLowerCase() !== filter.priority
+      ) {
+        return false;
+      }
+      if (filter.status !== "all") {
+        if (filter.status === "notStarted" && todo.status !== "Not Started")
+          return false;
+        if (filter.status === "inProgress" && todo.status !== "In Progress")
+          return false;
+        if (filter.status === "overdue" && todo.status !== "Overdue")
+          return false;
+        if (filter.status === "completed" && todo.status !== "Completed")
+          return false;
+      }
+      return true;
+    })
+    .sort((a, b) => {
+      if (filter.date === "mostRecent") {
+        return new Date(b.deadline).getTime() - new Date(a.deadline).getTime();
+      } else {
+        return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
+      }
+    })
+    .sort((a, b) => {
+      if (a.completed && !b.completed) return 1;
+      if (!a.completed && b.completed) return -1;
+      return 0;
+    });
+};
+
 const TodoList: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const { todos, filter } = useSelector((state: RootState) => state.todo);
@@ -42,7 +77,7 @@ const TodoList: React.FC = () => {
 
     const todosCollection = collection(firestore, "todos");
     const q = query(todosCollection, where("userId", "==", currentUser.uid));
-    
+
     // subscribe to todos collection and update todos state
     const unsubscribe = onSnapshot(q, (snapshot) => {
       if (snapshot.empty) {
@@ -74,45 +109,6 @@ const TodoList: React.FC = () => {
     return () => unsubscribe();
   }, [currentUser, router, dispatch]);
 
-  const filterTodos = (todos: Todo[]): Todo[] => {
-    return todos
-      .filter((todo) => {
-        if (
-          filter.priority !== "all" &&
-          todo.priority.toLowerCase() !== filter.priority
-        ) {
-          return false;
-        }
-        if (filter.status !== "all") {
-          if (filter.status === "notStarted" && todo.status !== "Not Started")
-            return false;
-          if (filter.status === "inProgress" && todo.status !== "In Progress")
-            return false;
-          if (filter.status === "overdue" && todo.status !== "Overdue")
-            return false;
-          if (filter.status === "completed" && todo.status !== "Completed")
-            return false;
-        }
-        return true;
-      })
-      .sort((a, b) => {
-        if (filter.date === "mostRecent") {
-          return (
-            new Date(b.deadline).getTime() - new Date(a.deadline).getTime()
-          );
-        } else {
-          return (
-            new Date(a.deadline).getTime() - new Date(b.deadline).getTime()
-          );
-        }
-      })
-      .sort((a, b) => {
-        if (a.completed && !b.completed) return 1;
-        if (!a.completed && b.completed) return -1;
-        return 0;
-      });
-  };
-
   return (
     <div className="max-w-6xl mx-auto mt-6 flex flex-col md:flex-row md:space-x-4">
       <div className="md:flex-[2] order-1 md:order-1">
@@ -129,8 +125,8 @@ const TodoList: React.FC = () => {
             <div className="col-span-1"></div>
           </div>
           <ul className="space-y-4">
-            {filterTodos(todos).map((todo) => (
-              <TodoItem key={todo.id} todo={todo} />
+            {filterTodos(todos, filter).map((todo) => (
+              <TodoItem key={todo.id} todo={todo} isHome={false} />
             ))}
           </ul>
         </div>

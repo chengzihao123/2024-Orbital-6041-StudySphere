@@ -2,23 +2,21 @@
 import * as React from "react";
 import Link from "next/link";
 import CountdownTimer from "./Timer";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import Box from "@mui/material/Box";
+import { Tabs, TabList, Tab, TabIndicator, Box } from "@chakra-ui/react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import { setIsFullscreen, setIsUserTime } from "@/store/timerSlice";
 
 export const FullScreenTopBar = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { isFullscreen, isUserTime, countdownSeconds } = useSelector(
+  const { isFullscreen, countdownSeconds, isUserTime } = useSelector(
     (state: RootState) => state.timer
   );
-  const [value, setValue] = React.useState("one");
+  // const [value, setValue] = React.useState("one");
 
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    setValue(newValue);
-  };
+  // const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+  //   setValue(newValue);
+  // };
 
   const handleFullscreenToggle = () => {
     dispatch(setIsFullscreen(!isFullscreen));
@@ -33,7 +31,9 @@ export const FullScreenTopBar = () => {
     if (isUserTime) {
       handleUserTimeToggle();
     }
-    document.exitFullscreen();
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    }
   };
 
   return (
@@ -54,7 +54,7 @@ export const FullScreenTopBar = () => {
             End Study
           </Link>
         </div>
-        <Box sx={{ width: "50%" }}>
+        {/* <Box sx={{ width: "50%" }}>
           <Tabs
             value={value}
             onChange={handleChange}
@@ -101,6 +101,27 @@ export const FullScreenTopBar = () => {
               component={Link}
               href="/chatroom"
               onClick={() => setValue("three")}
+            />
+          </Tabs>
+        </Box> */}
+        <Box width="100%" display="flex" justifyContent="center">
+          <Tabs position="relative" variant="unstyled">
+            <TabList>
+              <Link href="/background">
+                <Tab>None</Tab>
+              </Link>
+              <Link href="/todos">
+                <Tab>Todo</Tab>
+              </Link>
+              <Link href="/chatroom">
+                <Tab>Community</Tab>
+              </Link>
+            </TabList>
+            <TabIndicator
+              mt="-1.5px"
+              height="2px"
+              bg="blue.500"
+              borderRadius="1px"
             />
           </Tabs>
         </Box>

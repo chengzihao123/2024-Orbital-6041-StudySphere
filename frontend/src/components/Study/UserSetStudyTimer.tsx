@@ -2,14 +2,16 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
-import {
-  setShowAdditionalSetting,
-} from "@/store/timerSlice";
+import { setShowAdditionalSetting } from "@/store/timerSlice";
 import AdditionalSettingsModal from "../Modal/AdditionalSetting";
 import { BackgroundImageType } from "@/store/timerSlice";
 
 type UserSetStudyTimerProps = {
-  submitHandler: (e: React.FormEvent<HTMLFormElement>) => void;
+  submitHandler: (
+    e: React.FormEvent<HTMLFormElement>,
+    minutes: number,
+    seconds: number
+  ) => void;
   closeHandler: () => void;
   backgroundImages: string[];
 };
@@ -24,8 +26,8 @@ export default function UserSetStudyTimer({
     (state: RootState) => state.timer
   );
 
-  const [minutes, setMinutes] = useState(0);
-  const [seconds, setSeconds] = useState(0);
+  const [minutes, setMinutes] = useState<string>("0");
+  const [seconds, setSeconds] = useState<string>("0");
   const [error, setError] = useState<string | null>(null);
 
   const handleMoreSettings = () => {
@@ -46,18 +48,40 @@ export default function UserSetStudyTimer({
   };
 
   const handleMinutesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMinutes(Number(e.target.value));
+    setMinutes(e.target.value);
     if (error) setError(null); // Clear error when user changes input
   };
 
   const handleSecondsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSeconds(Number(e.target.value));
+    setSeconds(e.target.value);
     if (error) setError(null); // Clear error when user changes input
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const charCode = e.charCode;
+    if (charCode < 48 || charCode > 57) {
+      e.preventDefault();
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const minutesValue = Number(minutes);
+    const secondsValue = Number(seconds);
+    if (minutesValue > 100) {
+      setError("Minutes cannot exceed 100");
+      return;
+    }
+    if (secondsValue > 59) {
+      setError("Seconds cannot exceed 59");
+      return;
+    }
+    submitHandler(e, minutesValue, secondsValue);
   };
 
   return (
     <div>
-      <form onSubmit={submitHandler} className="flex flex-col space-y-4">
+      <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
         <label className="text-lg font-medium">Study Timer:</label>
         <div className="flex space-x-2">
           <div className="flex flex-col items-center">
@@ -65,13 +89,14 @@ export default function UserSetStudyTimer({
               Minutes
             </label>
             <input
-              type="number"
+              type="text"
               id="minutes"
               name="minutes"
               value={minutes}
               onChange={handleMinutesChange}
-              min="0"
-              max="100"
+              pattern="[0-9]*"
+              inputMode="numeric"
+              onKeyPress={handleKeyPress}
               className="p-2 border rounded w-20"
             />
           </div>
@@ -80,13 +105,14 @@ export default function UserSetStudyTimer({
               Seconds
             </label>
             <input
-              type="number"
+              type="text"
               id="seconds"
               name="seconds"
               value={seconds}
               onChange={handleSecondsChange}
-              min="0"
-              max="59"
+              pattern="[0-9]*"
+              inputMode="numeric"
+              onKeyPress={handleKeyPress}
               className="p-2 border rounded w-20"
             />
           </div>

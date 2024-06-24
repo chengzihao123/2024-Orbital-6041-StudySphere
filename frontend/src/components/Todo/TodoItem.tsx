@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { doc, deleteDoc, updateDoc } from "firebase/firestore";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/store/store";
 import { firestore } from "../../../firebase/firebase";
 import { removeTodo, updateTodo } from "../../store/todoSlice";
 
@@ -16,12 +17,13 @@ interface Todo {
 
 interface TodoItemProps {
   todo: Todo;
+  isHome: boolean;
 }
 
-const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
-  const dispatch = useDispatch();
-  const [status, setStatus] = useState(todo.status);
-  const [completed, setCompleted] = useState(todo.completed);
+const TodoItem: React.FC<TodoItemProps> = ({ todo, isHome }) => {
+  const dispatch = useDispatch<AppDispatch>();
+  // const [status, setStatus] = useState(todo.status);
+  // const [completed, setCompleted] = useState(todo.completed);
 
   const handleDelete = async () => {
     try {
@@ -38,9 +40,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
     e: React.ChangeEvent<HTMLSelectElement>
   ) => {
     const newStatus = e.target.value;
-    setStatus(newStatus);
     const isCompleted = newStatus === "Completed";
-    setCompleted(isCompleted);
 
     try {
       const todoRef = doc(firestore, "todos", todo.id);
@@ -51,14 +51,13 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
           data: { status: newStatus, completed: isCompleted },
         })
       );
-      // alert("Todo status updated successfully!");
     } catch (error) {
       console.error("Error updating todo status:", error);
     }
   };
 
   const getBackgroundColor = () => {
-    if (completed) return "bg-gray-400";
+    if (todo.completed) return "bg-gray-400";
     if (todo.priority === "High") return "bg-pink-200";
     if (todo.priority === "Medium") return "bg-yellow-200";
     return "bg-green-200";
@@ -90,26 +89,32 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
           {todo.priority}
         </p>
       </div>
-      <div className="col-span-1">
-        <select
-          value={status}
-          onChange={handleStatusChange}
-          className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-        >
-          <option value="Not Started">Not Started</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Completed">Completed</option>
-          <option value="Overdue">Overdue</option>
-        </select>
-      </div>
-      <div className="col-span-1 flex justify-end">
-        <button
-          onClick={handleDelete}
-          className="text-red-600 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-        >
-          Delete
-        </button>
-      </div>
+      {!isHome ? (
+        <>
+          <div className="col-span-1">
+            <select
+              value={todo.status}
+              onChange={handleStatusChange}
+              className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+            >
+              <option value="Not Started">Not Started</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+              <option value="Overdue">Overdue</option>
+            </select>
+          </div>
+          <div className="col-span-1 flex justify-end">
+            <button
+              onClick={handleDelete}
+              className="text-red-600 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+            >
+              Delete
+            </button>
+          </div>
+        </>
+      ) : (
+        <div className="col-span-1">{todo.status}</div>
+      )}
     </div>
   );
 };
