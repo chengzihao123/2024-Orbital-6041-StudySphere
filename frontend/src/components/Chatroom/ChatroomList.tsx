@@ -42,9 +42,7 @@ const ChatroomList: React.FC = () => {
       <ul>
         {chatrooms.map((room) => (
           <li key={room.id} className="mb-2">
-            <Link href={`/chatroom/${room.id}`} className="text-blue-500">
-              {room.name}
-            </Link>
+            <Link href={`/chatrooms/${room.id}`} className="text-blue-500">{room.name}</Link>
           </li>
         ))}
       </ul>
