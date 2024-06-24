@@ -113,7 +113,7 @@ export const FullScreenTopBar = () => {
               <Link href="/todos">
                 <Tab>Todo</Tab>
               </Link>
-              <Link href="/chatroom">
+              <Link href="/chatrooms">
                 <Tab>Community</Tab>
               </Link>
             </TabList>
