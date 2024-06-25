@@ -10,7 +10,7 @@ interface Chatroom {
   members: string[];
 }
 
-const ChatroomList: React.FC = () => {
+const ChatroomList: React.FC<{ isHome: boolean }> = ({ isHome }) => {
   const { currentUser } = useAuth() || {};
   const [chatrooms, setChatrooms] = useState<Chatroom[]>([]);
 
@@ -38,14 +38,39 @@ const ChatroomList: React.FC = () => {
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">Your Chatrooms</h2>
-      <ul>
-        {chatrooms.map((room) => (
-          <li key={room.id} className="mb-2">
-            <Link href={`/chatrooms/${room.id}`} className="text-blue-500">{room.name}</Link>
-          </li>
-        ))}
-      </ul>
+      {!isHome ? (
+        <>
+          <h2 className="text-xl font-bold mb-4">Your Chatrooms</h2>
+          <ul>
+            {chatrooms.map((room) => (
+              <li key={room.id} className="mb-2">
+                <Link href={`/chatrooms/${room.id}`} className="text-blue-500">
+                  {room.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : (
+        <>
+          <h2 className="text-xs font-bold mb-2">Active Chatrooms</h2>
+          <ul className="flex flex-row">
+            {chatrooms.slice(0, 3).map((room) => (
+              <li key={room.id} className="mb-2 mr-6">
+                <Link href={`/chatrooms/${room.id}`} className="text-blue-500">
+                  {room.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <Link
+            href="/chatrooms"
+            className="flex justify-end font-main text-xs hover:font-bold"
+          >
+            Find out More
+          </Link>
+        </>
+      )}
     </div>
   );
 };

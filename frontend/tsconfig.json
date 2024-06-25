@@ -30,8 +30,7 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     ".next/types/**/*.ts",
-    "src/components/Todo/AddTodo.tsx",
-    "src/components/Todo/TodoItem.tsx"
+    "src/components/Home/HomeTodoSection.tsx"
   ],
   "exclude": ["node_modules"]
 }

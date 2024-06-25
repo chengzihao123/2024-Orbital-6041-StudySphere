@@ -25,7 +25,7 @@ const HomePage: React.FC = () => {
         setError("");
         setLoading(true);
         await signup(emailRef.current.value, passwordRef.current.value);
-        router.push("/todos");
+        router.push("/home");
       } catch (err: any) {
         // handle specific firebase errors
         if (err.code === "auth/email-already-in-use") {
@@ -56,7 +56,7 @@ const HomePage: React.FC = () => {
     try {
       if (loginWithGoogle) {
         await loginWithGoogle();
-        router.push("/todos");
+        router.push("/home");
       }
     } catch (error) {
       setError("Failed to log in with Google");

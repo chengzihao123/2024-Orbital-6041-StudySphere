@@ -23,7 +23,7 @@ const Login: React.FC = () => {
         setError("");
         setLoading(true);
         await login(emailRef.current.value, passwordRef.current.value);
-        router.push("/todos");
+        router.push("/home");
       } catch (err: any) {
         if (err.code === "auth/user-not-found") {
           setError("No user found with this email address.");
@@ -39,7 +39,7 @@ const Login: React.FC = () => {
         if (emailRef.current) emailRef.current.value = "";
         if (passwordRef.current) passwordRef.current.value = "";
 
-        setShowPopup(true); 
+        setShowPopup(true);
         console.error("Error logging in:", err);
       }
 
@@ -125,7 +125,7 @@ const Login: React.FC = () => {
           .
         </p>
       </div>
-      
+
       {showPopup && (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-75">
           <div className="bg-white p-4 rounded-lg shadow-lg max-w-md">
