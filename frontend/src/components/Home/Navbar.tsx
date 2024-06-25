@@ -42,7 +42,10 @@ const Navbar: React.FC = () => {
               <Link href="/timer" className="text-gray-300 hover:text-white">
                 Timer
               </Link>*/}
-              <Link href="/chatrooms" className="text-gray-300 hover:text-white">
+              <Link
+                href="/chatrooms"
+                className="text-gray-300 hover:text-white"
+              >
                 Community
               </Link>
               <button
