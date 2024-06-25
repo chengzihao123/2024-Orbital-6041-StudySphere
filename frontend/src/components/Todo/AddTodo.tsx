@@ -16,7 +16,7 @@ const AddTodo: React.FC = () => {
       const deadlineDate = new Date(deadlineRef.current.value);
       const currentDate = new Date();
 
-      // Set time components to zero for accurate date comparison
+      // set time components to zero for accurate date comparison
       deadlineDate.setHours(0, 0, 0, 0);
       currentDate.setHours(0, 0, 0, 0);
 
@@ -124,7 +124,7 @@ const AddTodo: React.FC = () => {
           </select>
         </div>
       </div>
-      <button type="submit" className="w-full bg-black text-white py-2 rounded mt-4">
+      <button type="submit" className="w-full bg-black text-white py-2 rounded mt-4 hover:bg-gray-600">
         Add Task
       </button>
     </form>
