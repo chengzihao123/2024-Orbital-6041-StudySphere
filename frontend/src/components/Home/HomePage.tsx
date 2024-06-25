@@ -7,6 +7,8 @@ import { useAuth } from "../Auth/AuthContext";
 const HomePage: React.FC = () => {
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const usernameRef = useRef<HTMLInputElement>(null);
+  const profilePicRef = useRef<HTMLInputElement>(null);
   const auth = useAuth();
   const { signup, loginWithGoogle } = auth || {};
   const [error, setError] = useState("");
@@ -20,11 +22,22 @@ const HomePage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (emailRef.current && passwordRef.current && signup) {
+    if (
+      emailRef.current &&
+      passwordRef.current &&
+      usernameRef.current &&
+      profilePicRef.current &&
+      signup
+    ) {
       try {
         setError("");
         setLoading(true);
-        await signup(emailRef.current.value, passwordRef.current.value);
+        await signup(
+          emailRef.current.value,
+          passwordRef.current.value,
+          usernameRef.current.value,
+          profilePicRef.current.value || ""
+        );
         router.push("/home");
       } catch (err: any) {
         // handle specific firebase errors
@@ -43,6 +56,8 @@ const HomePage: React.FC = () => {
         // clear the input fields
         if (emailRef.current) emailRef.current.value = "";
         if (passwordRef.current) passwordRef.current.value = "";
+        if (usernameRef.current) usernameRef.current.value = "";
+        if (profilePicRef.current) profilePicRef.current.value = "";
 
         setShowPopup(true);
         console.error(err);
@@ -110,6 +125,25 @@ const HomePage: React.FC = () => {
             autoComplete="new-password"
             className="w-full mb-4 p-2 border border-gray-300 rounded"
             required
+          />
+          <input
+            type="text"
+            id="username"
+            name="username"
+            ref={usernameRef}
+            placeholder="Username"
+            autoComplete="username"
+            className="w-full mb-4 p-2 border border-gray-300 rounded"
+            required
+          />
+          <input
+            type="text"
+            id="profilePic"
+            name="profilePic"
+            ref={profilePicRef}
+            placeholder="Profile Picture URL (optional)"
+            autoComplete="profilePic"
+            className="w-full mb-4 p-2 border border-gray-300 rounded"
           />
           <button
             className="w-full bg-black text-white py-2 rounded hover:bg-gray-600"
