@@ -1,19 +1,28 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import { collection, addDoc, getDoc, doc, setDoc, arrayUnion } from 'firebase/firestore';
-import { firestore } from '../../../firebase/firebase';
-import { useAuth } from '@/components/Auth/AuthContext';
+import React, { useState, useEffect } from "react";
+import {
+  collection,
+  addDoc,
+  getDoc,
+  doc,
+  setDoc,
+  arrayUnion,
+} from "firebase/firestore";
+import { firestore } from "../../../firebase/firebase";
+import { useAuth } from "@/components/Auth/AuthContext";
 
 const CreateChatroom: React.FC = () => {
   const { currentUser } = useAuth() || {};
-  const [chatroomName, setChatroomName] = useState('');
+  const [chatroomName, setChatroomName] = useState("");
   const [chatroomCount, setChatroomCount] = useState(0);
+  const [isMaxLengthReached, setIsMaxLengthReached] = useState(false);
+  const maxChatroomNameLength = 15;
 
   useEffect(() => {
     if (currentUser) {
       const checkUserChatrooms = async () => {
         try {
-          const userDocRef = doc(firestore, 'users', currentUser.uid);
+          const userDocRef = doc(firestore, "usersChatrooms", currentUser.uid);
           const userDoc = await getDoc(userDocRef);
           if (userDoc.exists()) {
             const userChatrooms = userDoc.data()?.chatrooms || [];
@@ -24,7 +33,7 @@ const CreateChatroom: React.FC = () => {
             setChatroomCount(0);
           }
         } catch (error) {
-          console.error('Error checking user chatrooms:', error);
+          console.error("Error checking user chatrooms:", error);
         }
       };
 
@@ -37,7 +46,7 @@ const CreateChatroom: React.FC = () => {
     if (chatroomName && currentUser) {
       if (chatroomCount < 5) {
         try {
-          const chatroomDoc = await addDoc(collection(firestore, 'chatrooms'), {
+          const chatroomDoc = await addDoc(collection(firestore, "chatrooms"), {
             name: chatroomName,
             createdAt: new Date(),
             members: [currentUser.uid],
@@ -45,18 +54,31 @@ const CreateChatroom: React.FC = () => {
           });
 
           // Update user's chatroom list
-          const userDocRef = doc(firestore, 'users', currentUser.uid);
-          await setDoc(userDocRef, {
-            chatrooms: arrayUnion(chatroomDoc.id),
-          }, { merge: true });
+          const userDocRef = doc(firestore, "usersChatrooms", currentUser.uid);
+          await setDoc(
+            userDocRef,
+            {
+              chatrooms: arrayUnion(chatroomDoc.id),
+            },
+            { merge: true }
+          );
 
-          setChatroomName('');
+          setChatroomName("");
+          setIsMaxLengthReached(false);
         } catch (error) {
-          console.error('Error creating chatroom:', error);
+          console.error("Error creating chatroom:", error);
         }
       } else {
-        alert('You can only join or create up to 5 chatrooms.');
+        alert("You can only join or create up to 5 chatrooms.");
       }
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value.length <= maxChatroomNameLength) {
+      setChatroomName(value);
+      setIsMaxLengthReached(value.length === maxChatroomNameLength);
     }
   };
 
@@ -66,11 +88,18 @@ const CreateChatroom: React.FC = () => {
         type="text"
         placeholder="Chatroom Name"
         value={chatroomName}
-        onChange={(e) => setChatroomName(e.target.value)}
+        onChange={handleInputChange}
         className="p-2 border rounded-md w-full"
+        maxLength={maxChatroomNameLength}
         required
       />
-      <button type="submit" className="mt-2 p-2 bg-green-500 text-white rounded-md w-full">
+      {isMaxLengthReached && (
+        <p className="text-red-500 text-sm mt-1">Character limit reached (15 characters).</p>
+      )}
+      <button
+        type="submit"
+        className="mt-2 p-2 bg-green-500 text-white rounded-md w-full"
+      >
         Create Chatroom
       </button>
     </form>

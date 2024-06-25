@@ -85,6 +85,20 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, isHome }) => {
     }
   };
 
+  const handleDeadlineChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newDeadline = e.target.value;
+    setEditDeadline(newDeadline);
+
+    const currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);  // Reset hours, minutes, and seconds to compare only dates
+    const selectedDate = new Date(newDeadline);
+    selectedDate.setHours(0, 0, 0, 0);
+
+    if (selectedDate <= currentDate) {
+      setEditStatus("Overdue");
+    }
+  };
+
   const getBackgroundColor = () => {
     if (todo.completed) return "bg-gray-400";
     if (todo.priority === "High") return "bg-pink-200";
@@ -116,7 +130,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, isHome }) => {
             <input
               type="date"
               value={editDeadline}
-              onChange={(e) => setEditDeadline(e.target.value)}
+              onChange={handleDeadlineChange}
               className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
             />
           </div>

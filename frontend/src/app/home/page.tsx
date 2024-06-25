@@ -32,8 +32,9 @@ interface Todo {
 
 export default function HomePage() {
   const dispatch: AppDispatch = useDispatch();
-  const { currentUser } = useAuth() || {};
+  const { currentUser, profile } = useAuth() || {};
   const router = useRouter();
+
   useEffect(() => {
     if (!currentUser) {
       router.push("/login");
@@ -76,7 +77,7 @@ export default function HomePage() {
     <div className="grid grid-rows-12 px-5 h-[610px]">
       <div className="flex flex-row items-center w-full row-span-1 my-5">
         <HomeAvatar />
-        <div className="p-3">Welcome user Zhmaster</div>
+        <div className="p-3">Welcome, {profile?.displayName || 'user'}!</div>
       </div>
       <div className="row-span-8 mt-5 mb-5 grid grid-cols-4">
         <HomeTodoSection />
