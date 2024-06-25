@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import { setTodos } from "@/store/todoSlice";
@@ -68,6 +68,8 @@ const TodoList: React.FC = () => {
   const { todos, filter } = useSelector((state: RootState) => state.todo);
   const { currentUser } = useAuth() || {};
   const router = useRouter();
+  const [currentPage, setCurrentPage] = useState(1);
+  const todosPerPage = 10;
 
   useEffect(() => {
     if (!currentUser) {
@@ -109,6 +111,20 @@ const TodoList: React.FC = () => {
     return () => unsubscribe();
   }, [currentUser, router, dispatch]);
 
+  const filteredTodos = filterTodos(todos, filter);
+  const totalPages = Math.ceil(filteredTodos.length / todosPerPage);
+
+  const currentTodos = filteredTodos.slice(
+    (currentPage - 1) * todosPerPage,
+    currentPage * todosPerPage
+  );
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto mt-6 flex flex-col md:flex-row md:space-x-4">
       <div className="md:flex-[2] order-1 md:order-1">
@@ -125,10 +141,29 @@ const TodoList: React.FC = () => {
             <div className="col-span-1"></div>
           </div>
           <ul className="space-y-4">
-            {filterTodos(todos, filter).map((todo) => (
+            {currentTodos.map((todo) => (
               <TodoItem key={todo.id} todo={todo} isHome={false} />
             ))}
           </ul>
+          <div className="mt-4 flex justify-center items-center space-x-2">
+            {currentPage > 1 && (
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                className="px-3 py-1 bg-gray-300 rounded-lg"
+              >
+                Previous
+              </button>
+            )}
+            <span>Page {currentPage} of {totalPages}</span>
+            {currentPage < totalPages && (
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                className="px-3 py-1 bg-gray-300 rounded-lg"
+              >
+                Next
+              </button>
+            )}
+          </div>
         </div>
       </div>
       <div className="md:flex-[1] order-2 md:order-2 hidden md:block">
