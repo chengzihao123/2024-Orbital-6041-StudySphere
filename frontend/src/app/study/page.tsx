@@ -101,7 +101,7 @@ export default function Study() {
               Start to Study
             </button>
 
-            <Link href="/" className="text-blue-500 hover:text-blue-700">
+            <Link href="/home" className="text-blue-500 hover:text-blue-700">
               Go back
             </Link>
           </div>

@@ -12,11 +12,6 @@ export const FullScreenTopBar = () => {
   const { isFullscreen, countdownSeconds, isUserTime } = useSelector(
     (state: RootState) => state.timer
   );
-  // const [value, setValue] = React.useState("one");
-
-  // const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-  //   setValue(newValue);
-  // };
 
   const handleFullscreenToggle = () => {
     dispatch(setIsFullscreen(!isFullscreen));
@@ -54,56 +49,6 @@ export const FullScreenTopBar = () => {
             End Study
           </Link>
         </div>
-        {/* <Box sx={{ width: "50%" }}>
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            textColor="secondary"
-            indicatorColor="secondary"
-            aria-label="secondary tabs example"
-            centered
-            sx={{
-              "& .MuiTabs-flexContainer": {
-                justifyContent: "space-between",
-              },
-              "& .MuiTab-root": {
-                minWidth: "100px",
-                flex: 1,
-                fontWeight: "bold",
-                fontSize: "20px",
-                textTransform: "none", // Prevents all-caps
-              },
-              "& .Mui-selected": {
-                color: "primary.main", // Custom color for selected tab
-              },
-              "& .MuiTabs-indicator": {
-                height: 3, // Custom indicator thickness
-              },
-            }}
-          >
-            <Tab
-              value="one"
-              label="None"
-              component={Link}
-              href="/background"
-              onClick={() => setValue("one")}
-            />
-            <Tab
-              value="two"
-              label="Todo"
-              component={Link}
-              href="/todos"
-              onClick={() => setValue("two")}
-            />
-            <Tab
-              value="three"
-              label="Community"
-              component={Link}
-              href="/chatroom"
-              onClick={() => setValue("three")}
-            />
-          </Tabs>
-        </Box> */}
         <Box width="100%" display="flex" justifyContent="center">
           <Tabs position="relative" variant="unstyled">
             <TabList>

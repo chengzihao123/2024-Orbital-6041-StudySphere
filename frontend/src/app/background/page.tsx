@@ -1,13 +1,19 @@
 "use client";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import React from "react";
 
 export default function TodosPage() {
   const backgroundImage = localStorage.getItem("backgroundImage");
+
+  const backgroundImageStyle = backgroundImage
+    ? `url('/images/background/${backgroundImage}.jpg')`
+    : "";
+
   return (
     <ProtectedRoute>
       <div
         style={{
-          backgroundImage: `url('/images/background/${backgroundImage}.jpg')`,
+          backgroundImage: backgroundImageStyle,
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
