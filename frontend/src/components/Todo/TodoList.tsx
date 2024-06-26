@@ -17,6 +17,7 @@ import TodoItem from "./TodoItem";
 import AddTodo from "./AddTodo";
 import TodoFilter from "./TodoFilter";
 import { useRouter } from "next/navigation";
+import LoadingState from "../General/LoadingState";
 
 interface Todo {
   id: string;
@@ -64,6 +65,8 @@ export const filterTodos = (todos: Todo[], filter: any): Todo[] => {
 };
 
 const TodoList: React.FC = () => {
+  const [loading, setLoading] = useState(true);
+
   const dispatch: AppDispatch = useDispatch();
   const { todos, filter } = useSelector((state: RootState) => state.todo);
   const { currentUser } = useAuth() || {};
@@ -106,6 +109,7 @@ const TodoList: React.FC = () => {
 
         dispatch(setTodos(updatedTodos));
       }
+      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -126,50 +130,60 @@ const TodoList: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto mt-6 flex flex-col md:flex-row md:space-x-4">
-      <div className="md:flex-[2] order-1 md:order-1">
-        <AddTodo />
-        <div className="block md:hidden mt-4">
-          <TodoFilter />
+    <>
+      {loading ? (
+        <div className="flex justify-center items-center h-[500px]">
+          <LoadingState />
         </div>
-        <div className="mt-6 bg-white p-4 rounded-lg shadow-md">
-          <div className="grid grid-cols-6 gap-4 items-center font-bold text-gray-700 mb-4">
-            <div className="col-span-2">Task</div>
-            <div className="col-span-1">Deadline</div>
-            <div className="col-span-1">Priority</div>
-            <div className="col-span-1">Status</div>
-            <div className="col-span-1"></div>
+      ) : (
+        <div className="max-w-6xl mx-auto mt-6 flex flex-col md:flex-row md:space-x-4">
+          <div className="md:flex-[2] order-1 md:order-1">
+            <AddTodo />
+            <div className="block md:hidden mt-4">
+              <TodoFilter />
+            </div>
+            <div className="mt-6 bg-white p-4 rounded-lg shadow-md">
+              <div className="grid grid-cols-6 gap-4 items-center font-bold text-gray-700 mb-4">
+                <div className="col-span-2">Task</div>
+                <div className="col-span-1">Deadline</div>
+                <div className="col-span-1">Priority</div>
+                <div className="col-span-1">Status</div>
+                <div className="col-span-1"></div>
+              </div>
+              <ul className="space-y-4">
+                {currentTodos.map((todo) => (
+                  <TodoItem key={todo.id} todo={todo} isHome={false} />
+                ))}
+              </ul>
+              <div className="mt-4 flex justify-center items-center space-x-2">
+                {currentPage > 1 && (
+                  <button
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    className="px-3 py-1 bg-gray-300 rounded-lg"
+                  >
+                    Previous
+                  </button>
+                )}
+                <span>
+                  Page {currentPage} of {totalPages}
+                </span>
+                {currentPage < totalPages && (
+                  <button
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    className="px-3 py-1 bg-gray-300 rounded-lg"
+                  >
+                    Next
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
-          <ul className="space-y-4">
-            {currentTodos.map((todo) => (
-              <TodoItem key={todo.id} todo={todo} isHome={false} />
-            ))}
-          </ul>
-          <div className="mt-4 flex justify-center items-center space-x-2">
-            {currentPage > 1 && (
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                className="px-3 py-1 bg-gray-300 rounded-lg"
-              >
-                Previous
-              </button>
-            )}
-            <span>Page {currentPage} of {totalPages}</span>
-            {currentPage < totalPages && (
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                className="px-3 py-1 bg-gray-300 rounded-lg"
-              >
-                Next
-              </button>
-            )}
+          <div className="md:flex-[1] order-2 md:order-2 hidden md:block">
+            <TodoFilter />
           </div>
         </div>
-      </div>
-      <div className="md:flex-[1] order-2 md:order-2 hidden md:block">
-        <TodoFilter />
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 

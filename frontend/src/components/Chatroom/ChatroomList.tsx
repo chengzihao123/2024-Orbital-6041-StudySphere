@@ -4,15 +4,24 @@ import { collection, onSnapshot, query, where } from "firebase/firestore";
 import { firestore } from "../../../firebase/firebase";
 import { useAuth } from "@/components/Auth/AuthContext";
 import Link from "next/link";
+import CreateChatroom from "./CreateChatroom";
+import JoinChatroom from "./JoinChatroom";
+import LoadingState from "../General/LoadingState";
+
 interface Chatroom {
   id: string;
   name: string;
   members: string[];
 }
 
-const ChatroomList: React.FC<{ isHome: boolean }> = ({ isHome }) => {
+interface ChatroomListProps {
+  isHome: boolean;
+}
+
+const ChatroomList: React.FC<ChatroomListProps> = ({ isHome }) => {
   const { currentUser } = useAuth() || {};
   const [chatrooms, setChatrooms] = useState<Chatroom[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (currentUser) {
@@ -30,8 +39,8 @@ const ChatroomList: React.FC<{ isHome: boolean }> = ({ isHome }) => {
           };
         });
         setChatrooms(rooms);
+        setLoading(false); // Update loading state in parent component
       });
-
       return () => unsubscribe();
     }
   }, [currentUser]);
@@ -40,16 +49,37 @@ const ChatroomList: React.FC<{ isHome: boolean }> = ({ isHome }) => {
     <div>
       {!isHome ? (
         <>
-          <h2 className="text-xl font-bold mb-4">Your Chatrooms</h2>
-          <ul>
-            {chatrooms.map((room) => (
-              <li key={room.id} className="mb-2">
-                <Link href={`/chatrooms/${room.id}`} className="text-blue-500">
-                  {room.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          {loading ? (
+            <div className="flex justify-center items-center h-[500px]">
+              <LoadingState />
+            </div>
+          ) : (
+            <>
+              <div className="p-4">
+                <h1 className="text-2xl font-bold mb-4">Chatrooms</h1>
+                <div className="mb-4">
+                  <CreateChatroom />
+                </div>
+                <div className="mb-4">
+                  <JoinChatroom />
+                </div>
+
+                <h2 className="text-xl font-bold mb-4">Your Chatrooms</h2>
+                <ul>
+                  {chatrooms.map((room) => (
+                    <li key={room.id} className="mb-2">
+                      <Link
+                        href={`/chatrooms/${room.id}`}
+                        className="text-blue-500"
+                      >
+                        {room.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </>
+          )}
         </>
       ) : (
         <>

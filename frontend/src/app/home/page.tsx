@@ -1,7 +1,7 @@
 "use client";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../components/Auth/AuthContext";
 import { useRouter } from "next/navigation";
 import {
@@ -19,6 +19,7 @@ import HomeStudySection from "@/components/Home/Section/HomeStudySection";
 import HomeRewardSection from "@/components/Home/Section/HomeRewardSection";
 import HomeTodoSection from "@/components/Home/Section/HomeTodoSection";
 import HomeCommunitySection from "@/components/Home/Section/HomeCommunitySection";
+import LoadingState from "@/components/General/LoadingState";
 
 interface Todo {
   id: string;
@@ -33,6 +34,7 @@ interface Todo {
 export default function HomePage() {
   const dispatch: AppDispatch = useDispatch();
   const { currentUser, profile } = useAuth() || {};
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -68,25 +70,39 @@ export default function HomePage() {
 
         dispatch(setTodos(updatedTodos));
       }
+      setLoading(false);
     });
 
     return () => unsubscribe();
   }, [currentUser, router, dispatch]);
 
   return (
-    <div className="grid grid-rows-12 px-5 h-[610px]">
-      <div className="flex flex-row items-center w-full row-span-1 my-5">
-        <HomeAvatar />
-        <div className="p-3">Welcome, {profile?.displayName || 'user'}!</div>
-      </div>
-      <div className="row-span-8 mt-5 mb-5 grid grid-cols-4">
-        <HomeTodoSection />
-        <HomeStudySection />
-      </div>
-      <div className="row-span-5 grid grid-cols-4 mb-2">
-        <HomeRewardSection />
-        <HomeCommunitySection />
-      </div>
-    </div>
+    <>
+      {loading ? (
+        <div className="flex justify-center items-center h-[500px]">
+          <LoadingState />
+        </div>
+      ) : (
+        <div className="grid grid-rows-12 px-5 h-[610px]">
+          <div className="flex flex-row items-center w-full row-span-1 my-5">
+            <HomeAvatar
+              classes="hover:scale-110 cursor-pointer"
+              isHome={true}
+            />
+            <div className="p-3">
+              Welcome, {profile?.displayName || "user"}!
+            </div>
+          </div>
+          <div className="row-span-8 mt-5 mb-5 grid grid-cols-4">
+            <HomeTodoSection />
+            <HomeStudySection />
+          </div>
+          <div className="row-span-5 grid grid-cols-4 mb-2">
+            <HomeRewardSection />
+            <HomeCommunitySection />
+          </div>
+        </div>
+      )}
+    </>
   );
 }
