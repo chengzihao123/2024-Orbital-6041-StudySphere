@@ -24,7 +24,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => {
         placeholder="Type a message"
         className="message-input flex-grow p-2 border rounded-md"
       />
-      <button type="submit" className="send-button ml-2 p-2 bg-blue-500 text-white rounded-md">
+      <button type="submit" className="send-button ml-2 p-2 bg-blue-500 text-white rounded-md hover:bg-blue-700">
         Send
       </button>
     </form>

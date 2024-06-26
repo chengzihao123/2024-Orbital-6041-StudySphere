@@ -1,51 +1,39 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import { doc, updateDoc, arrayUnion, getDoc, setDoc } from "firebase/firestore";
+import React, { useState } from "react";
+import { doc, updateDoc, arrayUnion, setDoc } from "firebase/firestore";
 import { firestore } from "../../../firebase/firebase";
 import { useAuth } from "../Auth/AuthContext";
+import { useChatroom } from "@/components/Chatroom/ChatroomContext";
 
 const JoinChatroom: React.FC = () => {
   const { currentUser } = useAuth() || {};
+  const { isLimitReached, updateChatroomCount } = useChatroom();
   const [chatroomId, setChatroomId] = useState("");
-  const [chatroomCount, setChatroomCount] = useState(0);
-  const [isLimitReached, setIsLimitReached] = useState(false);
-
-  // fetch the usersChatrooms chatroom count when the component mounts/ currentuser changes
-  useEffect(() => {
-    if (currentUser) {
-      const fetchChatroomCount = async () => {
-        const userDocRef = doc(firestore, "usersChatrooms", currentUser.uid);
-        const userDoc = await getDoc(userDocRef);
-        // get the chatrooms array from the user document, if not present set to empty arr
-        const userChatrooms = userDoc.data()?.chatrooms || [];
-        setChatroomCount(userChatrooms.length);
-        if (userChatrooms.length >= 5) {
-          setIsLimitReached(true);
-        }
-      };
-      fetchChatroomCount();
-    }
-  }, [currentUser]);
 
   const handleJoin = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (currentUser && chatroomId && chatroomCount < 5) {
-      const chatroomRef = doc(firestore, "chatrooms", chatroomId);
-      await updateDoc(chatroomRef, {
-        members: arrayUnion(currentUser.uid),
-      });
+    if (currentUser && chatroomId && !isLimitReached) {
+      try {
+        const chatroomRef = doc(firestore, "chatrooms", chatroomId);
+        await updateDoc(chatroomRef, {
+          members: arrayUnion(currentUser.uid),
+        });
 
-      const userDocRef = doc(firestore, "usersChatrooms", currentUser.uid);
-      await setDoc(
-        userDocRef,
-        {
-          chatrooms: arrayUnion(chatroomId),
-        },
-        { merge: true }
-      );
+        const userDocRef = doc(firestore, "usersChatrooms", currentUser.uid);
+        await setDoc(
+          userDocRef,
+          {
+            chatrooms: arrayUnion(chatroomId),
+          },
+          { merge: true }
+        );
 
-      setChatroomId("");
+        setChatroomId("");
+        updateChatroomCount();  // Update chatroom count
+      } catch (error) {
+        console.error("Error joining chatroom:", error);
+      }
     }
   };
 
@@ -70,9 +58,7 @@ const JoinChatroom: React.FC = () => {
         </button>
       </form>
       {isLimitReached && (
-        <p className="text-red-600">
-          Max limit of 5 chatrooms reached. You cannot join more.
-        </p>
+        <p className="text-red-600">Max limit of 5 chatrooms reached. You cannot join more.</p>
       )}
     </div>
   );

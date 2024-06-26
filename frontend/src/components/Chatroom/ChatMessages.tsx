@@ -1,25 +1,30 @@
-"use client";
-import React from 'react';
-
-interface Message {
-  id: string;
-  text: string;
-  userId: string;
-  createdAt: any;
-}
+import React, { useEffect, useRef } from 'react';
+import Message from './Message';
 
 interface ChatMessagesProps {
-  messages: Message[];
+  messages: any[];
+  currentUser: any;
 }
 
-const ChatMessages: React.FC<ChatMessagesProps> = ({ messages }) => {
+const ChatMessages: React.FC<ChatMessagesProps> = ({ messages, currentUser }) => {
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   return (
-    <div className="messages-container overflow-auto mb-4 max-h-96 border border-gray-300 rounded-md p-2">
+    <div className="messages-container overflow-auto mb-4 max-h-96">
       {messages.map((msg) => (
-        <div key={msg.id} className="message-item p-2 border-b">
-          <p>{msg.text}</p>
-        </div>
+        <Message key={msg.id} message={msg} currentUser={currentUser?.uid || ''} />
       ))}
+      <div ref={messagesEndRef} />
     </div>
   );
 };

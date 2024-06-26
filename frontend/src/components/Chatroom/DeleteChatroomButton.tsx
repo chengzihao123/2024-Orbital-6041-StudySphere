@@ -12,7 +12,7 @@ const DeleteChatroomButton: React.FC<DeleteChatroomButtonProps> = ({ onDelete, i
   return (
     <button
       onClick={onDelete}
-      className="delete-button p-2 bg-red-500 text-white rounded-md"
+      className="delete-button p-2 bg-red-500 text-white rounded-md hover:bg-red-700"
     >
       Delete Room
     </button>
