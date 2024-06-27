@@ -1,5 +1,7 @@
 {
+  "/page": "app/page.js",
+  "/todos/page": "app/todos/page.js",
+  "/study/page": "app/study/page.js",
   "/chatrooms/page": "app/chatrooms/page.js",
-  "/chatrooms/[chatroomId]/page": "app/chatrooms/[chatroomId]/page.js",
-  "/study/page": "app/study/page.js"
+  "/chatrooms/[chatroomId]/page": "app/chatrooms/[chatroomId]/page.js"
 }

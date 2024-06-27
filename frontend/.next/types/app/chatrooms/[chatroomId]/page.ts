@@ -1,4 +1,4 @@
-// File: /Users/tzuentseng/Orbital/Latest/2024-Orbital-6041-StudySphere/frontend/src/app/chatrooms/[chatroomId]/page.tsx
+// File: /Users/tzuentseng/Orbital/Latest1/2024-Orbital-6041-StudySphere/frontend/src/app/chatrooms/[chatroomId]/page.tsx
 import * as entry from '../../../../../src/app/chatrooms/[chatroomId]/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
