@@ -1,4 +1,3 @@
-"use client";
 import * as React from "react";
 import Link from "next/link";
 import CountdownTimer from "./Timer";
@@ -52,7 +51,7 @@ export const FullScreenTopBar = () => {
         <Box width="100%" display="flex" justifyContent="center">
           <Tabs position="relative" variant="unstyled">
             <TabList>
-              <Link href="/background">
+              <Link href="/study/background">
                 <Tab>None</Tab>
               </Link>
               <Link href="/todos">

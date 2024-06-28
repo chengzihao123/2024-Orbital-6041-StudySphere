@@ -21,15 +21,20 @@
       "static/chunks/main-app.js",
       "static/chunks/app/todos/page.js"
     ],
-    "/chatrooms/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/chatrooms/page.js"
-    ],
     "/study/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/study/page.js"
+    ],
+    "/study/background/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/study/background/page.js"
+    ],
+    "/chatrooms/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/chatrooms/page.js"
     ],
     "/chatrooms/[chatroomId]/page": [
       "static/chunks/webpack.js",
