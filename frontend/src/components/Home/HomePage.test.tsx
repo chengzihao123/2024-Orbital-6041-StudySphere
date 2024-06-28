@@ -1,4 +1,3 @@
-// src/components/Home/HomePage.test.tsx
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -7,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/Auth/AuthContext';
 import { act } from 'react-dom/test-utils';
 
-// Mock the useRouter hook from next/navigation
+// mock hooks to test sign-up form submission
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }));
@@ -16,6 +15,7 @@ jest.mock('@/components/Auth/AuthContext', () => ({
   useAuth: jest.fn(),
 }));
 
+// group all test cases related to homepage component
 describe('HomePage Component', () => {
   const mockPush = jest.fn();
   const mockSignup = jest.fn();
@@ -23,17 +23,7 @@ describe('HomePage Component', () => {
 
   beforeEach(() => {
     (useRouter as jest.Mock).mockReturnValue({
-      route: '/',
-      pathname: '',
-      query: '',
-      asPath: '',
       push: mockPush,
-      replace: jest.fn(),
-      reload: jest.fn(),
-      back: jest.fn(),
-      prefetch: jest.fn().mockResolvedValue(undefined),
-      beforePopState: jest.fn(),
-      isFallback: false,
     });
 
     (useAuth as jest.Mock).mockReturnValue({
@@ -55,7 +45,7 @@ describe('HomePage Component', () => {
   });
 
   test('handles sign-up submission successfully', async () => {
-    mockSignup.mockResolvedValueOnce(undefined); // Mock successful signup
+    mockSignup.mockResolvedValueOnce(undefined); 
 
     render(<HomePage />);
     await act(async () => {
@@ -86,7 +76,7 @@ describe('HomePage Component', () => {
   });
 
   test('handles sign-up submission failure', async () => {
-    mockSignup.mockRejectedValueOnce({ code: 'auth/invalid-email' }); // Mock failed signup
+    mockSignup.mockRejectedValueOnce({ code: 'auth/invalid-email' }); 
 
     render(<HomePage />);
     await act(async () => {
