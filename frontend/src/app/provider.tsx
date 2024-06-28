@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import { store, RootState } from "../store/store";
 import { Provider, useSelector } from "react-redux";
 import { AuthProvider } from "@/components/Auth/AuthContext";
