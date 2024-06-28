@@ -26,10 +26,14 @@
     "recharts": "^2.12.7"
   },
   "devDependencies": {
+    "@babel/core": "^7.24.7",
     "@babel/preset-env": "^7.24.7",
     "@babel/preset-react": "^7.24.7",
+    "@babel/preset-typescript": "^7.24.7",
+    "@jest/globals": "^29.7.0",
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.2",
     "@types/jest": "^29.5.12",
     "@types/node": "^20",
     "@types/react": "^18",
@@ -42,6 +46,8 @@
     "postcss": "^8",
     "react-test-renderer": "^18.3.1",
     "tailwindcss": "^3.4.3",
+    "ts-jest": "^29.1.5",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }
