@@ -41,6 +41,7 @@ const HomePage: React.FC = () => {
         router.push("/home");
       } catch (err: any) {
         // handle specific firebase errors
+        console.log(err.code);
         if (err.code === "auth/email-already-in-use") {
           setError("The email address is already in use by another account.");
         } else if (err.code === "auth/invalid-email") {
