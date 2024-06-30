@@ -96,6 +96,7 @@ export default function UserSetStudyTimer({
               onChange={handleMinutesChange}
               pattern="[0-9]*"
               inputMode="numeric"
+              placeholder="0 minutes"
               onKeyPress={handleKeyPress}
               className="p-2 border rounded w-20"
             />
@@ -112,6 +113,7 @@ export default function UserSetStudyTimer({
               onChange={handleSecondsChange}
               pattern="[0-9]*"
               inputMode="numeric"
+              placeholder="0 seconds"
               onKeyPress={handleKeyPress}
               className="p-2 border rounded w-20"
             />
