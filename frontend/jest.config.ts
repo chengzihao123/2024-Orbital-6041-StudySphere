@@ -9,11 +9,11 @@ const config: Config.InitialOptions = {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   transform: {
-    '^.+\\.(ts|tsx)?$': 'ts-jest',
-    '^.+\\.(js|jsx)$': 'babel-jest',
+    '^.+\\.(ts|tsx)$': 'ts-jest',
+    '^.+\\.(js|jsx)$': 'ts-jest',
   },
   transformIgnorePatterns: [
-    '/node_modules/',
+    '/node_modules/(?!firebase/.*)', // Ignore node_modules except for firebase
     '^.+\\.module\\.(css|sass|scss)$',
   ],
   testPathIgnorePatterns: ['/node_modules/', '/.next/'],
