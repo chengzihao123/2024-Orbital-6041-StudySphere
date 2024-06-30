@@ -41,7 +41,6 @@ const HomePage: React.FC = () => {
         router.push("/home");
       } catch (err: any) {
         // handle specific firebase errors
-        console.log(err.code);
         if (err.code === "auth/email-already-in-use") {
           setError("The email address is already in use by another account.");
         } else if (err.code === "auth/invalid-email") {
@@ -61,7 +60,6 @@ const HomePage: React.FC = () => {
         if (profilePicRef.current) profilePicRef.current.value = "";
 
         setShowPopup(true);
-        console.error(err);
       }
 
       setLoading(false);
@@ -77,7 +75,6 @@ const HomePage: React.FC = () => {
     } catch (error) {
       setError("Failed to log in with Google");
       setShowPopup(true);
-      console.error(error);
     }
   };
 
