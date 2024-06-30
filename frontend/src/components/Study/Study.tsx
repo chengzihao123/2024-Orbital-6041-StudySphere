@@ -100,9 +100,12 @@ export default function Study() {
               Start to Study
             </button>
 
-            <Link href="/home" className="text-blue-500 hover:text-blue-700">
+            <button
+              className="text-blue-500 hover:text-blue-700"
+              onClick={() => router.push("/home")}
+            >
               Go back
-            </Link>
+            </button>
           </div>
         )}
 
