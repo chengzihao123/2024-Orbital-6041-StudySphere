@@ -77,28 +77,6 @@ describe("FullScreenTopBar Component", () => {
     jest.clearAllMocks();
   });
 
-  //   test("handles time up correctly", async () => {
-  //     render(<FullScreenTopBar />);
-
-  //     await waitFor(() => {
-  //       //   expect(global.document.exitFullscreen).toHaveBeenCalled();
-  //       expect(mockDispatch).toHaveBeenCalledWith(setIsFullscreen(false));
-  //       //   expect(mockPush).toHaveBeenCalledWith("/study");
-  //     });
-  //   });
-
-  //   test("handles End Study button click correctly", async () => {
-  //     render(<FullScreenTopBar />);
-
-  //     fireEvent.click(screen.getByText("End Study"));
-
-  //     await waitFor(() => {
-  //       //   expect(global.document.exitFullscreen).toHaveBeenCalled();
-  //         expect(mockDispatch).toHaveBeenCalledWith(setIsFullscreen(false));
-  //     //   expect(mockPush).toHaveBeenCalledWith("/study");
-  //     });
-  //   });
-
   test("handles None tab click correctly", () => {
     render(<FullScreenTopBar />);
 
