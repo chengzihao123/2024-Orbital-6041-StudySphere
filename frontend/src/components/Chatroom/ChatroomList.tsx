@@ -85,7 +85,7 @@ const ChatroomList: React.FC<ChatroomListProps> = ({ isHome }) => {
         <>
           <h2 className="text-xs font-bold mb-2">Active Chatrooms</h2>
           <ul className="flex flex-row">
-            {chatrooms.slice(0, 3).map((room) => (
+            {chatrooms.map((room) => (
               <li key={room.id} className="mb-2 mr-6">
                 <Link href={`/chatrooms/${room.id}`} className="text-blue-500">
                   {room.name}
@@ -93,6 +93,7 @@ const ChatroomList: React.FC<ChatroomListProps> = ({ isHome }) => {
               </li>
             ))}
           </ul>
+
           <Link
             href="/chatrooms"
             className="flex justify-end font-main text-xs hover:font-bold"

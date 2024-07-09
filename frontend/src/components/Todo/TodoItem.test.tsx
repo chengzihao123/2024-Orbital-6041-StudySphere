@@ -67,7 +67,8 @@ describe("TodoItem", () => {
       // note updatedoc takes in 2 args - doc reference and data
       expect(updateDoc).toHaveBeenCalledWith(
         expect.anything(), // doc reference can be anything
-        expect.objectContaining({ // this is referring to the obj
+        expect.objectContaining({
+          // this is referring to the obj
           status: "Completed",
           completed: true,
         })
