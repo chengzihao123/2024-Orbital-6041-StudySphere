@@ -1,6 +1,6 @@
 import * as React from "react";
 import Link from "next/link";
-import CountdownTimer from "./Timer";
+import CountdownTimer from "./CountdownTimer";
 import { Tabs, TabList, Tab, TabIndicator, Box } from "@chakra-ui/react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";

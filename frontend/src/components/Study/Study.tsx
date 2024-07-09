@@ -10,6 +10,7 @@ import {
 import UserSetStudyTimer from "./UserSetStudyTimer";
 import ProtectedRoute from "../ProtectedRoute";
 import TimeZeroAlert from "../Modal/TimeZeroAlert";
+import StudyLandingPage from "./StudyLandingPage";
 export default function Study() {
   const router = useRouter();
   const [showAlert, setShowAlert] = useState(false);
@@ -84,41 +85,14 @@ export default function Study() {
   return (
     <ProtectedRoute>
       <div className="flex flex-col items-center justify-center">
-        {!isFullscreen && (
-          <div className="flex flex-col items-center justify-center h-full">
-            <div className="text-center mb-8 mt-20">
-              <h1 className="text-5xl font-bold mb-10 mt-20">
-                Deep study starts here
-              </h1>
-              <p className="text-3xl mb-10">Are you ready to focus?</p>
-            </div>
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full mb-5"
-              onClick={userSetTime}
-            >
-              Start to Study
-            </button>
-            <button
-              className="text-blue-500 hover:text-blue-700"
-              onClick={() => router.push("/home")}
-            >
-              Go back
-            </button>
-          </div>
-        )}
-
+        {!isFullscreen && <StudyLandingPage userSetTime={userSetTime} />}
         {isUserTime && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white p-6 rounded shadow-lg max-h-screen overflow-y-auto">
-              <UserSetStudyTimer
-                submitHandler={handleSubmitForm}
-                closeHandler={handleCloseForm}
-                backgroundImages={backgroundImages}
-              />
-            </div>
-          </div>
+          <UserSetStudyTimer
+            submitHandler={handleSubmitForm}
+            closeHandler={handleCloseForm}
+            backgroundImages={backgroundImages}
+          />
         )}
-
         {showAlert && (
           <TimeZeroAlert
             message="Time can't be set as 0. Please enter a valid time."
