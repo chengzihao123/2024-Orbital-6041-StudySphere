@@ -30,13 +30,15 @@ const ChatroomList: React.FC<ChatroomListProps> = ({ isHome }) => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  // get chatrooms that user is in
   const fetchChatrooms = async () => {
     if (currentUser) {
       const q = query(
         collection(firestore, "chatrooms"),
         where("members", "array-contains", currentUser.uid)
       );
-
+      
+      // listen to real time updates to chatroom collection
       const unsubscribe = onSnapshot(q, async (snapshot) => {
         const rooms: Chatroom[] = snapshot.docs.map((doc) => {
           const data = doc.data() as Omit<Chatroom, "id">;
@@ -76,9 +78,8 @@ const ChatroomList: React.FC<ChatroomListProps> = ({ isHome }) => {
 
   const handleDelete = async (roomId: string, room: Chatroom) => {
     await handleDeleteRoom(roomId, currentUser, room, router);
-    // Refresh the chatrooms after deletion
     await fetchChatrooms();
-    await updateChatroomCount(); // Update the chatroom count after deletion
+    await updateChatroomCount(); 
   };
 
   return (

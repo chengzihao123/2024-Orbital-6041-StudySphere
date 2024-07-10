@@ -15,17 +15,17 @@ export const handleDeleteRoom = async (chatroomId: string, currentUser: any, cha
   try {
     const chatroomRef = doc(firestore, "chatrooms", chatroomId);
 
-    // Get all messages in the chatroom and delete them
+    // get all msgse in the chatroom and delete them
     const messagesRef = collection(firestore, `chatrooms/${chatroomId}/messages`);
     const messageSnapshot = await getDocs(messagesRef);
     const deleteMessagePromises = messageSnapshot.docs.map((messageDoc) =>
       deleteDoc(messageDoc.ref)
     );
 
-    // Wait for all message deletions to complete
+    // wait for all message deletions to complete
     await Promise.all(deleteMessagePromises);
 
-    // Remove chatroom references from usersChatrooms
+    // remove chatroom references from usersChatrooms
     const members = chatroom.members || [];
     for (const memberId of members) {
       const userRef = doc(firestore, "usersChatrooms", memberId);

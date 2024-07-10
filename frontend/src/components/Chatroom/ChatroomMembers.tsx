@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { doc, getDoc, updateDoc, arrayRemove, onSnapshot } from 'firebase/firestore';
 import { firestore } from '../../../firebase/firebase';
-import { useAuth } from '../../components/Auth/AuthContext'; // Adjust the path as necessary
+import { useAuth } from '../../components/Auth/AuthContext';
 import { Box, List, ListItem, Text, Button } from "@chakra-ui/react";
 import { useRouter } from 'next/navigation';
 
@@ -28,13 +28,13 @@ const ChatroomMembers: React.FC<ChatroomMembersProps> = ({ chatroomId }) => {
 
     const chatroomRef = doc(firestore, 'chatrooms', chatroomId);
     
-    // Listen for real-time updates to the chatroom
+    // listen for real time updates to the chatroom
     const unsubscribeChatroom = onSnapshot(chatroomRef, async (docSnapshot) => {
       const chatroomData = docSnapshot.data();
       setChatroom(chatroomData);
 
       if (chatroomData) {
-        // If the current user is no longer a member, redirect to chatrooms page
+        // if the current user is no longer a member, redirect to chatrooms page
         if (!chatroomData.members.includes(currentUser.uid)) {
           router.push('/chatrooms');
         }
@@ -66,7 +66,6 @@ const ChatroomMembers: React.FC<ChatroomMembersProps> = ({ chatroomId }) => {
         chatrooms: arrayRemove(chatroomId)
       });
 
-      // The member list will automatically update due to the onSnapshot listener
     } catch (error) {
       console.error("Error removing member:", error);
       alert("Error removing member. Please try again.");
