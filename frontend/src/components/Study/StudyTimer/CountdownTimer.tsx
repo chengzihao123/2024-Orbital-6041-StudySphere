@@ -45,7 +45,7 @@ export default function CountdownTimer({
       <div className="text-lg font-mono bg-gray-900 py-2 px-4 rounded-lg shadow-inner">
         {formatTime(minutes, seconds)}
       </div>
-      <div className=" flex flex-row justify-between w-full mt-1">
+      <div className=" flex flex-row justify-between w-3/4 mt-1">
         <FaPause onClick={pause} className="cursor-pointer" />
         <FaPlay onClick={resume} className="cursor-pointer" />
       </div>

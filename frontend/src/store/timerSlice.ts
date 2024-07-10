@@ -11,6 +11,7 @@ export type BackgroundImageType =
 export interface TimerState {
   isFullscreen: boolean;
   isUserTime: boolean;
+  pomodoroCycle: number;
   countdownSeconds: number;
   backgroundSettings: {
     backgroundImage: BackgroundImageType;
@@ -22,6 +23,7 @@ export interface TimerState {
 const initialTimerState: TimerState = {
   isFullscreen: false,
   isUserTime: false,
+  pomodoroCycle: 0,
   countdownSeconds: 0,
   backgroundSettings: {
     backgroundImage: "",
@@ -39,6 +41,9 @@ export const timerSlice = createSlice({
     },
     setIsUserTime(state, action: PayloadAction<boolean>) {
       state.isUserTime = action.payload;
+    },
+    setPomodoroCycle(state, action: PayloadAction<number>) {
+      state.pomodoroCycle = action.payload;
     },
     setCountdownSeconds(state, action: PayloadAction<number>) {
       state.countdownSeconds = action.payload;
@@ -59,6 +64,7 @@ export const timerSlice = createSlice({
 export const {
   setIsFullscreen,
   setIsUserTime,
+  setPomodoroCycle,
   setCountdownSeconds,
   setBackgroundImage,
   setShowAdditionalSetting,

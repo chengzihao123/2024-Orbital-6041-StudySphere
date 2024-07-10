@@ -6,7 +6,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
       <Head>
-        <link rel="icon" href="/favicon-32x32.ico" />
+        <link rel="icon" href="./images/logo-horizontal.jpg" />
       </Head>
       <body>
         <Providers>{children}</Providers>

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import { setShowAdditionalSetting } from "@/store/timerSlice";
-import AdditionalSettingsModal from "../Modal/AdditionalSetting";
+import AdditionalSettingsModal from "../../Modal/AdditionalSetting";
 import { BackgroundImageType } from "@/store/timerSlice";
 
 type UserSetStudyTimerProps = {

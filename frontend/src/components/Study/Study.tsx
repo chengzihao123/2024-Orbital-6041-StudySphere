@@ -6,14 +6,19 @@ import {
   setIsFullscreen,
   setIsUserTime,
   setCountdownSeconds,
+  setPomodoroCycle,
 } from "@/store/timerSlice";
-import UserSetStudyTimer from "./UserSetStudyTimer";
+import UserSetStudyTimer from "./StudyTimer/UserSetStudyTimer";
 import ProtectedRoute from "../ProtectedRoute";
 import TimeZeroAlert from "../Modal/TimeZeroAlert";
 import StudyLandingPage from "./StudyLandingPage";
+import StudyPatternModal from "../Modal/StudyPatternModal";
+import PomodoroModal from "../Modal/PomodoroModal";
 export default function Study() {
   const router = useRouter();
   const [showAlert, setShowAlert] = useState(false);
+  const [isCustomPattern, setCustomPattern] = useState(false);
+  const [hasSelectedPattern, setSelectedPattern] = useState(false);
   const backgroundImages = ["", "autumn", "grass", "sea", "mountain", "moon"];
 
   const dispatch: AppDispatch = useDispatch();
@@ -31,6 +36,10 @@ export default function Study() {
 
   const handleCountdownChange = (seconds: number) => {
     dispatch(setCountdownSeconds(seconds));
+  };
+
+  const handlePomodoroChange = (cycles: number) => {
+    dispatch(setPomodoroCycle(cycles));
   };
 
   useEffect(() => {
@@ -66,8 +75,21 @@ export default function Study() {
 
     const totalSeconds = minutes * 60 + seconds;
     handleCountdownChange(totalSeconds);
-    handleUserTimeToggle();
+    if (isUserTime) {
+      handleUserTimeToggle();
+    }
     enterFullscreen();
+  };
+
+  const handleConfirmPattern = () => {
+    setSelectedPattern(true);
+  };
+
+  const handleStudyPattern = (e: string) => {
+    if (e !== "custom") {
+      console.log("hello");
+      setCustomPattern(true);
+    }
   };
 
   const enterFullscreen = () => {
@@ -79,18 +101,46 @@ export default function Study() {
     router.push("/study/background");
   };
   const handleCloseForm = () => {
-    handleUserTimeToggle();
+    if (isUserTime) {
+      handleUserTimeToggle();
+    }
+    setSelectedPattern(false);
+    setCustomPattern(false);
+  };
+
+  const handlePomodoroConfirm = (num: number) => {
+    handlePomodoroChange(num);
+    if (isUserTime) {
+      handleUserTimeToggle();
+    }
+    setSelectedPattern(false);
+    setCustomPattern(false);
+    enterFullscreen();
   };
 
   return (
     <ProtectedRoute>
       <div className="flex flex-col items-center justify-center">
-        {!isFullscreen && <StudyLandingPage userSetTime={userSetTime} />}
-        {isUserTime && (
+        {isUserTime ? (
+          <StudyPatternModal
+            onConfirm={handleConfirmPattern}
+            onClose={handleCloseForm}
+            setStudyPattern={handleStudyPattern}
+          />
+        ) : (
+          <StudyLandingPage userSetTime={userSetTime} />
+        )}
+        {hasSelectedPattern && !isCustomPattern && (
           <UserSetStudyTimer
             submitHandler={handleSubmitForm}
             closeHandler={handleCloseForm}
             backgroundImages={backgroundImages}
+          />
+        )}
+        {hasSelectedPattern && isCustomPattern && (
+          <PomodoroModal
+            onConfirm={handlePomodoroConfirm}
+            onClose={handleCloseForm}
           />
         )}
         {showAlert && (
