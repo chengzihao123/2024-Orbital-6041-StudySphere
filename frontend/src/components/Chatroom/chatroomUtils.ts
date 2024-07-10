@@ -8,12 +8,9 @@ import {
   getDoc,
 } from "firebase/firestore";
 import { firestore } from "../../../firebase/firebase";
-import { useRouter } from "next/navigation";
 
-export const handleDeleteRoom = async (chatroomId: string, currentUser: any, chatroom: any) => {
+export const handleDeleteRoom = async (chatroomId: string, currentUser: any, chatroom: any, router: any) => {
   if (!chatroomId || !currentUser) return;
-
-  const router = useRouter();
 
   try {
     const chatroomRef = doc(firestore, "chatrooms", chatroomId);
@@ -51,10 +48,8 @@ export const handleDeleteRoom = async (chatroomId: string, currentUser: any, cha
   }
 };
 
-export const handleLeaveRoom = async (chatroomId: string, currentUser: any) => {
+export const handleLeaveRoom = async (chatroomId: string, currentUser: any, router: any) => {
   if (!chatroomId || !currentUser) return;
-
-  const router = useRouter();
 
   try {
     const userRef = doc(firestore, "usersChatrooms", currentUser.uid);

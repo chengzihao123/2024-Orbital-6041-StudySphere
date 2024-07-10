@@ -151,31 +151,37 @@ const TodoList: React.FC = () => {
                 <div className="col-span-1"></div>
               </div>
               <ul className="space-y-4">
-                {currentTodos.map((todo) => (
-                  <TodoItem key={todo.id} todo={todo} isHome={false} />
-                ))}
+                {currentTodos.length > 0 ? (
+                  currentTodos.map((todo) => (
+                    <TodoItem key={todo.id} todo={todo} isHome={false} />
+                  ))
+                ) : (
+                  <p className="text-center text-gray-500">No todos found.</p>
+                )}
               </ul>
-              <div className="mt-4 flex justify-center items-center space-x-2">
-                {currentPage > 1 && (
-                  <button
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    className="px-3 py-1 bg-gray-300 rounded-lg"
-                  >
-                    Previous
-                  </button>
-                )}
-                <span>
-                  Page {currentPage} of {totalPages}
-                </span>
-                {currentPage < totalPages && (
-                  <button
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    className="px-3 py-1 bg-gray-300 rounded-lg"
-                  >
-                    Next
-                  </button>
-                )}
-              </div>
+              {filteredTodos.length > 0 && (
+                <div className="mt-4 flex justify-center items-center space-x-2">
+                  {currentPage > 1 && (
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      className="px-3 py-1 bg-gray-300 rounded-lg"
+                    >
+                      Previous
+                    </button>
+                  )}
+                  <span>
+                    Page {currentPage} of {totalPages}
+                  </span>
+                  {currentPage < totalPages && (
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      className="px-3 py-1 bg-gray-300 rounded-lg"
+                    >
+                      Next
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           </div>
           <div className="md:flex-[1] order-2 md:order-2 hidden md:block">
