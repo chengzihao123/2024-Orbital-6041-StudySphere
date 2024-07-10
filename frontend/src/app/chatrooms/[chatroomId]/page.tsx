@@ -3,9 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import {
   doc,
-  getDoc,
-  collection,
   onSnapshot,
+  collection,
   orderBy,
   query,
   addDoc,
@@ -60,7 +59,13 @@ const ChatroomPage: React.FC = () => {
 
     const unsubscribeChatroom = onSnapshot(chatroomRef, (docSnapshot) => {
       if (docSnapshot.exists()) {
-        setChatroom(docSnapshot.data());
+        const chatroomData = docSnapshot.data();
+        setChatroom(chatroomData);
+
+        // Redirect if the user is no longer a member
+        if (!chatroomData.members.includes(currentUser.uid)) {
+          router.push("/chatrooms");
+        }
       } else {
         router.push("/chatrooms");
       }
@@ -139,14 +144,14 @@ const ChatroomPage: React.FC = () => {
         isOpen={showDeleteModal}
         title="Delete Chatroom"
         message="Are you sure you want to delete this chatroom? This action cannot be undone."
-        onConfirm={() => handleDeleteRoom(chatroomId, currentUser, chatroom)}
+        onConfirm={() => handleDeleteRoom(chatroomId, currentUser, chatroom, router)}
         onCancel={() => setShowDeleteModal(false)}
       />
       <Modal
         isOpen={showLeaveModal}
         title="Leave Chatroom"
         message="Are you sure you want to leave this chatroom?"
-        onConfirm={() => handleLeaveRoom(chatroomId, currentUser)}
+        onConfirm={() => handleLeaveRoom(chatroomId, currentUser, router)}
         onCancel={() => setShowLeaveModal(false)}
       />
     </div>
