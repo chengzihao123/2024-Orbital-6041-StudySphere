@@ -1,4 +1,3 @@
-// Notifications.tsx
 "use client";
 import React, { useEffect, useState } from 'react';
 import { collection, query, where, onSnapshot, updateDoc, doc } from 'firebase/firestore';
@@ -32,7 +31,7 @@ const Notifications: React.FC = () => {
         ...doc.data(),
       } as Notification));
 
-      // Explicitly sort by timestamp in descending order
+      // sort by timestamp in descending order
       const sortedNotifications = fetchedNotifications.sort((a, b) => b.timestamp.toDate() - a.timestamp.toDate());
 
       setNotifications(sortedNotifications);
