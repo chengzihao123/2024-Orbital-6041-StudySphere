@@ -1,4 +1,5 @@
 import ChatroomList from "@/components/Chatroom/ChatroomList";
+import { ChatroomProvider } from '@/components/Chatroom/ChatroomContext';
 
 export default function HomeCommunitySection() {
   return (
@@ -6,7 +7,9 @@ export default function HomeCommunitySection() {
       <div className="mb-3 ml-2 font-bold text-xl border-b-2 border-white pb-1">
         Community
       </div>
-      <ChatroomList isHome={true} />
+      <ChatroomProvider>
+        <ChatroomList isHome={true} />
+      </ChatroomProvider>
     </div>
   );
 }

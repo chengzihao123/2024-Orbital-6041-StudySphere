@@ -18,6 +18,8 @@ import AddTodo from "./AddTodo";
 import TodoFilter from "./TodoFilter";
 import { useRouter } from "next/navigation";
 import LoadingState from "../General/LoadingState";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import 'react-circular-progressbar/dist/styles.css';
 
 interface Todo {
   id: string;
@@ -129,6 +131,11 @@ const TodoList: React.FC = () => {
     }
   };
 
+  // Calculate completion percentage
+  const completedTodos = todos.filter(todo => todo.completed).length;
+  const totalTodos = todos.length;
+  const completionPercentage = totalTodos === 0 ? 0 : (completedTodos / totalTodos) * 100;
+
   return (
     <>
       {loading ? (
@@ -137,10 +144,25 @@ const TodoList: React.FC = () => {
         </div>
       ) : (
         <div className="max-w-6xl mx-auto mt-6 flex flex-col md:flex-row md:space-x-4">
-          <div className="md:flex-[2] order-1 md:order-1">
+          {/* Main content section */}
+          <div className="order-1 md:order-1 md:flex-[2]">
             <AddTodo />
-            <div className="block md:hidden mt-4">
-              <TodoFilter />
+            {/* Mobile view: Filter and progress bar side by side */}
+            <div className="md:hidden mt-4 flex justify-end items-center">
+              <div className="flex-1 mr-4">
+                <TodoFilter />
+              </div>
+              <div className="w-20 h-20">
+                <CircularProgressbar
+                  value={completionPercentage}
+                  text={`${Math.round(completionPercentage)}%`}
+                  styles={buildStyles({
+                    textColor: "#4A5568",
+                    pathColor: "#4A5568",
+                    trailColor: "#CBD5E0"
+                  })}
+                />
+              </div>
             </div>
             <div className="mt-6 bg-white p-4 rounded-lg shadow-md">
               <div className="grid grid-cols-6 gap-4 items-center font-bold text-gray-700 mb-4">
@@ -184,8 +206,20 @@ const TodoList: React.FC = () => {
               )}
             </div>
           </div>
-          <div className="md:flex-[1] order-2 md:order-2 hidden md:block">
+          {/* Desktop view: Filter and progress bar in a column */}
+          <div className="hidden md:flex order-2 flex-col items-center mt-6 space-y-4 md:order-2 md:flex-[1]">
             <TodoFilter />
+            <div className="w-2/3 md:w-full max-w-xs p-10">
+              <CircularProgressbar
+                value={completionPercentage}
+                text={`${Math.round(completionPercentage)}%`}
+                styles={buildStyles({
+                  textColor: "#4A5568",
+                  pathColor: "#4A5568",
+                  trailColor: "#CBD5E0"
+                })}
+              />
+            </div>
           </div>
         </div>
       )}
