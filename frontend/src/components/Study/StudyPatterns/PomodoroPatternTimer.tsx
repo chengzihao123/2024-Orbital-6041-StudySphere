@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "@/store/store";
+import { setPomodoroCycle } from "@/store/timerSlice";
 import { useTimer } from "react-timer-hook";
 import { FaPause, FaPlay } from "react-icons/fa6";
 
@@ -16,23 +19,35 @@ export default function PomodoroPatternTimer({
 }: PomodoroPatternTimerProps) {
   const router = useRouter();
   const [isPaused, setIsPaused] = useState(false);
+  const dispatch: AppDispatch = useDispatch();
+  const { pomodoroCycle } = useSelector((state: RootState) => state.timer);
 
   const studyTimer = new Date();
-  studyTimer.setSeconds(studyTimer.getSeconds() + 3);
+  studyTimer.setSeconds(studyTimer.getSeconds() + 1500);
 
   const { seconds, minutes, pause, resume, restart } = useTimer({
     expiryTimestamp: studyTimer,
     onExpire: async () => {
       if (isStudyCycle) {
         const restTimer = await new Date();
-        restTimer.setSeconds(restTimer.getSeconds() + 3);
+        restTimer.setSeconds(restTimer.getSeconds() + 300);
         setStudyCycle(false);
         restart(restTimer);
         resume;
         router.push("/study/background/break");
       } else {
-        onTimeUp();
-        router.push("/study"); // Navigate to /study when timer reaches zero
+        if (pomodoroCycle == 1) {
+          onTimeUp();
+          router.push("/study/summary");
+        } else {
+          dispatch(setPomodoroCycle(pomodoroCycle - 1));
+          setStudyCycle(true);
+          const restTimer = await new Date();
+          restTimer.setSeconds(restTimer.getSeconds() + 1500);
+          restart(restTimer);
+          resume;
+          router.push("/study/background");
+        }
       }
     },
   });

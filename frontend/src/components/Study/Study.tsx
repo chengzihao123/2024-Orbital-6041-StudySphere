@@ -26,6 +26,9 @@ export default function Study() {
     (state: RootState) => state.timer
   );
 
+  useEffect(() => {
+    dispatch(setPomodoroCycle(0));
+  }, []);
   const handleFullscreenToggle = () => {
     dispatch(setIsFullscreen(!isFullscreen));
   };

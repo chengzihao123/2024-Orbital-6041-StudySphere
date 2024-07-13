@@ -21,7 +21,7 @@ export default function CountdownTimer({
     expiryTimestamp,
     onExpire: () => {
       onTimeUp();
-      router.push("/study"); // Navigate to /study when timer reaches zero
+      router.push("/study/summary");
     },
   });
 

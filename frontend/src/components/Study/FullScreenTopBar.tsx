@@ -44,16 +44,23 @@ export const FullScreenTopBar = () => {
               initialTime={countdownSeconds}
             />
           ) : (
-            <PomodoroPatternTimer
-              onTimeUp={exitFullscreen}
-              isStudyCycle={isStudyCycle}
-              setStudyCycle={handleToggleCycle}
-            />
+            <div className="flex flex-row items-center">
+              <PomodoroPatternTimer
+                onTimeUp={exitFullscreen}
+                isStudyCycle={isStudyCycle}
+                setStudyCycle={handleToggleCycle}
+              />
+              {pomodoroCycle > 0 && (
+                <span className="ml-4 font-secondary text-white">
+                  No. of cycles left : {pomodoroCycle - 1}
+                </span>
+              )}
+            </div>
           )}
         </div>
         <div className="absolute right-5 top-8 mt-4 mr-4">
           <Link
-            href={"/study"}
+            href={"/study/summary"}
             className="bg-red-500 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-full"
             onClick={exitFullscreen}
           >

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 type PomodoroModalProps = {
   onConfirm: (cycles: number) => void;
@@ -10,6 +10,10 @@ export default function PomodoroModal({
   onClose,
 }: PomodoroModalProps) {
   const [cycles, setCycles] = useState(1);
+
+  useEffect(() => {
+    setCycles(1);
+  }, []);
 
   const handleCycleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setCycles(Number(e.target.value));
