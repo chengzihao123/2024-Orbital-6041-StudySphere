@@ -20,6 +20,7 @@ import HomeRewardSection from "@/components/Home/Section/HomeRewardSection";
 import HomeTodoSection from "@/components/Home/Section/HomeTodoSection";
 import HomeCommunitySection from "@/components/Home/Section/HomeCommunitySection";
 import LoadingState from "@/components/General/LoadingState";
+import Notifications from "@/components/Home/Section/Notifications";
 
 interface Todo {
   id: string;
@@ -31,11 +32,45 @@ interface Todo {
   taskDescription: string;
 }
 
+const sampleNotifications = [
+  {
+    userId: "user123",
+    message: "Reminder: Your task 'Complete the project report' is due tomorrow.",
+    read: false,
+    timestamp: new Date(),
+  },
+  {
+    userId: "user123",
+    message: "You have been assigned a new task 'Prepare for the client meeting'.",
+    read: false,
+    timestamp: new Date(),
+  },
+  {
+    userId: "user123",
+    message: "Congratulations! You have completed the task 'Submit the budget report'.",
+    read: true,
+    timestamp: new Date(),
+  },
+  {
+    userId: "user123",
+    message: "The task 'Finish the design mockup' is overdue.",
+    read: false,
+    timestamp: new Date(),
+  },
+  {
+    userId: "user123",
+    message: "New updates are available for the project management tool.",
+    read: false,
+    timestamp: new Date(),
+  },
+];
+
 export default function HomePage() {
   const dispatch: AppDispatch = useDispatch();
   const { currentUser, profile } = useAuth() || {};
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const [notifications, setNotifications] = useState(sampleNotifications); // Temporary state for notifications
 
   useEffect(() => {
     if (!currentUser) {
@@ -83,23 +118,23 @@ export default function HomePage() {
           <LoadingState />
         </div>
       ) : (
-        <div className="grid grid-rows-12 px-5 h-[610px]">
-          <div className="flex flex-row items-center w-full row-span-1 my-5">
-            <HomeAvatar
-              classes="hover:scale-110 cursor-pointer"
-              isHome={true}
-            />
-            <div className="p-3">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex items-center mb-4">
+            <HomeAvatar classes="hover:scale-110 cursor-pointer" isHome={true} />
+            <div className="ml-4 text-lg font-bold">
               Welcome, {profile?.displayName || "user"}!
             </div>
           </div>
-          <div className="row-span-8 mt-5 mb-5 grid grid-cols-4">
-            <HomeTodoSection />
-            <HomeStudySection />
-          </div>
-          <div className="row-span-5 grid grid-cols-4 mb-2">
-            <HomeRewardSection />
-            <HomeCommunitySection />
+          <Notifications />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="col-span-2 space-y-4">
+              <HomeTodoSection />
+              <HomeRewardSection />
+            </div>
+            <div className="col-span-1 space-y-4">
+              <HomeStudySection />
+              <HomeCommunitySection />
+            </div>
           </div>
         </div>
       )}
