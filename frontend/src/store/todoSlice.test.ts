@@ -48,6 +48,8 @@ describe("todoSlice", () => {
         completed: false,
         taskName: "New Task",
         taskDescription: "Description",
+        userId: "user123", // Add userId here
+        notified: false, // Add notified here
       },
     ];
 
@@ -62,15 +64,15 @@ describe("todoSlice", () => {
   });
 
   test("filter for status", () => {
-    const newFilter = { priority: "completed" };
+    const newFilter = { status: "completed" }; // Corrected key
     store.dispatch(setFilter(newFilter));
-    expect(store.getState().todo.filter.priority).toEqual("completed");
+    expect(store.getState().todo.filter.status).toEqual("completed"); // Corrected key
   });
 
   test("filter for order of dates", () => {
-    const newFilter = { priority: "oldest" };
+    const newFilter = { date: "oldest" }; // Corrected key
     store.dispatch(setFilter(newFilter));
-    expect(store.getState().todo.filter.priority).toEqual("oldest");
+    expect(store.getState().todo.filter.date).toEqual("oldest"); // Corrected key
   });
 
   test("update of completion status", () => {
@@ -82,6 +84,8 @@ describe("todoSlice", () => {
       completed: false,
       taskName: "New Task",
       taskDescription: "Description",
+      userId: "user123", // Add userId here
+      notified: false, // Add notified here
     };
 
     store.dispatch(setTodos([todo]));
@@ -98,6 +102,8 @@ describe("todoSlice", () => {
       completed: false,
       taskName: "New Task",
       taskDescription: "Description",
+      userId: "user123", // Add userId here
+      notified: false, // Add notified here
     };
 
     store.dispatch(setTodos([todo]));
@@ -114,6 +120,8 @@ describe("todoSlice", () => {
       completed: false,
       taskName: "New Task",
       taskDescription: "Description",
+      userId: "user123", // Add userId here
+      notified: false, // Add notified here
     };
 
     const updatedData = {
@@ -144,6 +152,8 @@ describe("todoSlice", () => {
       completed: false,
       taskName: "New Task",
       taskDescription: "Description",
+      userId: "user123", // Add userId here
+      notified: false, // Add notified here
     };
 
     store.dispatch(setTodos([todo]));
