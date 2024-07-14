@@ -4,12 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import { setTodos } from "@/store/todoSlice";
 import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  updateDoc,
-  doc,
+  collection, query, where, onSnapshot, updateDoc, doc
 } from "firebase/firestore";
 import { firestore } from "../../../firebase/firebase";
 import { useAuth } from "../Auth/AuthContext";
@@ -20,16 +15,8 @@ import { useRouter } from "next/navigation";
 import LoadingState from "../General/LoadingState";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import 'react-circular-progressbar/dist/styles.css';
-
-interface Todo {
-  id: string;
-  deadline: string;
-  priority: string;
-  status: string;
-  completed: boolean;
-  taskName: string;
-  taskDescription: string;
-}
+import { checkDeadlinesAndNotify } from './notificationUtils'; 
+import { Todo } from './types'; 
 
 export const filterTodos = (todos: Todo[], filter: any): Todo[] => {
   return todos
@@ -86,7 +73,7 @@ const TodoList: React.FC = () => {
     const q = query(todosCollection, where("userId", "==", currentUser.uid));
 
     // subscribe to todos collection and update todos state
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+    const unsubscribe = onSnapshot(q, async (snapshot) => {
       if (snapshot.empty) {
         console.log("No todos found.");
         dispatch(setTodos([]));
@@ -110,6 +97,7 @@ const TodoList: React.FC = () => {
         });
 
         dispatch(setTodos(updatedTodos));
+        await checkDeadlinesAndNotify(updatedTodos);
       }
       setLoading(false);
     });
@@ -144,10 +132,8 @@ const TodoList: React.FC = () => {
         </div>
       ) : (
         <div className="max-w-6xl mx-auto mt-6 flex flex-col md:flex-row md:space-x-4">
-          {/* Main content section */}
           <div className="order-1 md:order-1 md:flex-[2]">
             <AddTodo />
-            {/* Mobile view: Filter and progress bar side by side */}
             <div className="md:hidden mt-4 flex justify-end items-center">
               <div className="flex-1 mr-4">
                 <TodoFilter />
@@ -206,7 +192,6 @@ const TodoList: React.FC = () => {
               )}
             </div>
           </div>
-          {/* Desktop view: Filter and progress bar in a column */}
           <div className="hidden md:flex order-2 flex-col items-center mt-6 space-y-4 md:order-2 md:flex-[1]">
             <TodoFilter />
             <div className="w-2/3 md:w-full max-w-xs p-10">
@@ -215,8 +200,8 @@ const TodoList: React.FC = () => {
                 text={`${Math.round(completionPercentage)}%`}
                 styles={buildStyles({
                   textColor: "#4A5568",
-                  pathColor: "#4A5568",
-                  trailColor: "#CBD5E0"
+                    pathColor: "#4A5568",
+                    trailColor: "#CBD5E0"
                 })}
               />
             </div>

@@ -1,10 +1,9 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { collection, query, where, onSnapshot, updateDoc, doc } from 'firebase/firestore';
-import { firestore } from '../../../../firebase/firebase';
-import { useAuth } from '../../Auth/AuthContext';
+import { firestore } from '../../../firebase/firebase';
+import { useAuth } from '../../components/Auth/AuthContext';
 import { FaCheckCircle, FaRegCircle } from 'react-icons/fa';
-import HomeButton from "@/components/Home/HomeButton";
 
 interface Notification {
   id: string;
@@ -13,9 +12,11 @@ interface Notification {
   timestamp: any;
 }
 
-const Notifications: React.FC = () => {
+const AllNotifications: React.FC = () => {
   const { currentUser } = useAuth() || {};
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const notificationsPerPage = 10;
 
   useEffect(() => {
     if (!currentUser) return;
@@ -46,13 +47,25 @@ const Notifications: React.FC = () => {
     await updateDoc(notificationRef, { read: true });
   };
 
+  const totalPages = Math.ceil(notifications.length / notificationsPerPage);
+  const currentNotifications = notifications.slice(
+    (currentPage - 1) * notificationsPerPage,
+    currentPage * notificationsPerPage
+  );
+
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
   return (
-    <div className="bg-lightGreen p-4 rounded-xl shadow-md mb-4">
-      <h2 className="text-lg font-bold mb-2">Notifications</h2>
+    <div className="container mx-auto px-4 py-6">
+      <h2 className="text-lg font-bold mb-4">All Notifications</h2>
       {notifications.length > 0 ? (
         <>
-          <ul className="space-y-2 max-h-40 overflow-y-auto">
-            {notifications.slice(0, 5).map((notification) => (
+          <ul className="space-y-2">
+            {currentNotifications.map((notification) => (
               <li key={notification.id} className={`p-2 rounded flex items-center ${notification.read ? 'bg-gray-100' : 'bg-green-300'}`}>
                 <button
                   className={`mr-2 ${notification.read ? 'text-gray-400' : 'text-green-600'}`}
@@ -65,8 +78,26 @@ const Notifications: React.FC = () => {
               </li>
             ))}
           </ul>
-          <div className="flex justify-end mt-2">
-            <HomeButton web={"/notifications"} buttonText={"View all"} />
+          <div className="mt-4 flex justify-center items-center space-x-2">
+            {currentPage > 1 && (
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                className="px-3 py-1 bg-gray-300 rounded-lg"
+              >
+                Previous
+              </button>
+            )}
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            {currentPage < totalPages && (
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                className="px-3 py-1 bg-gray-300 rounded-lg"
+              >
+                Next
+              </button>
+            )}
           </div>
         </>
       ) : (
@@ -76,4 +107,4 @@ const Notifications: React.FC = () => {
   );
 };
 
-export default Notifications;
+export default AllNotifications;

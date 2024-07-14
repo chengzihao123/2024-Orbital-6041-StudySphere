@@ -21,56 +21,13 @@ import HomeTodoSection from "@/components/Home/Section/HomeTodoSection";
 import HomeCommunitySection from "@/components/Home/Section/HomeCommunitySection";
 import LoadingState from "@/components/General/LoadingState";
 import Notifications from "@/components/Home/Section/Notifications";
-
-interface Todo {
-  id: string;
-  deadline: string;
-  priority: string;
-  status: string;
-  completed: boolean;
-  taskName: string;
-  taskDescription: string;
-}
-
-const sampleNotifications = [
-  {
-    userId: "user123",
-    message: "Reminder: Your task 'Complete the project report' is due tomorrow.",
-    read: false,
-    timestamp: new Date(),
-  },
-  {
-    userId: "user123",
-    message: "You have been assigned a new task 'Prepare for the client meeting'.",
-    read: false,
-    timestamp: new Date(),
-  },
-  {
-    userId: "user123",
-    message: "Congratulations! You have completed the task 'Submit the budget report'.",
-    read: true,
-    timestamp: new Date(),
-  },
-  {
-    userId: "user123",
-    message: "The task 'Finish the design mockup' is overdue.",
-    read: false,
-    timestamp: new Date(),
-  },
-  {
-    userId: "user123",
-    message: "New updates are available for the project management tool.",
-    read: false,
-    timestamp: new Date(),
-  },
-];
+import { Todo } from "@/components/Todo/types";
 
 export default function HomePage() {
   const dispatch: AppDispatch = useDispatch();
   const { currentUser, profile } = useAuth() || {};
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const [notifications, setNotifications] = useState(sampleNotifications); // Temporary state for notifications
 
   useEffect(() => {
     if (!currentUser) {

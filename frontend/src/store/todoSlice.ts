@@ -1,20 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-interface Todo {
-  id: string;
-  deadline: string;
-  priority: string;
-  status: string;
-  completed: boolean;
-  taskName: string;
-  taskDescription: string;
-}
-
-interface Filter {
-  date: string;
-  priority: string;
-  status: string;
-}
+import { Todo, Filter } from "@/components/Todo/types"; 
 
 export interface TodoState {
   todos: Todo[];
