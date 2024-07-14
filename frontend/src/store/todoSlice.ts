@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Todo, Filter } from "@/components/Todo/types"; // Adjust the path accordingly
+import { Todo, Filter } from "@/components/Todo/types"; 
 
 export interface TodoState {
   todos: Todo[];

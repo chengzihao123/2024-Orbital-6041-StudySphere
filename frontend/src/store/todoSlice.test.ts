@@ -48,8 +48,8 @@ describe("todoSlice", () => {
         completed: false,
         taskName: "New Task",
         taskDescription: "Description",
-        userId: "user123", // Add userId here
-        notified: false, // Add notified here
+        userId: "user123", 
+        notified: false, 
       },
     ];
 
@@ -64,15 +64,15 @@ describe("todoSlice", () => {
   });
 
   test("filter for status", () => {
-    const newFilter = { status: "completed" }; // Corrected key
+    const newFilter = { status: "completed" }; 
     store.dispatch(setFilter(newFilter));
-    expect(store.getState().todo.filter.status).toEqual("completed"); // Corrected key
+    expect(store.getState().todo.filter.status).toEqual("completed"); 
   });
 
   test("filter for order of dates", () => {
-    const newFilter = { date: "oldest" }; // Corrected key
+    const newFilter = { date: "oldest" }; 
     store.dispatch(setFilter(newFilter));
-    expect(store.getState().todo.filter.date).toEqual("oldest"); // Corrected key
+    expect(store.getState().todo.filter.date).toEqual("oldest"); 
   });
 
   test("update of completion status", () => {
@@ -102,8 +102,8 @@ describe("todoSlice", () => {
       completed: false,
       taskName: "New Task",
       taskDescription: "Description",
-      userId: "user123", // Add userId here
-      notified: false, // Add notified here
+      userId: "user123",
+      notified: false, 
     };
 
     store.dispatch(setTodos([todo]));
@@ -120,8 +120,8 @@ describe("todoSlice", () => {
       completed: false,
       taskName: "New Task",
       taskDescription: "Description",
-      userId: "user123", // Add userId here
-      notified: false, // Add notified here
+      userId: "user123", 
+      notified: false, 
     };
 
     const updatedData = {
@@ -152,8 +152,8 @@ describe("todoSlice", () => {
       completed: false,
       taskName: "New Task",
       taskDescription: "Description",
-      userId: "user123", // Add userId here
-      notified: false, // Add notified here
+      userId: "user123", 
+      notified: false,
     };
 
     store.dispatch(setTodos([todo]));
