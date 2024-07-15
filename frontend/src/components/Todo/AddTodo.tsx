@@ -39,7 +39,8 @@ const AddTodo: React.FC = () => {
         deadline: deadlineRef.current.value,
         status: status,
         priority: priority,
-        completed: false
+        completed: false,
+        notified: false,
       });
 
       taskNameRef.current.value = '';
