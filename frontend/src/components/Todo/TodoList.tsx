@@ -14,23 +14,9 @@ import TodoFilter from "./TodoFilter";
 import { useRouter } from "next/navigation";
 import LoadingState from "../General/LoadingState";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
-<<<<<<< HEAD
-import "react-circular-progressbar/dist/styles.css";
-
-interface Todo {
-  id: string;
-  deadline: string;
-  priority: string;
-  status: string;
-  completed: boolean;
-  taskName: string;
-  taskDescription: string;
-}
-=======
 import 'react-circular-progressbar/dist/styles.css';
 import { checkDeadlinesAndNotify } from './notificationUtils'; 
 import { Todo } from './types'; 
->>>>>>> 478982c411a845eb5b704e8319b8193806404f12
 
 export const filterTodos = (todos: Todo[], filter: any): Todo[] => {
   return todos
@@ -134,10 +120,9 @@ const TodoList: React.FC = () => {
   };
 
   // Calculate completion percentage
-  const completedTodos = todos.filter((todo) => todo.completed).length;
+  const completedTodos = todos.filter(todo => todo.completed).length;
   const totalTodos = todos.length;
-  const completionPercentage =
-    totalTodos === 0 ? 0 : (completedTodos / totalTodos) * 100;
+  const completionPercentage = totalTodos === 0 ? 0 : (completedTodos / totalTodos) * 100;
 
   return (
     <>
@@ -160,7 +145,7 @@ const TodoList: React.FC = () => {
                   styles={buildStyles({
                     textColor: "#4A5568",
                     pathColor: "#4A5568",
-                    trailColor: "#CBD5E0",
+                    trailColor: "#CBD5E0"
                   })}
                 />
               </div>
@@ -215,13 +200,8 @@ const TodoList: React.FC = () => {
                 text={`${Math.round(completionPercentage)}%`}
                 styles={buildStyles({
                   textColor: "#4A5568",
-<<<<<<< HEAD
-                  pathColor: "#4A5568",
-                  trailColor: "#CBD5E0",
-=======
                     pathColor: "#4A5568",
                     trailColor: "#CBD5E0"
->>>>>>> 478982c411a845eb5b704e8319b8193806404f12
                 })}
               />
             </div>
