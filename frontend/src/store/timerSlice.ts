@@ -11,8 +11,10 @@ export type BackgroundImageType =
 export interface TimerState {
   isFullscreen: boolean;
   isUserTime: boolean;
-  pomodoroCycle: number;
+  pomodoroCycleLeft: number;
+  pomodoroCycleCompleted: number;
   countdownSeconds: number;
+  studyTime: number;
   backgroundSettings: {
     backgroundImage: BackgroundImageType;
     backgroundMusic: string;
@@ -23,13 +25,15 @@ export interface TimerState {
 const initialTimerState: TimerState = {
   isFullscreen: false,
   isUserTime: false,
-  pomodoroCycle: 0,
+  pomodoroCycleLeft: 0,
+  pomodoroCycleCompleted: 0,
   countdownSeconds: 0,
   backgroundSettings: {
     backgroundImage: "",
     backgroundMusic: "",
   },
   showAdditionalSetting: false,
+  studyTime: 0,
 };
 
 export const timerSlice = createSlice({
@@ -42,11 +46,17 @@ export const timerSlice = createSlice({
     setIsUserTime(state, action: PayloadAction<boolean>) {
       state.isUserTime = action.payload;
     },
-    setPomodoroCycle(state, action: PayloadAction<number>) {
-      state.pomodoroCycle = action.payload;
+    setpomodoroCycleLeft(state, action: PayloadAction<number>) {
+      state.pomodoroCycleLeft = action.payload;
+    },
+    setpomodoroCycleCompleted(state, action: PayloadAction<number>) {
+      state.pomodoroCycleCompleted = action.payload;
     },
     setCountdownSeconds(state, action: PayloadAction<number>) {
       state.countdownSeconds = action.payload;
+    },
+    setStudyTime(state, action: PayloadAction<number>) {
+      state.studyTime = action.payload;
     },
     setBackgroundImage(state, action: PayloadAction<BackgroundImageType>) {
       state.backgroundSettings.backgroundImage = action.payload;
@@ -64,11 +74,13 @@ export const timerSlice = createSlice({
 export const {
   setIsFullscreen,
   setIsUserTime,
-  setPomodoroCycle,
+  setpomodoroCycleLeft,
+  setpomodoroCycleCompleted,
   setCountdownSeconds,
   setBackgroundImage,
   setShowAdditionalSetting,
   setBackgroundMusic,
+  setStudyTime,
 } = timerSlice.actions;
 
 export default timerSlice.reducer;

@@ -19,7 +19,7 @@ import TodoFilter from "./TodoFilter";
 import { useRouter } from "next/navigation";
 import LoadingState from "../General/LoadingState";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
-import 'react-circular-progressbar/dist/styles.css';
+import "react-circular-progressbar/dist/styles.css";
 
 interface Todo {
   id: string;
@@ -132,9 +132,10 @@ const TodoList: React.FC = () => {
   };
 
   // Calculate completion percentage
-  const completedTodos = todos.filter(todo => todo.completed).length;
+  const completedTodos = todos.filter((todo) => todo.completed).length;
   const totalTodos = todos.length;
-  const completionPercentage = totalTodos === 0 ? 0 : (completedTodos / totalTodos) * 100;
+  const completionPercentage =
+    totalTodos === 0 ? 0 : (completedTodos / totalTodos) * 100;
 
   return (
     <>
@@ -159,7 +160,7 @@ const TodoList: React.FC = () => {
                   styles={buildStyles({
                     textColor: "#4A5568",
                     pathColor: "#4A5568",
-                    trailColor: "#CBD5E0"
+                    trailColor: "#CBD5E0",
                   })}
                 />
               </div>
@@ -216,7 +217,7 @@ const TodoList: React.FC = () => {
                 styles={buildStyles({
                   textColor: "#4A5568",
                   pathColor: "#4A5568",
-                  trailColor: "#CBD5E0"
+                  trailColor: "#CBD5E0",
                 })}
               />
             </div>

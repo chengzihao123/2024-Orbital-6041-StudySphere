@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTimer } from "react-timer-hook";
 import { FaPause, FaPlay } from "react-icons/fa6";
@@ -6,18 +6,19 @@ import { FaPause, FaPlay } from "react-icons/fa6";
 type CountdownTimerProps = {
   initialTime: number;
   onTimeUp: () => void;
+  onTotalSecondsUpdate: (seconds: number) => void;
 };
 
 export default function CountdownTimer({
   onTimeUp,
   initialTime,
+  onTotalSecondsUpdate,
 }: CountdownTimerProps) {
   const router = useRouter();
-
   const expiryTimestamp = new Date();
   expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + initialTime);
 
-  const { seconds, minutes, pause, resume, restart } = useTimer({
+  const { seconds, minutes, pause, resume, restart, totalSeconds } = useTimer({
     expiryTimestamp,
     onExpire: () => {
       onTimeUp();
@@ -33,6 +34,10 @@ export default function CountdownTimer({
     restart(newExpiryTimestamp);
   }, [initialTime, restart]);
 
+  useEffect(() => {
+    onTotalSecondsUpdate(totalSeconds);
+  }, [totalSeconds, onTotalSecondsUpdate]);
+
   const formatTime = (minutes: number, seconds: number) => {
     return `${minutes > 9 ? minutes : `0${minutes}`}:${
       seconds < 10 ? "0" : ""
@@ -45,7 +50,7 @@ export default function CountdownTimer({
       <div className="text-lg font-mono bg-gray-900 py-2 px-4 rounded-lg shadow-inner">
         {formatTime(minutes, seconds)}
       </div>
-      <div className=" flex flex-row justify-between w-3/4 mt-1">
+      <div className="flex flex-row justify-between w-3/4 mt-1">
         <FaPause onClick={pause} className="cursor-pointer" />
         <FaPlay onClick={resume} className="cursor-pointer" />
       </div>

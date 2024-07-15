@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "@/store/store";
-import { setPomodoroCycle } from "@/store/timerSlice";
+import { setpomodoroCycleLeft } from "@/store/timerSlice";
 import { useTimer } from "react-timer-hook";
 import { FaPause, FaPlay } from "react-icons/fa6";
 
@@ -10,17 +10,19 @@ type PomodoroPatternTimerProps = {
   onTimeUp: () => void;
   isStudyCycle: boolean;
   setStudyCycle: React.Dispatch<React.SetStateAction<boolean>>;
+  onCycleComplete: () => void;
 };
 
 export default function PomodoroPatternTimer({
   onTimeUp,
   isStudyCycle,
   setStudyCycle,
+  onCycleComplete,
 }: PomodoroPatternTimerProps) {
   const router = useRouter();
   const [isPaused, setIsPaused] = useState(false);
   const dispatch: AppDispatch = useDispatch();
-  const { pomodoroCycle } = useSelector((state: RootState) => state.timer);
+  const { pomodoroCycleLeft } = useSelector((state: RootState) => state.timer);
 
   const studyTimer = new Date();
   studyTimer.setSeconds(studyTimer.getSeconds() + 1500);
@@ -36,11 +38,12 @@ export default function PomodoroPatternTimer({
         resume;
         router.push("/study/background/break");
       } else {
-        if (pomodoroCycle == 1) {
+        onCycleComplete();
+        if (pomodoroCycleLeft == 1) {
           onTimeUp();
           router.push("/study/summary");
         } else {
-          dispatch(setPomodoroCycle(pomodoroCycle - 1));
+          dispatch(setpomodoroCycleLeft(pomodoroCycleLeft - 1));
           setStudyCycle(true);
           const restTimer = await new Date();
           restTimer.setSeconds(restTimer.getSeconds() + 1500);

@@ -6,7 +6,7 @@ import {
   setIsFullscreen,
   setIsUserTime,
   setCountdownSeconds,
-  setPomodoroCycle,
+  setpomodoroCycleLeft,
 } from "@/store/timerSlice";
 import UserSetStudyTimer from "./StudyTimer/UserSetStudyTimer";
 import ProtectedRoute from "../ProtectedRoute";
@@ -27,7 +27,7 @@ export default function Study() {
   );
 
   useEffect(() => {
-    dispatch(setPomodoroCycle(0));
+    dispatch(setpomodoroCycleLeft(0));
   }, []);
   const handleFullscreenToggle = () => {
     dispatch(setIsFullscreen(!isFullscreen));
@@ -42,7 +42,7 @@ export default function Study() {
   };
 
   const handlePomodoroChange = (cycles: number) => {
-    dispatch(setPomodoroCycle(cycles));
+    dispatch(setpomodoroCycleLeft(cycles));
   };
 
   useEffect(() => {
@@ -90,7 +90,6 @@ export default function Study() {
 
   const handleStudyPattern = (e: string) => {
     if (e !== "custom") {
-      console.log("hello");
       setCustomPattern(true);
     }
   };
