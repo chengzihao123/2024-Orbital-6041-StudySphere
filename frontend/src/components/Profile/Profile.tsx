@@ -2,8 +2,9 @@ import { useAuth } from "@/components/Auth/AuthContext";
 import HomeAvatar from "@/components/Home/HomeAvatar";
 import ProfileFields from "@/components/Profile/ProfileFields";
 import { Tooltip } from "@chakra-ui/react";
-import { FaEdit } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import { FaEdit } from "react-icons/fa";
+import { Progress, Box } from "@chakra-ui/react";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -27,12 +28,25 @@ export default function ProfilePage() {
 
   return (
     <>
-      <div className="flex flex-col items-center mb-5">
-        <HomeAvatar classes="mt-2" isHome={false} />
-        <div className="mt-4">
-          <h1 className="text-xl font-main font-semibold">
-            {profile?.displayName ?? ""}
-          </h1>
+      <div className="flex flex-row justify-center items-center w-screen mb-5">
+        <div className="flex flex-col items-center">
+          <HomeAvatar classes="mt-2" isHome={false} />
+          <div className="mt-4">
+            <h1 className="text-xl font-main font-semibold">
+              {profile?.displayName ?? ""}
+            </h1>
+          </div>
+        </div>
+        <div className="flex flex-col items-center ml-10">
+          <Box py={4} mt={20} ml={10}>
+            <Progress
+              value={28}
+              hasStripe
+              width={["100px", "200px", "300px"]}
+              isAnimated
+            />
+          </Box>
+          <div>XP level</div>
         </div>
       </div>
       <div className="flex justify-center">
