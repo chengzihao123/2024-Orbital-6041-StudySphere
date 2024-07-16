@@ -75,22 +75,25 @@ export default function HomePage() {
           <LoadingState />
         </div>
       ) : (
-        <div className="container mx-auto px-4 py-6">
+        <div className="container mx-auto px-4 pb-2">
           <div className="flex items-center mb-4">
-            <HomeAvatar classes="hover:scale-110 cursor-pointer" isHome={true} />
+            <HomeAvatar
+              classes="hover:scale-110 cursor-pointer"
+              isHome={true}
+            />
             <div className="ml-4 text-lg font-bold">
               Welcome, {profile?.displayName || "user"}!
             </div>
           </div>
           <Notifications />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="col-span-2 space-y-4">
-              <HomeTodoSection />
-              <HomeRewardSection />
+            <div className="grid grid-rows-3 col-span-2 space-y-4">
+              <HomeTodoSection style="row-span-2 col-span-3 mr-5 rounded-xl bg-slate-300 p-3" />
+              <HomeRewardSection style="row-span-1 col-span-3  bg-darkerBlue mr-5 p-3 rounded-xl" />
             </div>
-            <div className="col-span-1 space-y-4">
-              <HomeStudySection />
-              <HomeCommunitySection />
+            <div className="grid grid-rows-3 col-span-1 space-y-4">
+              <HomeStudySection style="row-span-2 col-span-1 bg-lightBlue p-3 rounded-xl" />
+              <HomeCommunitySection style="col-span-1  bg-skyBlue p-3 rounded-xl" />
             </div>
           </div>
         </div>
