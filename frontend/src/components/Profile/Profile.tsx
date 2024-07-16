@@ -3,8 +3,10 @@ import HomeAvatar from "@/components/Home/HomeAvatar";
 import ProfileFields from "@/components/Profile/ProfileFields";
 import { Tooltip } from "@chakra-ui/react";
 import { FaEdit } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 export default function ProfilePage() {
+  const router = useRouter();
   const { profile } = useAuth() || {};
 
   // Sample user particulars
@@ -17,6 +19,10 @@ export default function ProfilePage() {
     hobby: "Reading",
     cca: "Basketball",
     birthday: "22/04",
+  };
+
+  const handleEditProfile = () => {
+    router.push("/profile/particulars");
   };
 
   return (
@@ -59,7 +65,10 @@ export default function ProfilePage() {
             <div className="flex justify-end">
               <Tooltip label={"Edit Profile"}>
                 <div>
-                  <FaEdit className="text-xl cursor-pointer" />
+                  <FaEdit
+                    className="text-xl cursor-pointer"
+                    onClick={handleEditProfile}
+                  />
                 </div>
               </Tooltip>
             </div>

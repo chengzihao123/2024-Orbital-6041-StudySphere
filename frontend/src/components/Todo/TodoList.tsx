@@ -4,7 +4,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import { setTodos } from "@/store/todoSlice";
 import {
-  collection, query, where, onSnapshot, updateDoc, doc
+  collection,
+  query,
+  where,
+  onSnapshot,
+  updateDoc,
+  doc,
 } from "firebase/firestore";
 import { firestore } from "../../../firebase/firebase";
 import { useAuth } from "../Auth/AuthContext";
@@ -14,23 +19,9 @@ import TodoFilter from "./TodoFilter";
 import { useRouter } from "next/navigation";
 import LoadingState from "../General/LoadingState";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
-<<<<<<< HEAD
 import "react-circular-progressbar/dist/styles.css";
-
-interface Todo {
-  id: string;
-  deadline: string;
-  priority: string;
-  status: string;
-  completed: boolean;
-  taskName: string;
-  taskDescription: string;
-}
-=======
-import 'react-circular-progressbar/dist/styles.css';
-import { checkDeadlinesAndNotify } from './notificationUtils'; 
-import { Todo } from './types'; 
->>>>>>> 478982c411a845eb5b704e8319b8193806404f12
+import { checkDeadlinesAndNotify } from "./notificationUtils";
+import { Todo } from "./types";
 
 export const filterTodos = (todos: Todo[], filter: any): Todo[] => {
   return todos
@@ -215,13 +206,8 @@ const TodoList: React.FC = () => {
                 text={`${Math.round(completionPercentage)}%`}
                 styles={buildStyles({
                   textColor: "#4A5568",
-<<<<<<< HEAD
                   pathColor: "#4A5568",
                   trailColor: "#CBD5E0",
-=======
-                    pathColor: "#4A5568",
-                    trailColor: "#CBD5E0"
->>>>>>> 478982c411a845eb5b704e8319b8193806404f12
                 })}
               />
             </div>
