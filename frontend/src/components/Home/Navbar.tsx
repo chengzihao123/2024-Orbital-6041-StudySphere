@@ -3,6 +3,8 @@ import React from "react";
 import Link from "next/link";
 import { useAuth } from "../Auth/AuthContext";
 import { useRouter } from "next/navigation";
+import { Progress, Box, Flex, Text, Tooltip } from "@chakra-ui/react";
+import { FaInfoCircle } from "react-icons/fa";
 
 const Navbar: React.FC = () => {
   const { currentUser, logout } = useAuth() || {};
@@ -19,16 +21,69 @@ const Navbar: React.FC = () => {
     }
   };
 
+  // Sample XP values
+  const dailyXP = 0;
+  const dailyXPTarget = 40;
+
+  const xpTooltipContent = (
+    <Box>
+      <Text>Ways to earn XP:</Text>
+      <Text>
+        • Sign in <span style={{ color: "green" }}>+10XP</span>
+      </Text>
+      <Text>
+        • Spent one hour in study mode{" "}
+        <span style={{ color: "green" }}>+10XP</span>
+      </Text>
+      <Text>
+        • Answer one question posted in chat groups{" "}
+        <span style={{ color: "green" }}>+10XP</span>
+      </Text>
+      <Text>
+        • Complete one quest posted in chat groups{" "}
+        <span style={{ color: "green" }}>+10XP</span>
+      </Text>
+    </Box>
+  );
+
   return (
-    <nav className="bg-gray-800 p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <Link href="/home" className="text-gray-300 hover:text-white">
-          <img
-            src="/images/logo-horizontal-white.png"
-            alt="Study Sphere"
-            className="h-8"
-          />
-        </Link>
+    <nav className="bg-gray-800 p-4 w-full">
+      <div className="container mx-auto flex justify-between items-center w-full">
+        <div className="flex items-center space-x-4">
+          <Link href="/home" className="text-gray-300 hover:text-white">
+            <img
+              src="/images/logo-horizontal-white.png"
+              alt="Study Sphere"
+              className="h-8"
+            />
+          </Link>
+          {currentUser && (
+            <Box>
+              <Flex alignItems="center">
+                <Progress
+                  value={(dailyXP / dailyXPTarget) * 100}
+                  hasStripe
+                  isAnimated
+                  width={["50px", "50px", "100px"]}
+                  borderRadius="md"
+                />
+                <Flex alignItems="center" ml={2}>
+                  <Text
+                    fontFamily="Roboto"
+                    className="sm:text-xs"
+                    color={"white"}
+                  >{`${dailyXP}/${dailyXPTarget} daily XP earned`}</Text>
+                  <Tooltip label={xpTooltipContent}>
+                    <Box ml={2}>
+                      <FaInfoCircle className="cursor-pointer" color="white" />
+                    </Box>
+                  </Tooltip>
+                </Flex>
+              </Flex>
+            </Box>
+          )}
+        </div>
+
         <div className="space-x-4">
           {currentUser ? (
             <>

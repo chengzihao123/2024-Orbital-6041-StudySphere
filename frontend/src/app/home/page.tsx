@@ -22,6 +22,7 @@ import HomeCommunitySection from "@/components/Home/Section/HomeCommunitySection
 import LoadingState from "@/components/General/LoadingState";
 import Notifications from "@/components/Home/Section/Notifications";
 import { Todo } from "@/components/Todo/types";
+import { MdCheckCircleOutline } from "react-icons/md";
 
 export default function HomePage() {
   const dispatch: AppDispatch = useDispatch();
@@ -76,13 +77,19 @@ export default function HomePage() {
         </div>
       ) : (
         <div className="container mx-auto px-4 pb-2">
-          <div className="flex items-center mb-4">
-            <HomeAvatar
-              classes="hover:scale-110 cursor-pointer"
-              isHome={true}
-            />
-            <div className="ml-4 text-lg font-bold">
-              Welcome, {profile?.displayName || "user"}!
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center">
+              <HomeAvatar
+                classes="hover:scale-110 cursor-pointer"
+                isHome={true}
+              />
+              <div className="ml-4 text-lg font-bold">
+                Welcome, {profile?.displayName || "user"}!
+              </div>
+            </div>
+            <div className="flex items-center cursor-pointer border-2 p-2 pt-1  border-slate-400 rounded-lg hover:scale-105">
+              <div className="mr-2 font-bold">sign in</div>
+              <MdCheckCircleOutline className="mt-1" />
             </div>
           </div>
           <Notifications />
