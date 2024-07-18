@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface UserState {
+  userId: string; // Added userId
   nickname: string;
   yearOfStudy: string;
   faculty: string;
@@ -13,6 +14,7 @@ export interface UserState {
 }
 
 const initialUserState: UserState = {
+  userId: "", // Initialize with an empty string or any default value
   nickname: "",
   yearOfStudy: "",
   faculty: "",
@@ -28,6 +30,9 @@ export const userProfileSlice = createSlice({
   name: "userProfile",
   initialState: initialUserState,
   reducers: {
+    setUserId: (state, action: PayloadAction<string>) => {
+      state.userId = action.payload;
+    },
     setNickname: (state, action: PayloadAction<string>) => {
       state.nickname = action.payload;
     },
@@ -59,6 +64,7 @@ export const userProfileSlice = createSlice({
 });
 
 export const {
+  setUserId,
   setNickname,
   setYearOfStudy,
   setFaculty,

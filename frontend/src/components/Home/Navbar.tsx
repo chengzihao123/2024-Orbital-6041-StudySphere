@@ -1,19 +1,55 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "../Auth/AuthContext";
 import { useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "@/store/store";
 import { Progress, Box, Flex, Text, Tooltip } from "@chakra-ui/react";
 import { FaInfoCircle } from "react-icons/fa";
+import { setUserId, setTodayXP, setTotalXP } from "@/store/userProfileSlice";
+import { firestore } from "../../../firebase/firebase";
+import { collection, query, where, getDocs } from "firebase/firestore";
 
 const Navbar: React.FC = () => {
   const { currentUser, logout } = useAuth() || {};
   const router = useRouter();
+  const dispatch: AppDispatch = useDispatch();
   const { todayXP, totalXP } = useSelector(
     (state: RootState) => state.userInfo
   );
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (currentUser) {
+        dispatch(setUserId(currentUser.uid));
+
+        try {
+          // Fetch XP data from Firestore for the logged-in user
+          const q = query(collection(firestore, "rewards"), where("userId", "==", currentUser.uid));
+          const querySnapshot = await getDocs(q);
+          let userTotalXP = 0;
+          let userTodayXP = 0;
+
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            userTotalXP += data.totalXP;
+            const today = new Date().toISOString().split("T")[0];
+            if (data.date === today) {
+              userTodayXP += data.dailyXP;
+            }
+          });
+
+          dispatch(setTodayXP(userTodayXP));
+          dispatch(setTotalXP(userTotalXP));
+        } catch (error) {
+          console.error("Error fetching user data from Firestore: ", error);
+        }
+      }
+    };
+
+    fetchUserData();
+  }, [currentUser, dispatch]);
 
   const handleLogout = async () => {
     try {
