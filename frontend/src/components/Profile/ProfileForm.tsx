@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -11,10 +11,24 @@ import {
   Select,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
+import { firestore } from "../../../firebase/firebase";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { useAuth } from "../Auth/AuthContext";
 
-const ParticularForm: React.FC = (): JSX.Element => {
+type FormValues = {
+  nickname: string;
+  yearOfStudy: string;
+  faculty: string;
+  major: string;
+  hobby: string;
+  cca: string;
+  birthday: string;
+};
+
+const ProfileForm: React.FC = (): JSX.Element => {
   const router = useRouter();
-  const [formValues, setFormValues] = useState({
+  const { currentUser, updateProfileData } = useAuth() || {};
+  const [formValues, setFormValues] = useState<FormValues>({
     nickname: "",
     yearOfStudy: "",
     faculty: "",
@@ -26,6 +40,28 @@ const ParticularForm: React.FC = (): JSX.Element => {
 
   const toast = useToast();
 
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      if (currentUser) {
+        try {
+          const profileDoc = await getDoc(doc(firestore, "profiles", currentUser.uid));
+          if (profileDoc.exists()) {
+            setFormValues(profileDoc.data() as FormValues);
+          }
+        } catch (error) {
+          toast({
+            title: "Error loading profile data.",
+            status: "error",
+            duration: 3000,
+            isClosable: true,
+          });
+        }
+      }
+    };
+
+    fetchProfileData();
+  }, [currentUser, toast]);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -33,13 +69,58 @@ const ParticularForm: React.FC = (): JSX.Element => {
     setFormValues({ ...formValues, [name]: value });
   };
 
+  const handleProfileUpdate = async () => {
+    if (!currentUser) {
+      return;
+    }
+
+    const updatedProfileData = {
+      ...formValues,
+      userId: currentUser.uid,
+      profileCompleted: true,
+    };
+
+    console.log("Updating profile data:", updatedProfileData);
+
+    try {
+      await setDoc(doc(firestore, "profiles", currentUser.uid), updatedProfileData, { merge: true });
+
+      if (updateProfileData) {
+        await updateProfileData(updatedProfileData);
+      }
+
+      const updatedDoc = await getDoc(doc(firestore, "profiles", currentUser.uid));
+      console.log("Updated profile data from Firestore:", updatedDoc.data());
+
+      toast({
+        title: "Profile updated successfully!",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+
+      router.push("/home");
+    } catch (error: any) {
+      console.error("Error updating profile:", error);
+      toast({
+        title: "Error updating profile.",
+        description: error.message,
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Validate the form
-    if (!formValues.nickname) {
+    const requiredFields = ["nickname", "yearOfStudy", "faculty", "major", "birthday"];
+    const missingFields = requiredFields.filter((field) => !formValues[field as keyof FormValues]);
+
+    if (missingFields.length > 0) {
       toast({
-        title: "Let us know your cool nickname!",
+        title: "Please fill out all required fields.",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -47,60 +128,14 @@ const ParticularForm: React.FC = (): JSX.Element => {
       return;
     }
 
-    if (!formValues.yearOfStudy) {
-      toast({
-        title: "Which year are you currently in?",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    if (!formValues.faculty) {
-      toast({
-        title: "Faculty is required.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    if (!formValues.major) {
-      toast({
-        title: "Major is required.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    if (!formValues.birthday) {
-      toast({
-        title: "Please let us know your birthday.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-      });
-      return;
-    }
-
-    router.push("/home");
-    toast({
-      title: "Thank you for letting us know more about you!",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
+    handleProfileUpdate();
   };
 
   return (
     <Box maxWidth="500px" mx="auto" p={5} borderWidth={1} borderRadius="lg">
       <form onSubmit={handleSubmit}>
         <VStack spacing={4}>
-          <FormControl id="nickname">
+          <FormControl id="nickname" isRequired>
             <FormLabel>Nickname</FormLabel>
             <Input
               type="text"
@@ -110,7 +145,7 @@ const ParticularForm: React.FC = (): JSX.Element => {
             />
           </FormControl>
 
-          <FormControl id="yearOfStudy">
+          <FormControl id="yearOfStudy" isRequired>
             <FormLabel>Year of Study</FormLabel>
             <Select
               name="yearOfStudy"
@@ -128,7 +163,7 @@ const ParticularForm: React.FC = (): JSX.Element => {
             </Select>
           </FormControl>
 
-          <FormControl id="faculty">
+          <FormControl id="faculty" isRequired>
             <FormLabel>Faculty</FormLabel>
             <Input
               type="text"
@@ -138,7 +173,7 @@ const ParticularForm: React.FC = (): JSX.Element => {
             />
           </FormControl>
 
-          <FormControl id="major">
+          <FormControl id="major" isRequired>
             <FormLabel>Major</FormLabel>
             <Input
               type="text"
@@ -168,7 +203,7 @@ const ParticularForm: React.FC = (): JSX.Element => {
             />
           </FormControl>
 
-          <FormControl id="birthday">
+          <FormControl id="birthday" isRequired>
             <FormLabel>Birthday</FormLabel>
             <Input
               type="date"
@@ -187,4 +222,4 @@ const ParticularForm: React.FC = (): JSX.Element => {
   );
 };
 
-export default ParticularForm;
+export default ProfileForm;

@@ -1,30 +1,19 @@
+"use client";
 import { useAuth } from "@/components/Auth/AuthContext";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import HomeAvatar from "@/components/Home/HomeAvatar";
-import ProfileFields from "@/components/Profile/ProfileFields";
+import { ProfileFields } from "@/components/Profile/ProfileFields";
 import { Tooltip, Box, Progress, Flex, Text } from "@chakra-ui/react";
 import { FaEdit, FaInfoCircle } from "react-icons/fa";
 
-export default function ProfilePage() {
+export default function Profile() {
   const router = useRouter();
-  const { profile } = useAuth() || {};
+  const { profile, profileData } = useAuth() || {};
   const { todayXP, totalXP } = useSelector(
     (state: RootState) => state.userInfo
   );
-
-  // Sample user particulars
-  const particulars = {
-    name: profile?.displayName ?? "John Doe",
-    nickname: "Johnny",
-    yearOfStudy: "3",
-    faculty: "Engineering",
-    major: "Chemical engineering",
-    hobby: "Reading",
-    cca: "Basketball",
-    birthday: "22/04",
-  };
 
   const handleEditProfile = () => {
     router.push("/profile/particulars");
@@ -92,26 +81,38 @@ export default function ProfilePage() {
             User Particulars
           </h2>
           <div className="grid grid-cols-2 gap-y-2">
-            <ProfileFields fieldName="Name" fieldDetails={particulars.name} />
+            <ProfileFields
+              fieldName="Name"
+              fieldDetails={profile?.displayName ?? "N/A"}
+            />
             <ProfileFields
               fieldName="Nickname"
-              fieldDetails={particulars.nickname}
+              fieldDetails={profileData?.nickname ?? "N/A"}
             />
             <ProfileFields
               fieldName="Birth date"
-              fieldDetails={particulars.birthday}
+              fieldDetails={profileData?.birthday ?? "N/A"}
             />
             <ProfileFields
               fieldName="Years of Study"
-              fieldDetails={particulars.yearOfStudy}
+              fieldDetails={profileData?.yearOfStudy ?? "N/A"}
             />
             <ProfileFields
               fieldName="Faculty"
-              fieldDetails={particulars.faculty}
+              fieldDetails={profileData?.faculty ?? "N/A"}
             />
-            <ProfileFields fieldName="Major" fieldDetails={particulars.major} />
-            <ProfileFields fieldName="Hobby" fieldDetails={particulars.hobby} />
-            <ProfileFields fieldName="CCA" fieldDetails={particulars.cca} />
+            <ProfileFields
+              fieldName="Major"
+              fieldDetails={profileData?.major ?? "N/A"}
+            />
+            <ProfileFields
+              fieldName="Hobby"
+              fieldDetails={profileData?.hobby ?? "N/A"}
+            />
+            <ProfileFields
+              fieldName="CCA"
+              fieldDetails={profileData?.cca ?? "N/A"}
+            />
             <div />
             <div className="flex justify-end">
               <Tooltip label={"Edit Profile"}>

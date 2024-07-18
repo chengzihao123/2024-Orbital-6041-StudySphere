@@ -11,6 +11,7 @@ import {
   onSnapshot,
   updateDoc,
   doc,
+  getDoc,
 } from "firebase/firestore";
 import { firestore } from "../../../firebase/firebase";
 import { setTodos } from "@/store/todoSlice";
@@ -31,42 +32,54 @@ export default function HomePage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!currentUser) {
-      router.push("/login");
-      return;
-    }
-
-    const todosCollection = collection(firestore, "todos");
-    const q = query(todosCollection, where("userId", "==", currentUser.uid));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      if (snapshot.empty) {
-        console.log("No todos found.");
-        dispatch(setTodos([]));
-      } else {
-        const fetchedTodos = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...(doc.data() as Omit<Todo, "id">),
-        }));
-
-        const updatedTodos = fetchedTodos.map((todo) => {
-          if (
-            !todo.completed &&
-            new Date(todo.deadline) < new Date() &&
-            todo.status !== "Overdue"
-          ) {
-            const todoRef = doc(firestore, "todos", todo.id);
-            updateDoc(todoRef, { status: "Overdue" });
-            return { ...todo, status: "Overdue" };
-          }
-          return todo;
-        });
-
-        dispatch(setTodos(updatedTodos));
+    const checkProfileCompletion = async () => {
+      if (!currentUser) {
+        router.push("/login");
+        return;
       }
-      setLoading(false);
-    });
 
-    return () => unsubscribe();
+      const profileDoc = doc(firestore, "profiles", currentUser.uid);
+      const profileSnapshot = await getDoc(profileDoc);
+
+      if (profileSnapshot.exists() && !profileSnapshot.data().profileCompleted) {
+        router.push("/profile/particulars");
+        return;
+      }
+
+      const todosCollection = collection(firestore, "todos");
+      const q = query(todosCollection, where("userId", "==", currentUser.uid));
+      const unsubscribe = onSnapshot(q, async (snapshot) => {
+        if (snapshot.empty) {
+          console.log("No todos found.");
+          dispatch(setTodos([]));
+        } else {
+          const fetchedTodos = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...(doc.data() as Omit<Todo, "id">),
+          }));
+
+          const updatedTodos = fetchedTodos.map((todo) => {
+            if (
+              !todo.completed &&
+              new Date(todo.deadline) < new Date() &&
+              todo.status !== "Overdue"
+            ) {
+              const todoRef = doc(firestore, "todos", todo.id);
+              updateDoc(todoRef, { status: "Overdue" });
+              return { ...todo, status: "Overdue" };
+            }
+            return todo;
+          });
+
+          dispatch(setTodos(updatedTodos));
+        }
+        setLoading(false);
+      });
+
+      return () => unsubscribe();
+    };
+
+    checkProfileCompletion();
   }, [currentUser, router, dispatch]);
 
   return (
