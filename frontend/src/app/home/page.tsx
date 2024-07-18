@@ -22,7 +22,7 @@ import HomeCommunitySection from "@/components/Home/Section/HomeCommunitySection
 import LoadingState from "@/components/General/LoadingState";
 import Notifications from "@/components/Home/Section/Notifications";
 import { Todo } from "@/components/Todo/types";
-import { MdCheckCircleOutline } from "react-icons/md";
+import HomeSignInButton from "@/components/Home/HomeSignInButton";
 
 export default function HomePage() {
   const dispatch: AppDispatch = useDispatch();
@@ -87,16 +87,13 @@ export default function HomePage() {
                 Welcome, {profile?.displayName || "user"}!
               </div>
             </div>
-            <div className="flex items-center cursor-pointer border-2 p-2 pt-1  border-slate-400 rounded-lg hover:scale-105">
-              <div className="mr-2 font-bold">sign in</div>
-              <MdCheckCircleOutline className="mt-1" />
-            </div>
+            <HomeSignInButton />
           </div>
           <Notifications />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="grid grid-rows-3 col-span-2 space-y-4">
+            <div className="grid md:grid-rows-3 col-span-2 sm:grid-rows-4 sm:h-52 md:h-auto space-y-4">
               <HomeTodoSection style="row-span-2 col-span-3 mr-5 rounded-xl bg-slate-300 p-3" />
-              <HomeRewardSection style="row-span-1 col-span-3  bg-darkerBlue mr-5 p-3 rounded-xl" />
+              <HomeRewardSection style="row-span-1 col-span-3  bg-darkerBlue mr-5 p-3 rounded-xl sm:row-span-2" />
             </div>
             <div className="grid grid-rows-3 col-span-1 space-y-4">
               <HomeStudySection style="row-span-2 col-span-1 bg-lightBlue p-3 rounded-xl" />

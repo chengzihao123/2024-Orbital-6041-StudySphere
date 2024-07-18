@@ -1,15 +1,23 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { collection, onSnapshot, query, where, getDoc, doc } from "firebase/firestore";
+import Link from "next/link";
+import {
+  collection,
+  onSnapshot,
+  query,
+  where,
+  getDoc,
+  doc,
+} from "firebase/firestore";
 import { firestore } from "../../../firebase/firebase";
 import { useAuth } from "@/components/Auth/AuthContext";
-import Link from "next/link";
-import CreateChatroom from "./CreateChatroom";
-import JoinChatroom from "./JoinChatroom";
-import LoadingState from "../General/LoadingState";
 import { handleDeleteRoom } from "@/components/Chatroom/chatroomUtils";
 import { useRouter } from "next/navigation";
 import { useChatroom } from "@/components/Chatroom/ChatroomContext";
+import CreateChatroom from "./CreateChatroom";
+import JoinChatroom from "./JoinChatroom";
+import LoadingState from "../General/LoadingState";
+import HomeButton from "../Home/HomeButton";
 
 interface Chatroom {
   id: string;
@@ -37,7 +45,7 @@ const ChatroomList: React.FC<ChatroomListProps> = ({ isHome }) => {
         collection(firestore, "chatrooms"),
         where("members", "array-contains", currentUser.uid)
       );
-      
+
       // listen to real time updates to chatroom collection
       const unsubscribe = onSnapshot(q, async (snapshot) => {
         const rooms: Chatroom[] = snapshot.docs.map((doc) => {
@@ -48,7 +56,7 @@ const ChatroomList: React.FC<ChatroomListProps> = ({ isHome }) => {
           };
         });
 
-        const creatorIds = rooms.map(room => room.createdBy);
+        const creatorIds = rooms.map((room) => room.createdBy);
         const uniqueCreatorIds = Array.from(new Set(creatorIds));
 
         const userPromises = uniqueCreatorIds.map(async (uid) => {
@@ -59,7 +67,7 @@ const ChatroomList: React.FC<ChatroomListProps> = ({ isHome }) => {
 
         const users = await Promise.all(userPromises);
         const usernamesMap: { [key: string]: string } = {};
-        users.forEach(user => {
+        users.forEach((user) => {
           usernamesMap[user.uid] = user.displayName;
         });
 
@@ -79,7 +87,7 @@ const ChatroomList: React.FC<ChatroomListProps> = ({ isHome }) => {
   const handleDelete = async (roomId: string, room: Chatroom) => {
     await handleDeleteRoom(roomId, currentUser, room, router);
     await fetchChatrooms();
-    await updateChatroomCount(); 
+    await updateChatroomCount();
   };
 
   return (
@@ -96,7 +104,9 @@ const ChatroomList: React.FC<ChatroomListProps> = ({ isHome }) => {
                 <h1 className="text-2xl font-bold mb-4">Chatrooms</h1>
                 <div className="mb-4">
                   {isLimitReached && (
-                    <p className="text-red-500">You have reached the maximum number of chatrooms.</p>
+                    <p className="text-red-500">
+                      You have reached the maximum number of chatrooms.
+                    </p>
                   )}
                   <CreateChatroom />
                 </div>
@@ -107,11 +117,15 @@ const ChatroomList: React.FC<ChatroomListProps> = ({ isHome }) => {
                 <h2 className="text-xl font-bold mb-4">Your Chatrooms</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {chatrooms.map((room) => (
-                    <div key={room.id} className="p-4 border rounded-lg shadow-md hover:shadow-lg transition-shadow relative">
+                    <div
+                      key={room.id}
+                      className="p-4 border rounded-lg shadow-md hover:shadow-lg transition-shadow relative"
+                    >
                       <Link href={`/chatrooms/${room.id}`}>
                         <h3 className="text-lg font-bold">{room.name}</h3>
                         <p className="text-sm text-gray-600">
-                          Created by: {usernames[room.createdBy] || "Loading..."}
+                          Created by:{" "}
+                          {usernames[room.createdBy] || "Loading..."}
                         </p>
                         <p className="text-sm text-gray-600">
                           Members: {room.members.length}
@@ -147,13 +161,9 @@ const ChatroomList: React.FC<ChatroomListProps> = ({ isHome }) => {
               </li>
             ))}
           </ul>
-
-          <Link
-            href="/chatrooms"
-            className="flex justify-end font-main text-xs hover:font-bold"
-          >
-            Find out More
-          </Link>
+          <div className="absolute bottom-2 right-4">
+            <HomeButton web={"/chatrooms"} buttonText={"Find out More"} />
+          </div>
         </>
       )}
     </div>

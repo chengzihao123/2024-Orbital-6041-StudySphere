@@ -3,12 +3,17 @@ import React from "react";
 import Link from "next/link";
 import { useAuth } from "../Auth/AuthContext";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 import { Progress, Box, Flex, Text, Tooltip } from "@chakra-ui/react";
 import { FaInfoCircle } from "react-icons/fa";
 
 const Navbar: React.FC = () => {
   const { currentUser, logout } = useAuth() || {};
   const router = useRouter();
+  const { todayXP, totalXP } = useSelector(
+    (state: RootState) => state.userInfo
+  );
 
   const handleLogout = async () => {
     try {
@@ -22,7 +27,6 @@ const Navbar: React.FC = () => {
   };
 
   // Sample XP values
-  const dailyXP = 0;
   const dailyXPTarget = 40;
 
   const xpTooltipContent = (
@@ -32,7 +36,7 @@ const Navbar: React.FC = () => {
         • Sign in <span style={{ color: "green" }}>+10XP</span>
       </Text>
       <Text>
-        • Spent one hour in study mode{" "}
+        • Spent one hour in study mode or 2 cycles of Pomodoro{" "}
         <span style={{ color: "green" }}>+10XP</span>
       </Text>
       <Text>
@@ -61,7 +65,7 @@ const Navbar: React.FC = () => {
             <Box>
               <Flex alignItems="center">
                 <Progress
-                  value={(dailyXP / dailyXPTarget) * 100}
+                  value={(totalXP / dailyXPTarget) * 100}
                   hasStripe
                   isAnimated
                   width={["50px", "50px", "100px"]}
@@ -72,7 +76,7 @@ const Navbar: React.FC = () => {
                     fontFamily="Roboto"
                     className="sm:text-xs"
                     color={"white"}
-                  >{`${dailyXP}/${dailyXPTarget} daily XP earned`}</Text>
+                  >{`${totalXP}/${dailyXPTarget} daily XP earned`}</Text>
                   <Tooltip label={xpTooltipContent}>
                     <Box ml={2}>
                       <FaInfoCircle className="cursor-pointer" color="white" />

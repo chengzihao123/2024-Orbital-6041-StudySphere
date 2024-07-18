@@ -1,13 +1,18 @@
 import { useAuth } from "@/components/Auth/AuthContext";
+import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 import HomeAvatar from "@/components/Home/HomeAvatar";
 import ProfileFields from "@/components/Profile/ProfileFields";
 import { Tooltip, Box, Progress, Flex, Text } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
 import { FaEdit, FaInfoCircle } from "react-icons/fa";
 
 export default function ProfilePage() {
   const router = useRouter();
   const { profile } = useAuth() || {};
+  const { todayXP, totalXP } = useSelector(
+    (state: RootState) => state.userInfo
+  );
 
   // Sample user particulars
   const particulars = {
@@ -25,10 +30,6 @@ export default function ProfilePage() {
     router.push("/profile/particulars");
   };
 
-  const dailyXP = 0;
-  const dailyXPTarget = 40;
-  const totalXP = 0;
-
   const xpTooltipContent = (
     <Box>
       <Text>Ways to earn XP:</Text>
@@ -36,7 +37,7 @@ export default function ProfilePage() {
         • Sign in <span style={{ color: "green" }}>+10XP</span>
       </Text>
       <Text>
-        • Spent one hour in study mode{" "}
+        • Spent one hour in study mode or 2 cycles of Pomodoro{" "}
         <span style={{ color: "green" }}>+10XP</span>
       </Text>
       <Text>
@@ -65,7 +66,7 @@ export default function ProfilePage() {
           <Box className="py-4 mt-[62px] ml-10">
             <Flex alignItems="center">
               <Progress
-                value={(dailyXP / dailyXPTarget) * 100}
+                value={(todayXP / 40) * 100}
                 hasStripe
                 isAnimated
                 width="100px"
@@ -73,7 +74,7 @@ export default function ProfilePage() {
                 borderRadius="md"
               />
               <Flex alignItems="center" ml={4}>
-                <Text as="b">{`${dailyXP}/${dailyXPTarget} daily XP earned`}</Text>
+                <Text as="b">{`${todayXP}/40 daily XP earned`}</Text>
                 <Tooltip label={xpTooltipContent}>
                   <Box ml={2}>
                     <FaInfoCircle className="cursor-pointer mt-[2.5px]" />
@@ -91,7 +92,7 @@ export default function ProfilePage() {
             User Particulars
           </h2>
           <div className="grid grid-cols-2 gap-y-2">
-            <ProfileFields fieldName="name" fieldDetails={particulars.name} />
+            <ProfileFields fieldName="Name" fieldDetails={particulars.name} />
             <ProfileFields
               fieldName="Nickname"
               fieldDetails={particulars.nickname}
