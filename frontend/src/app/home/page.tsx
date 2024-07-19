@@ -24,6 +24,7 @@ import LoadingState from "@/components/General/LoadingState";
 import Notifications from "@/components/Home/Section/Notifications";
 import { Todo } from "@/components/Todo/types";
 import HomeSignInButton from "@/components/Home/HomeSignInButton";
+import VirtualSpaceSection from "@/components/Home/Section/VirtualSpaceSection";
 
 export default function HomePage() {
   const dispatch: AppDispatch = useDispatch();
@@ -41,7 +42,10 @@ export default function HomePage() {
       const profileDoc = doc(firestore, "profiles", currentUser.uid);
       const profileSnapshot = await getDoc(profileDoc);
 
-      if (profileSnapshot.exists() && !profileSnapshot.data().profileCompleted) {
+      if (
+        profileSnapshot.exists() &&
+        !profileSnapshot.data().profileCompleted
+      ) {
         router.push("/profile/particulars");
         return;
       }
@@ -102,15 +106,18 @@ export default function HomePage() {
             </div>
             <HomeSignInButton />
           </div>
-          <Notifications />
+          <div className="grid grid-cols-7">
+            <Notifications style="col-span-5 md:col-span-6" />
+            <VirtualSpaceSection />
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="grid md:grid-rows-3 col-span-2 sm:grid-rows-4 sm:h-52 md:h-auto space-y-4">
+            <div className="grid md:grid-rows-3 col-span-2 sm:grid-rows-4 sm:h-80 md:h-auto space-y-4">
               <HomeTodoSection style="row-span-2 col-span-3 mr-5 rounded-xl bg-slate-300 p-3" />
-              <HomeRewardSection style="row-span-1 col-span-3  bg-darkerBlue mr-5 p-3 rounded-xl sm:row-span-2" />
+              <HomeRewardSection style="row-span-1 col-span-3 bg-darkerBlue mr-5 p-3 rounded-xl sm:row-span-2" />
             </div>
             <div className="grid grid-rows-3 col-span-1 space-y-4">
               <HomeStudySection style="row-span-2 col-span-1 bg-lightBlue p-3 rounded-xl" />
-              <HomeCommunitySection style="col-span-1  bg-skyBlue p-3 rounded-xl" />
+              <HomeCommunitySection style="col-span-1 bg-skyBlue p-3 rounded-xl" />
             </div>
           </div>
         </div>
