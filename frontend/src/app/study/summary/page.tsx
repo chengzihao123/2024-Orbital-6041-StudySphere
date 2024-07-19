@@ -13,15 +13,16 @@ const SummaryTime = (num: number) => {
     return `${minutes} minutes ${seconds} seconds`;
   }
 };
+
 export default function SummaryPage() {
   const { studyTime, pomodoroCycleCompleted, pomodoroCycleLeft } = useSelector(
     (state: RootState) => state.timer
   );
   const summaryRendering = () => {
     if (pomodoroCycleLeft > 0) {
-      return `Congratulation! You have studied for ${pomodoroCycleCompleted} cycles`;
+      return `Congratulations! You have studied for ${pomodoroCycleCompleted} cycles`;
     } else {
-      return `Congratulation! You have studied for ${SummaryTime(studyTime)}`;
+      return `Congratulations! You have studied for ${SummaryTime(studyTime)}`;
     }
   };
 

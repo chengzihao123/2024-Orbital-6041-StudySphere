@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import { setTodayXP, setTotalXP } from "@/store/userProfileSlice";
 import { firestore } from "../../../firebase/firebase";
-import { collection, addDoc, getDocs, query, where, Timestamp } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where, updateDoc, doc, Timestamp } from "firebase/firestore";
 import { useAuth } from "../Auth/AuthContext";
 
 export default function HomeSignInButton() {
@@ -14,6 +14,7 @@ export default function HomeSignInButton() {
   const { userId, totalXP, todayXP } = userProfile;
   const dispatch: AppDispatch = useDispatch();
   const [isDisabled, setIsDisabled] = useState(false);
+  const [docRefId, setDocRefId] = useState<string | null>(null); 
 
   useEffect(() => {
     const checkLastSignIn = async () => {
@@ -25,13 +26,22 @@ export default function HomeSignInButton() {
       const today = new Date().toISOString().split("T")[0];
 
       try {
-        // Check if an entry for today already exists in Firestore
         const q = query(collection(firestore, "rewards"), where("userId", "==", currentUser.uid), where("date", "==", today));
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
           setIsDisabled(true);
+          setDocRefId(querySnapshot.docs[0].id); 
         } else {
+          const docRef = await addDoc(collection(firestore, "rewards"), {
+            userId: currentUser.uid,
+            dailyXP: 0,
+            totalXP: totalXP,
+            dailyTime: 0, 
+            date: today,
+            timestamp: Timestamp.now(),
+          });
+          setDocRefId(docRef.id); 
           setIsDisabled(false);
         }
       } catch (error) {
@@ -39,9 +49,8 @@ export default function HomeSignInButton() {
       }
     };
 
-    // Check the last sign-in when the component mounts
     checkLastSignIn();
-  }, [currentUser]);
+  }, [currentUser, totalXP]);
 
   const handleSignIn = async () => {
     if (!currentUser) {
@@ -54,20 +63,21 @@ export default function HomeSignInButton() {
     setIsDisabled(true);
 
     try {
-      // Add a new entry for today
-      await addDoc(collection(firestore, "rewards"), {
-        userId: currentUser.uid,
-        dailyXP: todayXP + 10,
-        totalXP: totalXP + 10,
-        date: today,
-        timestamp: Timestamp.now(),
-      });
+      if (docRefId) {
+        const docRef = doc(firestore, "rewards", docRefId);
+        await updateDoc(docRef, {
+          dailyXP: todayXP + 10,
+          totalXP: totalXP + 10,
+          timestamp: Timestamp.now(), 
+        });
 
-      // Update the state locally
-      dispatch(setTodayXP(todayXP + 10));
-      dispatch(setTotalXP(totalXP + 10));
+        dispatch(setTodayXP(todayXP + 10));
+        dispatch(setTotalXP(totalXP + 10));
+      } else {
+        console.error("Document reference ID is null.");
+      }
     } catch (error) {
-      console.error("Error creating XP document: ", error);
+      console.error("Error updating XP document: ", error);
     }
   };
 

@@ -11,6 +11,9 @@ import {
   setStudyTime,
   setpomodoroCycleCompleted,
 } from "@/store/timerSlice";
+import { collection, getDocs, query, updateDoc, where, doc, Timestamp } from "firebase/firestore";
+import { firestore } from "../../../firebase/firebase";
+import { useAuth } from "../Auth/AuthContext";
 
 export const FullScreenTopBar = () => {
   const [isStudyCycle, setStudyCycle] = useState(true);
@@ -23,6 +26,7 @@ export const FullScreenTopBar = () => {
     pomodoroCycleLeft,
     pomodoroCycleCompleted,
   } = useSelector((state: RootState) => state.timer);
+  const { currentUser } = useAuth();
 
   const handleFullscreenToggle = () => {
     dispatch(setIsFullscreen(!isFullscreen));
@@ -46,8 +50,25 @@ export const FullScreenTopBar = () => {
     setStudyCycle(!isStudyCycle);
   };
 
-  const handleEndStudy = () => {
+  const handleEndStudy = async () => {
     dispatch(setStudyTime(elapsedTime));
+    if (currentUser) {
+      const today = new Date().toISOString().split("T")[0];
+      try {
+        const q = query(collection(firestore, "rewards"), where("userId", "==", currentUser.uid), where("date", "==", today));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          const docRef = querySnapshot.docs[0].ref;
+          const currentDailyTime = querySnapshot.docs[0].data().dailyTime || 0;
+          await updateDoc(docRef, {
+            dailyTime: currentDailyTime + elapsedTime,
+            timestamp: Timestamp.now(),
+          });
+        }
+      } catch (error) {
+        console.error("Error updating daily time in Firestore: ", error);
+      }
+    }
     exitFullscreen();
   };
 

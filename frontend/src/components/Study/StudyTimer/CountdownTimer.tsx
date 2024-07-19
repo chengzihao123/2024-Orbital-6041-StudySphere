@@ -1,7 +1,13 @@
+"use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { setStudyTime } from "@/store/timerSlice";
 import { useTimer } from "react-timer-hook";
 import { FaPause, FaPlay } from "react-icons/fa6";
+import { collection, getDocs, query, updateDoc, where, doc, Timestamp } from "firebase/firestore";
+import { firestore } from "../../../../firebase/firebase";
+import { useAuth } from "../../Auth/AuthContext";
 
 type CountdownTimerProps = {
   initialTime: number;
@@ -15,33 +21,55 @@ export default function CountdownTimer({
   onTotalSecondsUpdate,
 }: CountdownTimerProps) {
   const router = useRouter();
+  const dispatch = useDispatch();
+  const { currentUser } = useAuth();
   const expiryTimestamp = new Date();
   expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + initialTime);
 
   const { seconds, minutes, pause, resume, restart, totalSeconds } = useTimer({
     expiryTimestamp,
     onExpire: () => {
-      onTimeUp();
-      router.push("/study/summary");
+      handleTimerEnd(initialTime);
     },
   });
 
+  const handleTimerEnd = async (elapsedTime: number) => {
+    if (currentUser) {
+      const today = new Date().toISOString().split("T")[0];
+      try {
+        const q = query(collection(firestore, "rewards"), where("userId", "==", currentUser.uid), where("date", "==", today));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          const docRef = querySnapshot.docs[0].ref;
+          const currentDailyTime = querySnapshot.docs[0].data().dailyTime || 0;
+          await updateDoc(docRef, {
+            dailyTime: currentDailyTime + elapsedTime,
+            timestamp: Timestamp.now(),
+          });
+        }
+      } catch (error) {
+        console.error("Error updating daily time in Firestore: ", error);
+      }
+    }
+
+    onTimeUp();
+    dispatch(setStudyTime(elapsedTime));
+    router.push("/study/summary");
+  };
+
   useEffect(() => {
     const newExpiryTimestamp = new Date();
-    newExpiryTimestamp.setSeconds(
-      newExpiryTimestamp.getSeconds() + initialTime
-    );
+    newExpiryTimestamp.setSeconds(newExpiryTimestamp.getSeconds() + initialTime);
     restart(newExpiryTimestamp);
   }, [initialTime, restart]);
 
   useEffect(() => {
     onTotalSecondsUpdate(totalSeconds);
-  }, [totalSeconds, onTotalSecondsUpdate]);
+    dispatch(setStudyTime(initialTime - totalSeconds));
+  }, [totalSeconds, onTotalSecondsUpdate, dispatch, initialTime]);
 
   const formatTime = (minutes: number, seconds: number) => {
-    return `${minutes > 9 ? minutes : `0${minutes}`}:${
-      seconds < 10 ? "0" : ""
-    }${seconds}`;
+    return `${minutes > 9 ? minutes : `0${minutes}`}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
   return (
