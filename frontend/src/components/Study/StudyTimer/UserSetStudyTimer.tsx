@@ -40,11 +40,9 @@ export default function UserSetStudyTimer({
 
   const handleSettingsSubmit = (settings: {
     backgroundImage: BackgroundImageType;
-    backgroundMusic: string;
   }) => {
     handleCloseSettings();
     localStorage.setItem("backgroundImage", settings.backgroundImage);
-    localStorage.setItem("backgroundMusic", settings.backgroundMusic);
   };
 
   const handleMinutesChange = (e: React.ChangeEvent<HTMLInputElement>) => {

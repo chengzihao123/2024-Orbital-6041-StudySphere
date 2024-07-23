@@ -17,7 +17,6 @@ export interface TimerState {
   studyTime: number;
   backgroundSettings: {
     backgroundImage: BackgroundImageType;
-    backgroundMusic: string;
   };
   showAdditionalSetting: boolean;
 }
@@ -30,7 +29,6 @@ const initialTimerState: TimerState = {
   countdownSeconds: 0,
   backgroundSettings: {
     backgroundImage: "",
-    backgroundMusic: "",
   },
   showAdditionalSetting: false,
   studyTime: 0,
@@ -61,9 +59,6 @@ export const timerSlice = createSlice({
     setBackgroundImage(state, action: PayloadAction<BackgroundImageType>) {
       state.backgroundSettings.backgroundImage = action.payload;
     },
-    setBackgroundMusic(state, action: PayloadAction<string>) {
-      state.backgroundSettings.backgroundMusic = action.payload;
-    },
     setShowAdditionalSetting(state, action: PayloadAction<boolean>) {
       state.showAdditionalSetting = action.payload;
     },
@@ -79,7 +74,6 @@ export const {
   setCountdownSeconds,
   setBackgroundImage,
   setShowAdditionalSetting,
-  setBackgroundMusic,
   setStudyTime,
 } = timerSlice.actions;
 
