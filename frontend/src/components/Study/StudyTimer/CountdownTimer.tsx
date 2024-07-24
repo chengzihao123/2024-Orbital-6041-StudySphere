@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { setStudyTime } from "@/store/timerSlice";
 import { useTimer } from "react-timer-hook";
-import { FaPause, FaPlay } from "react-icons/fa6";
-import { collection, getDocs, query, updateDoc, where, doc, Timestamp } from "firebase/firestore";
+import { FaPause, FaPlay, FaStop } from "react-icons/fa6"; // Added FaStop for stopping the timer prematurely
+import { collection, getDocs, query, updateDoc, where, Timestamp } from "firebase/firestore";
 import { firestore } from "../../../../firebase/firebase";
 import { useAuth } from "../../Auth/AuthContext";
 
@@ -57,6 +57,11 @@ export default function CountdownTimer({
     router.push("/study/summary");
   };
 
+  const handlePrematureEnd = () => {
+    pause();
+    handleTimerEnd(initialTime - totalSeconds);
+  };
+
   useEffect(() => {
     const newExpiryTimestamp = new Date();
     newExpiryTimestamp.setSeconds(newExpiryTimestamp.getSeconds() + initialTime);
@@ -81,6 +86,7 @@ export default function CountdownTimer({
       <div className="flex flex-row justify-between w-3/4 mt-1">
         <FaPause onClick={pause} className="cursor-pointer" />
         <FaPlay onClick={resume} className="cursor-pointer" />
+        <FaStop onClick={handlePrematureEnd} className="cursor-pointer" /> {/* Added stop button */}
       </div>
     </div>
   );

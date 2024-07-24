@@ -1,56 +1,104 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { MdCheckCircleOutline } from "react-icons/md";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import { setTodayXP, setTotalXP } from "@/store/userProfileSlice";
 import { firestore } from "../../../firebase/firebase";
-import { collection, addDoc, getDocs, query, where, updateDoc, doc, Timestamp } from "firebase/firestore";
+import { collection, addDoc, getDocs, query, where, updateDoc, doc, getDoc, Timestamp } from "firebase/firestore";
 import { useAuth } from "../Auth/AuthContext";
 
 export default function HomeSignInButton() {
   const { currentUser } = useAuth();
   const userProfile = useSelector((state: RootState) => state.userInfo);
-  const { userId, totalXP, todayXP } = userProfile;
+  const { totalXP, todayXP } = userProfile;
   const dispatch: AppDispatch = useDispatch();
   const [isDisabled, setIsDisabled] = useState(false);
-  const [docRefId, setDocRefId] = useState<string | null>(null); 
+  const [docRefId, setDocRefId] = useState<string | null>(null);
+  const initialLoad = useRef(true); // To ensure the function runs only once
+
+  const getTodayDate = () => {
+    const today = new Date();
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      timeZone: 'Asia/Singapore'
+    };
+    const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(today).split('/').reverse().join('-');
+    return formattedDate;
+  };
+
+  const today = getTodayDate();
+  console.log('Formatted Today\'s Date:', today);
+
+  const checkLastSignIn = async () => {
+    if (!currentUser) {
+      console.error("User is not authenticated.");
+      return;
+    }
+
+    try {
+      const q = query(
+        collection(firestore, "rewards"),
+        where("userId", "==", currentUser.uid),
+        where("date", "==", today)
+      );
+      const querySnapshot = await getDocs(q);
+      console.log('Query snapshot size:', querySnapshot.size);
+
+      if (!querySnapshot.empty) {
+        const docData = querySnapshot.docs[0].data();
+        setDocRefId(querySnapshot.docs[0].id);
+        setIsDisabled(docData.clickedSignIn);
+        console.log('Existing document for today found:', docData);
+        dispatch(setTodayXP(docData.dailyXP));
+        dispatch(setTotalXP(docData.totalXP));
+      } else {
+        console.log('No document found for today.');
+        const docRef = await addDoc(collection(firestore, "rewards"), {
+          userId: currentUser.uid,
+          dailyXP: 0,
+          totalXP: totalXP,
+          dailyTime: 0,
+          date: today,
+          clickedSignIn: false,
+          timestamp: new Date().toLocaleString('en-US', { timeZone: 'Asia/Singapore' })
+        });
+        setDocRefId(docRef.id);
+        setIsDisabled(false);
+        dispatch(setTodayXP(0));
+        dispatch(setTotalXP(totalXP));
+        console.log('New document created:', docRef.id);
+      }
+    } catch (error) {
+      console.error("Error checking last sign-in date from Firestore:", error);
+    }
+  };
 
   useEffect(() => {
-    const checkLastSignIn = async () => {
-      if (!currentUser) {
-        console.error("User is not authenticated.");
-        return;
-      }
+    if (initialLoad.current) {
+      checkLastSignIn();
+      initialLoad.current = false;
+    }
+  }, [currentUser, totalXP, today, dispatch]);
 
-      const today = new Date().toISOString().split("T")[0];
+  useEffect(() => {
+    const resetSignInStatus = () => {
+      const lastSignInDate = localStorage.getItem("lastSignInDate");
 
-      try {
-        const q = query(collection(firestore, "rewards"), where("userId", "==", currentUser.uid), where("date", "==", today));
-        const querySnapshot = await getDocs(q);
-
-        if (!querySnapshot.empty) {
-          setIsDisabled(true);
-          setDocRefId(querySnapshot.docs[0].id); 
-        } else {
-          const docRef = await addDoc(collection(firestore, "rewards"), {
-            userId: currentUser.uid,
-            dailyXP: 0,
-            totalXP: totalXP,
-            dailyTime: 0, 
-            date: today,
-            timestamp: Timestamp.now(),
-          });
-          setDocRefId(docRef.id); 
-          setIsDisabled(false);
-        }
-      } catch (error) {
-        console.error("Error checking last sign-in date from Firestore: ", error);
+      if (lastSignInDate !== today) {
+        setIsDisabled(false);
+        setDocRefId(null);
+        localStorage.setItem("lastSignInDate", today);
       }
     };
 
-    checkLastSignIn();
-  }, [currentUser, totalXP]);
+    resetSignInStatus();
+    const intervalId = setInterval(resetSignInStatus, 1000 * 60 * 60); // Check every hour
+
+    return () => clearInterval(intervalId);
+  }, [today]);
 
   const handleSignIn = async () => {
     if (!currentUser) {
@@ -58,26 +106,37 @@ export default function HomeSignInButton() {
       return;
     }
 
-    const now = new Date();
-    const today = now.toISOString().split("T")[0];
+    if (isDisabled) {
+      return;
+    }
+
     setIsDisabled(true);
 
     try {
       if (docRefId) {
         const docRef = doc(firestore, "rewards", docRefId);
-        await updateDoc(docRef, {
-          dailyXP: todayXP + 10,
-          totalXP: totalXP + 10,
-          timestamp: Timestamp.now(), 
-        });
+        const docSnap = await getDoc(docRef);
 
-        dispatch(setTodayXP(todayXP + 10));
-        dispatch(setTotalXP(totalXP + 10));
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          await updateDoc(docRef, {
+            dailyXP: data.dailyXP + 10,
+            totalXP: data.totalXP + 10,
+            clickedSignIn: true,
+            timestamp: new Date().toLocaleString('en-US', { timeZone: 'Asia/Singapore' })
+          });
+
+          dispatch(setTodayXP(data.dailyXP + 10));
+          dispatch(setTotalXP(data.totalXP + 10));
+          console.log('Document updated successfully:', data);
+        } else {
+          console.error("Document does not exist.");
+        }
       } else {
         console.error("Document reference ID is null.");
       }
     } catch (error) {
-      console.error("Error updating XP document: ", error);
+      console.error("Error updating XP document:", error);
     }
   };
 

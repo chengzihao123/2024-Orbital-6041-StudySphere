@@ -5,6 +5,9 @@ import { AppDispatch, RootState } from "@/store/store";
 import { setpomodoroCycleLeft } from "@/store/timerSlice";
 import { useTimer } from "react-timer-hook";
 import { FaPause, FaPlay } from "react-icons/fa6";
+import { collection, getDocs, query, updateDoc, where, Timestamp } from "firebase/firestore";
+import { firestore } from "../../../../firebase/firebase";
+import { useAuth } from "../../Auth/AuthContext";
 
 type PomodoroPatternTimerProps = {
   onTimeUp: () => void;
@@ -23,6 +26,7 @@ export default function PomodoroPatternTimer({
   const [isPaused, setIsPaused] = useState(false);
   const dispatch: AppDispatch = useDispatch();
   const { pomodoroCycleLeft } = useSelector((state: RootState) => state.timer);
+  const { currentUser } = useAuth();
 
   const studyTimer = new Date();
   studyTimer.setSeconds(studyTimer.getSeconds() + 1500);
@@ -31,13 +35,31 @@ export default function PomodoroPatternTimer({
     expiryTimestamp: studyTimer,
     onExpire: async () => {
       if (isStudyCycle) {
-        const restTimer = await new Date();
+        // Study cycle completed
+        const today = new Date().toISOString().split("T")[0];
+        try {
+          const q = query(collection(firestore, "rewards"), where("userId", "==", currentUser?.uid), where("date", "==", today));
+          const querySnapshot = await getDocs(q);
+          if (!querySnapshot.empty) {
+            const docRef = querySnapshot.docs[0].ref;
+            const currentDailyCycle = querySnapshot.docs[0].data().dailyCycle || 0;
+            await updateDoc(docRef, {
+              dailyCycle: currentDailyCycle + 1,
+              timestamp: Timestamp.now(),
+            });
+          }
+        } catch (error) {
+          console.error("Error updating daily cycle in Firestore: ", error);
+        }
+
+        const restTimer = new Date();
         restTimer.setSeconds(restTimer.getSeconds() + 300);
         setStudyCycle(false);
         restart(restTimer);
-        resume;
+        resume();
         router.push("/study/background/break");
       } else {
+        // Break cycle completed
         onCycleComplete();
         if (pomodoroCycleLeft == 1) {
           onTimeUp();
@@ -45,10 +67,10 @@ export default function PomodoroPatternTimer({
         } else {
           dispatch(setpomodoroCycleLeft(pomodoroCycleLeft - 1));
           setStudyCycle(true);
-          const restTimer = await new Date();
-          restTimer.setSeconds(restTimer.getSeconds() + 1500);
-          restart(restTimer);
-          resume;
+          const studyTimer = new Date();
+          studyTimer.setSeconds(studyTimer.getSeconds() + 1500);
+          restart(studyTimer);
+          resume();
           router.push("/study/background");
         }
       }
