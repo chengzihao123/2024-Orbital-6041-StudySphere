@@ -1,3 +1,5 @@
 {
-  "dependencies": {}
+  "dependencies": {
+    "react-medium-image-zoom": "^5.2.8"
+  }
 }

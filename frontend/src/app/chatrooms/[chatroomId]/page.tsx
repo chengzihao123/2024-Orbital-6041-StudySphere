@@ -28,6 +28,7 @@ import {
 interface Message {
   id: string;
   text: string;
+  imageUrl?: string;
   userId: string;
   createdAt: any;
   displayName: string;
@@ -85,6 +86,7 @@ const ChatroomPage: React.FC = () => {
           return {
             id: doc.id,
             text: data.text,
+            imageUrl: data.imageUrl,
             userId: data.userId,
             createdAt: data.createdAt,
             displayName: data.displayName,
@@ -103,10 +105,11 @@ const ChatroomPage: React.FC = () => {
     };
   }, [chatroomId, currentUser, router]);
 
-  const handleSendMessage = async (message: string) => {
+  const handleSendMessage = async (message: string, imageUrl?: string) => {
     if (currentUser) {
       await addDoc(collection(firestore, `chatrooms/${chatroomId}/messages`), {
         text: message,
+        imageUrl: imageUrl || '',
         userId: currentUser.uid,
         displayName: currentUser.displayName,
         createdAt: serverTimestamp(),
