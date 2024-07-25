@@ -151,7 +151,7 @@ const Navbar: React.FC = () => {
                 Study
               </button>
               <button
-                onClick={() => router.push("/community")}
+                onClick={() => router.push("/chatrooms")}
                 className="text-gray-300 hover:text-white"
               >
                 Community
