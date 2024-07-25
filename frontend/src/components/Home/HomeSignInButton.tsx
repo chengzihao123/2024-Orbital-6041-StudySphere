@@ -15,7 +15,7 @@ export default function HomeSignInButton() {
   const dispatch: AppDispatch = useDispatch();
   const [isDisabled, setIsDisabled] = useState(false);
   const [docRefId, setDocRefId] = useState<string | null>(null);
-  const initialLoad = useRef(true); // To ensure the function runs only once
+  const initialLoad = useRef(true); 
 
   const getTodayDate = () => {
     const today = new Date();
@@ -61,8 +61,10 @@ export default function HomeSignInButton() {
           dailyXP: 0,
           totalXP: totalXP,
           dailyTime: 0,
+          dailyCycle:0,
           date: today,
           clickedSignIn: false,
+          hasAnsweredQuestion: false,
           timestamp: new Date().toLocaleString('en-US', { timeZone: 'Asia/Singapore' })
         });
         setDocRefId(docRef.id);

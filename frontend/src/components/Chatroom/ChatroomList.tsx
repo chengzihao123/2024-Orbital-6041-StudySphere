@@ -38,7 +38,6 @@ const ChatroomList: React.FC<ChatroomListProps> = ({ isHome }) => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  // get chatrooms that user is in
   const fetchChatrooms = async () => {
     if (currentUser) {
       const q = query(
@@ -46,7 +45,6 @@ const ChatroomList: React.FC<ChatroomListProps> = ({ isHome }) => {
         where("members", "array-contains", currentUser.uid)
       );
 
-      // listen to real time updates to chatroom collection
       const unsubscribe = onSnapshot(q, async (snapshot) => {
         const rooms: Chatroom[] = snapshot.docs.map((doc) => {
           const data = doc.data() as Omit<Chatroom, "id">;
@@ -60,15 +58,15 @@ const ChatroomList: React.FC<ChatroomListProps> = ({ isHome }) => {
         const uniqueCreatorIds = Array.from(new Set(creatorIds));
 
         const userPromises = uniqueCreatorIds.map(async (uid) => {
-          const userDoc = await getDoc(doc(firestore, "users", uid));
+          const userDoc = await getDoc(doc(firestore, "profiles", uid));
           const userData = userDoc.data();
-          return { uid, displayName: userData?.displayName || "Unknown" };
+          return { uid, nickname: userData?.nickname || "Unknown" };
         });
 
         const users = await Promise.all(userPromises);
         const usernamesMap: { [key: string]: string } = {};
         users.forEach((user) => {
-          usernamesMap[user.uid] = user.displayName;
+          usernamesMap[user.uid] = user.nickname;
         });
 
         setUsernames(usernamesMap);

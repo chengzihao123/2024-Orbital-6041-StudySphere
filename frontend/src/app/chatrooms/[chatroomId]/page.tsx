@@ -9,6 +9,7 @@ import {
   query,
   addDoc,
   serverTimestamp,
+  where,
 } from "firebase/firestore";
 import { firestore } from "../../../../firebase/firebase";
 import { useAuth } from "@/components/Auth/AuthContext";
@@ -34,12 +35,21 @@ interface Message {
   displayName: string;
 }
 
+interface Question {
+  id: string;
+  question: string;
+  topic: string;
+  userId: string;
+  createdAt: any;
+}
+
 const ChatroomPage: React.FC = () => {
   const router = useRouter();
   const params = useParams();
   const chatroomId = params.chatroomId as string;
   const { currentUser } = useAuth() || {};
   const [messages, setMessages] = useState<Message[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [chatroom, setChatroom] = useState<any>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
@@ -63,7 +73,6 @@ const ChatroomPage: React.FC = () => {
         const chatroomData = docSnapshot.data();
         setChatroom(chatroomData);
 
-        // Redirect if the user is no longer a member
         if (!chatroomData.members.includes(currentUser.uid)) {
           router.push("/chatrooms");
         }
@@ -99,9 +108,33 @@ const ChatroomPage: React.FC = () => {
       }
     );
 
+    const questionsRef = collection(firestore, "quests");
+    const qQuest = query(questionsRef, where("chatroomId", "==", chatroomId));
+
+    const unsubscribeQuestions = onSnapshot(
+      qQuest,
+      (snapshot) => {
+        const qsts: Question[] = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            question: data.question,
+            topic: data.topic,
+            userId: data.userId,
+            createdAt: data.createdAt,
+          };
+        });
+        setQuestions(qsts);
+      },
+      (error) => {
+        console.error("Error fetching questions:", error);
+      }
+    );
+
     return () => {
       unsubscribeChatroom();
       unsubscribeMessages();
+      unsubscribeQuestions();
     };
   }, [chatroomId, currentUser, router]);
 
@@ -113,6 +146,30 @@ const ChatroomPage: React.FC = () => {
         userId: currentUser.uid,
         displayName: currentUser.displayName,
         createdAt: serverTimestamp(),
+      });
+    }
+  };
+
+  const handlePostQuestion = async (question: string, topic: string) => {
+    if (currentUser) {
+      await addDoc(collection(firestore, `quests`), {
+        question,
+        topic,
+        userId: currentUser.uid,
+        createdAt: serverTimestamp(),
+        chatroomId,
+      });
+    }
+  };
+
+  const handlePostAnswer = async (answer: string, questionId: string) => {
+    if (currentUser) {
+      const answersRef = collection(firestore, "quests", questionId, "answers");
+      await addDoc(answersRef, {
+        answer,
+        userId: currentUser.uid,
+        createdAt: serverTimestamp(),
+        upvotes: 0,
       });
     }
   };
@@ -130,8 +187,8 @@ const ChatroomPage: React.FC = () => {
       <div className="mt-4">
         {activeTab === 0 ? (
           <>
-            <ChatMessages messages={messages} currentUser={currentUser} />
-            <MessageInput onSendMessage={handleSendMessage} />
+            <ChatMessages messages={messages} questions={questions} currentUser={currentUser} onAnswerSubmit={handlePostAnswer} />
+            <MessageInput onSendMessage={handleSendMessage} onPostQuestion={handlePostQuestion} />
           </>
         ) : (
           <ChatroomMembers chatroomId={chatroomId} />
