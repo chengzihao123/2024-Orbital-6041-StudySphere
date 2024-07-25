@@ -1,8 +1,8 @@
 "use client";
-import VSSstudySection from "./VSSstudySection";
-import VSStodoSection from "./VSStodoSection";
-import VSSCommunitySection from "./VSSCommunitySection";
-import VSSRewardSection from "./VSSRewardSection";
+import VSSstudySection from "./sections/VSSstudySection";
+import VSStodoSection from "./sections/VSStodoSection";
+import VSSCommunitySection from "./sections/VSSCommunitySection";
+import VSSRewardSection from "./sections/VSSRewardSection";
 
 export default function VSSMainPage() {
   return (

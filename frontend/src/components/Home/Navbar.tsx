@@ -138,18 +138,24 @@ const Navbar: React.FC = () => {
         <div className="space-x-4">
           {currentUser ? (
             <>
-              <Link href="/todos" className="text-gray-300 hover:text-white">
+              <button
+                onClick={() => router.push("/todos")}
+                className="text-gray-300 hover:text-white"
+              >
                 Todos
-              </Link>
-              <Link href="/study" className="text-gray-300 hover:text-white">
+              </button>
+              <button
+                onClick={() => router.push("/study")}
+                className="text-gray-300 hover:text-white"
+              >
                 Study
-              </Link>
-              <Link
-                href="/chatrooms"
+              </button>
+              <button
+                onClick={() => router.push("/community")}
                 className="text-gray-300 hover:text-white"
               >
                 Community
-              </Link>
+              </button>
               <button
                 onClick={handleLogout}
                 className="text-gray-300 hover:text-white"

@@ -5,7 +5,14 @@ import { useDispatch } from "react-redux";
 import { setStudyTime } from "@/store/timerSlice";
 import { useTimer } from "react-timer-hook";
 import { FaPause, FaPlay, FaStop } from "react-icons/fa6"; // Added FaStop for stopping the timer prematurely
-import { collection, getDocs, query, updateDoc, where, Timestamp } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+  Timestamp,
+} from "firebase/firestore";
 import { firestore } from "../../../../firebase/firebase";
 import { useAuth } from "../../Auth/AuthContext";
 
@@ -37,7 +44,11 @@ export default function CountdownTimer({
     if (currentUser) {
       const today = new Date().toISOString().split("T")[0];
       try {
-        const q = query(collection(firestore, "rewards"), where("userId", "==", currentUser.uid), where("date", "==", today));
+        const q = query(
+          collection(firestore, "rewards"),
+          where("userId", "==", currentUser.uid),
+          where("date", "==", today)
+        );
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
           const docRef = querySnapshot.docs[0].ref;
@@ -64,7 +75,9 @@ export default function CountdownTimer({
 
   useEffect(() => {
     const newExpiryTimestamp = new Date();
-    newExpiryTimestamp.setSeconds(newExpiryTimestamp.getSeconds() + initialTime);
+    newExpiryTimestamp.setSeconds(
+      newExpiryTimestamp.getSeconds() + initialTime
+    );
     restart(newExpiryTimestamp);
   }, [initialTime, restart]);
 
@@ -74,7 +87,9 @@ export default function CountdownTimer({
   }, [totalSeconds, onTotalSecondsUpdate, dispatch, initialTime]);
 
   const formatTime = (minutes: number, seconds: number) => {
-    return `${minutes > 9 ? minutes : `0${minutes}`}:${seconds < 10 ? "0" : ""}${seconds}`;
+    return `${minutes > 9 ? minutes : `0${minutes}`}:${
+      seconds < 10 ? "0" : ""
+    }${seconds}`;
   };
 
   return (
@@ -86,7 +101,8 @@ export default function CountdownTimer({
       <div className="flex flex-row justify-between w-3/4 mt-1">
         <FaPause onClick={pause} className="cursor-pointer" />
         <FaPlay onClick={resume} className="cursor-pointer" />
-        <FaStop onClick={handlePrematureEnd} className="cursor-pointer" /> {/* Added stop button */}
+        <FaStop onClick={handlePrematureEnd} className="cursor-pointer" />{" "}
+        {/* Added stop button */}
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
-import TodoItem from "../Todo/TodoItem";
+import TodoItem from "../../Todo/TodoItem";
 
 export default function VSStodoSection() {
   const { todos } = useSelector((state: RootState) => state.todo);

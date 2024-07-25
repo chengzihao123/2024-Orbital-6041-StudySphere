@@ -1,4 +1,4 @@
-import HomeStudyChart from "../HomeStudyChart";
+import HomeStudyChart from "./misc/HomeStudyChart";
 import HomeButton from "../HomeButton";
 
 export default function HomeStudySection({ style }: { style: string }) {

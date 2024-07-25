@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
-import CountdownTimer from "./StudyTimer/CountdownTimer";
-import PomodoroPatternTimer from "./StudyPatterns/PomodoroPatternTimer";
+import CountdownTimer from "./StudyTimer/CustomTimer";
+import PomodoroPatternTimer from "./StudyTimer/PomodoroPatternTimer";
 import { Tabs, TabList, Tab, TabIndicator, Box } from "@chakra-ui/react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
@@ -11,7 +11,15 @@ import {
   setStudyTime,
   setpomodoroCycleCompleted,
 } from "@/store/timerSlice";
-import { collection, getDocs, query, updateDoc, where, doc, Timestamp } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+  doc,
+  Timestamp,
+} from "firebase/firestore";
 import { firestore } from "../../../firebase/firebase";
 import { useAuth } from "../Auth/AuthContext";
 
@@ -55,7 +63,11 @@ export const FullScreenTopBar = () => {
     if (currentUser) {
       const today = new Date().toISOString().split("T")[0];
       try {
-        const q = query(collection(firestore, "rewards"), where("userId", "==", currentUser.uid), where("date", "==", today));
+        const q = query(
+          collection(firestore, "rewards"),
+          where("userId", "==", currentUser.uid),
+          where("date", "==", today)
+        );
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
           const docRef = querySnapshot.docs[0].ref;

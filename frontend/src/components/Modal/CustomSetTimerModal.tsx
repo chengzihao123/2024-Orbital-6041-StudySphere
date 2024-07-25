@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import { setShowAdditionalSetting } from "@/store/timerSlice";
-import AdditionalSettingsModal from "../../Modal/AdditionalSetting";
+import AdditionalSettingsModal from "./AdditionalSetting";
 import { BackgroundImageType } from "@/store/timerSlice";
 
 type UserSetStudyTimerProps = {
@@ -132,7 +132,7 @@ export default function UserSetStudyTimer({
               type="submit"
               className="p-2 bg-green-500 text-white rounded hover:scale-105"
             >
-              Confirm
+              Submit
             </button>
             <button
               type="button"

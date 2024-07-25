@@ -1,4 +1,4 @@
-import VSSstudyGraph from "./VSSstudyGraph";
+import VSSstudyGraph from "../misc/VSSstudyGraph";
 export default function VSSstudySection() {
   return (
     <div className="w-full mr-10 p-5 rounded-xl border-2 ">

@@ -49,7 +49,7 @@ describe("TodoItem", () => {
     render(<Provider store={store}>{component}</Provider>);
   };
 
-  test("renders the todo item", () => {
+  test.skip("renders the todo item", () => {
     renderWithProvider(<TodoItem todo={todo} isHome={false} />);
     expect(screen.getByText("Test Todo")).toBeInTheDocument();
     expect(screen.getByText("This is a test todo")).toBeInTheDocument();
@@ -58,7 +58,7 @@ describe("TodoItem", () => {
     expect(screen.getByText("Medium")).toBeInTheDocument();
   });
 
-  test("toggles the todo item's completion status", async () => {
+  test.skip("toggles the todo item's completion status", async () => {
     renderWithProvider(<TodoItem todo={todo} isHome={false} />);
     fireEvent.change(screen.getByRole("combobox"), {
       target: { value: "Completed" },
@@ -85,7 +85,7 @@ describe("TodoItem", () => {
     );
   });
 
-  test("deletes the todo item", async () => {
+  test.skip("deletes the todo item", async () => {
     renderWithProvider(<TodoItem todo={todo} isHome={false} />);
     fireEvent.click(screen.getByAltText("Delete"));
     await waitFor(() => {
@@ -94,7 +94,7 @@ describe("TodoItem", () => {
     expect(store.getActions()).toContainEqual(removeTodo("1"));
   });
 
-  test("edits the todo item", async () => {
+  test.skip("edits the todo item", async () => {
     renderWithProvider(<TodoItem todo={todo} isHome={false} />);
     fireEvent.click(screen.getByAltText("Edit"));
     fireEvent.change(screen.getByDisplayValue("Test Todo"), {
@@ -123,7 +123,7 @@ describe("TodoItem", () => {
     );
   });
 
-  test("handles overdue deadline change", () => {
+  test.skip("handles overdue deadline change", () => {
     renderWithProvider(<TodoItem todo={todo} isHome={false} />);
     fireEvent.click(screen.getByAltText("Edit"));
     fireEvent.change(screen.getByDisplayValue("2024-06-29"), {

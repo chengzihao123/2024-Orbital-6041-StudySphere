@@ -8,7 +8,7 @@ import {
   setCountdownSeconds,
   setpomodoroCycleLeft,
 } from "@/store/timerSlice";
-import UserSetStudyTimer from "./StudyTimer/UserSetStudyTimer";
+import CustomSetTimerModal from "../Modal/CustomSetTimerModal";
 import ProtectedRoute from "../ProtectedRoute";
 import TimeZeroAlert from "../Modal/TimeZeroAlert";
 import StudyLandingPage from "./StudyLandingPage";
@@ -133,7 +133,7 @@ export default function Study() {
           <StudyLandingPage userSetTime={userSetTime} />
         )}
         {hasSelectedPattern && !isCustomPattern && (
-          <UserSetStudyTimer
+          <CustomSetTimerModal
             submitHandler={handleSubmitForm}
             closeHandler={handleCloseForm}
             backgroundImages={backgroundImages}
