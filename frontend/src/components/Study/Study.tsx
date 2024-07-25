@@ -143,6 +143,7 @@ export default function Study() {
           <PomodoroModal
             onConfirm={handlePomodoroConfirm}
             onClose={handleCloseForm}
+            backgroundImages={backgroundImages}
           />
         )}
         {showAlert && (

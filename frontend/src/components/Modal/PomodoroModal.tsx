@@ -1,14 +1,38 @@
 import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, AppDispatch } from "../../store/store";
+import { setShowAdditionalSetting } from "../../store/timerSlice";
+import AdditionalSettingsModal from "./AdditionalSetting";
+import { BackgroundImageType } from "@/store/timerSlice";
 
 type PomodoroModalProps = {
   onConfirm: (cycles: number) => void;
   onClose: () => void;
+  backgroundImages: string[];
 };
 
 export default function PomodoroModal({
   onConfirm,
   onClose,
+  backgroundImages,
 }: PomodoroModalProps) {
+  const dispatch: AppDispatch = useDispatch();
+  const { showAdditionalSetting } = useSelector(
+    (state: RootState) => state.timer
+  );
+  const handleCloseSettings = () => {
+    dispatch(setShowAdditionalSetting(false));
+  };
+  const handleMoreSettings = () => {
+    dispatch(setShowAdditionalSetting(true));
+  };
+
+  const handleSettingsSubmit = (settings: {
+    backgroundImage: BackgroundImageType;
+  }) => {
+    handleCloseSettings();
+    localStorage.setItem("backgroundImage", settings.backgroundImage);
+  };
   const [cycles, setCycles] = useState(1);
 
   useEffect(() => {
@@ -48,6 +72,22 @@ export default function PomodoroModal({
             </option>
           ))}
         </select>
+        <div className="px-1 ">
+          <h1
+            className="hover:cursor-pointer hover:text-blue-500"
+            onClick={handleMoreSettings}
+          >
+            More settings
+          </h1>
+        </div>
+        {showAdditionalSetting && (
+          <AdditionalSettingsModal
+            onClose={handleCloseSettings}
+            onSettingsSubmit={handleSettingsSubmit}
+            backgroundImages={backgroundImages}
+          />
+        )}
+
         <div className="flex justify-between mt-5">
           <button
             onClick={handleConfirm}
