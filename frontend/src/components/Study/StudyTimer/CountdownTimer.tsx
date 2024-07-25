@@ -1,13 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useDispatch } from "react-redux";
-import { setStudyTime } from "@/store/timerSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { setStudyTime, setTodayXP, setTotalXP, setHasAwardedDailyTimeXP } from "@/store/timerSlice";
 import { useTimer } from "react-timer-hook";
-import { FaPause, FaPlay, FaStop } from "react-icons/fa6"; // Added FaStop for stopping the timer prematurely
-import { collection, getDocs, query, updateDoc, where, Timestamp } from "firebase/firestore";
+import { FaPause, FaPlay, FaStop } from "react-icons/fa6"; 
+import { collection, getDocs, query, updateDoc, where, Timestamp, addDoc } from "firebase/firestore";
 import { firestore } from "../../../../firebase/firebase";
 import { useAuth } from "../../Auth/AuthContext";
+import { RootState } from "@/store/store"; 
 
 type CountdownTimerProps = {
   initialTime: number;
@@ -23,6 +24,7 @@ export default function CountdownTimer({
   const router = useRouter();
   const dispatch = useDispatch();
   const { currentUser } = useAuth();
+  const { hasAwardedDailyTimeXP } = useSelector((state: RootState) => state.timer); // Access state
   const expiryTimestamp = new Date();
   expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + initialTime);
 
@@ -33,17 +35,54 @@ export default function CountdownTimer({
     },
   });
 
+  const getTodayDate = () => {
+    const today = new Date();
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      timeZone: 'Asia/Singapore'
+    };
+    const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(today).split('/').reverse().join('-');
+    return formattedDate;
+  };
+
   const handleTimerEnd = async (elapsedTime: number) => {
     if (currentUser) {
-      const today = new Date().toISOString().split("T")[0];
+      const today = getTodayDate();
       try {
         const q = query(collection(firestore, "rewards"), where("userId", "==", currentUser.uid), where("date", "==", today));
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
           const docRef = querySnapshot.docs[0].ref;
-          const currentDailyTime = querySnapshot.docs[0].data().dailyTime || 0;
-          await updateDoc(docRef, {
-            dailyTime: currentDailyTime + elapsedTime,
+          const data = querySnapshot.docs[0].data();
+          const currentDailyTime = data.dailyTime || 0;
+          const totalDailyTime = currentDailyTime + elapsedTime;
+
+          const updates: any = {
+            dailyTime: totalDailyTime,
+            timestamp: Timestamp.now(),
+          };
+
+          if (totalDailyTime >= 3600 && !hasAwardedDailyTimeXP) {
+            updates.dailyXP = (data.dailyXP || 0) + 10;
+            updates.totalXP = (data.totalXP || 0) + 10;
+            dispatch(setTodayXP((data.dailyXP || 0) + 10));
+            dispatch(setTotalXP((data.totalXP || 0) + 10));
+            dispatch(setHasAwardedDailyTimeXP(true)); 
+          }
+
+          await updateDoc(docRef, updates);
+        } else {
+          await addDoc(collection(firestore, "rewards"), {
+            userId: currentUser.uid,
+            dailyXP: 0,
+            totalXP: 0,
+            dailyTime: elapsedTime,
+            date: today,
+            dailyCycle: 0,
+            hasAwardedDailyTimeXP: false,
+            hasAwardedCycleXP: false,
             timestamp: Timestamp.now(),
           });
         }
