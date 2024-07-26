@@ -28,6 +28,7 @@ import {
 
 interface Message {
   id: string;
+  type: "message";
   text: string;
   imageUrl?: string;
   userId: string;
@@ -37,6 +38,7 @@ interface Message {
 
 interface Question {
   id: string;
+  type: "question";
   question: string;
   topic: string;
   userId: string;
@@ -48,8 +50,7 @@ const ChatroomPage: React.FC = () => {
   const params = useParams();
   const chatroomId = params.chatroomId as string;
   const { currentUser } = useAuth() || {};
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [items, setItems] = useState<(Message | Question)[]>([]);
   const [chatroom, setChatroom] = useState<any>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showLeaveModal, setShowLeaveModal] = useState(false);
@@ -81,19 +82,20 @@ const ChatroomPage: React.FC = () => {
       }
     });
 
-    const messagesRef = collection(
-      firestore,
-      `chatrooms/${chatroomId}/messages`
-    );
-    const q = query(messagesRef, orderBy("createdAt"));
+    const messagesRef = collection(firestore, `chatrooms/${chatroomId}/messages`);
+    const questionsRef = collection(firestore, "quests");
+
+    const qMessages = query(messagesRef, orderBy("createdAt"));
+    const qQuestions = query(questionsRef, where("chatroomId", "==", chatroomId), orderBy("createdAt"));
 
     const unsubscribeMessages = onSnapshot(
-      q,
+      qMessages,
       (snapshot) => {
         const msgs: Message[] = snapshot.docs.map((doc) => {
           const data = doc.data();
           return {
             id: doc.id,
+            type: "message",
             text: data.text,
             imageUrl: data.imageUrl,
             userId: data.userId,
@@ -101,30 +103,34 @@ const ChatroomPage: React.FC = () => {
             displayName: data.displayName,
           };
         });
-        setMessages(msgs);
+        setItems((prevItems) => {
+          const newItems = [...prevItems.filter(item => item.type !== "message"), ...msgs];
+          return newItems.sort((a, b) => a.createdAt - b.createdAt);
+        });
       },
       (error) => {
         console.error("Error fetching messages:", error);
       }
     );
 
-    const questionsRef = collection(firestore, "quests");
-    const qQuest = query(questionsRef, where("chatroomId", "==", chatroomId));
-
     const unsubscribeQuestions = onSnapshot(
-      qQuest,
+      qQuestions,
       (snapshot) => {
         const qsts: Question[] = snapshot.docs.map((doc) => {
           const data = doc.data();
           return {
             id: doc.id,
+            type: "question",
             question: data.question,
             topic: data.topic,
             userId: data.userId,
             createdAt: data.createdAt,
           };
         });
-        setQuestions(qsts);
+        setItems((prevItems) => {
+          const newItems = [...prevItems.filter(item => item.type !== "question"), ...qsts];
+          return newItems.sort((a, b) => a.createdAt - b.createdAt);
+        });
       },
       (error) => {
         console.error("Error fetching questions:", error);
@@ -187,7 +193,7 @@ const ChatroomPage: React.FC = () => {
       <div className="mt-4">
         {activeTab === 0 ? (
           <>
-            <ChatMessages messages={messages} questions={questions} currentUser={currentUser} onAnswerSubmit={handlePostAnswer} />
+            <ChatMessages items={items} currentUser={currentUser} onAnswerSubmit={handlePostAnswer} />
             <MessageInput onSendMessage={handleSendMessage} onPostQuestion={handlePostQuestion} />
           </>
         ) : (
