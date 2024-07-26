@@ -8,7 +8,7 @@ export default function HomeStudySection({ style }: { style: string }) {
         Study
       </div>
       <div style={{ height: "270px" }}>
-        <HomeStudyChart />
+        <HomeStudyChart></HomeStudyChart> 
       </div>
       <HomeButton web={"/study"} buttonText={"Continue to study"} />
     </div>
