@@ -19,6 +19,10 @@ export interface TimerState {
     backgroundImage: BackgroundImageType;
   };
   showAdditionalSetting: boolean;
+  todayXP: number; // New property for today's XP
+  totalXP: number; // New property for total XP
+  hasAwardedDailyTimeXP: boolean; // New property
+  hasAwardedCycleXP: boolean; // New property
 }
 
 const initialTimerState: TimerState = {
@@ -32,6 +36,10 @@ const initialTimerState: TimerState = {
   },
   showAdditionalSetting: false,
   studyTime: 0,
+  todayXP: 0, // Initialize to 0
+  totalXP: 0, // Initialize to 0
+  hasAwardedDailyTimeXP: false, // Initialize to false
+  hasAwardedCycleXP: false, // Initialize to false
 };
 
 export const timerSlice = createSlice({
@@ -62,6 +70,18 @@ export const timerSlice = createSlice({
     setShowAdditionalSetting(state, action: PayloadAction<boolean>) {
       state.showAdditionalSetting = action.payload;
     },
+    setTodayXP(state, action: PayloadAction<number>) { // New reducer
+      state.todayXP = action.payload;
+    },
+    setTotalXP(state, action: PayloadAction<number>) { // New reducer
+      state.totalXP = action.payload;
+    },
+    setHasAwardedDailyTimeXP(state, action: PayloadAction<boolean>) { // New reducer
+      state.hasAwardedDailyTimeXP = action.payload;
+    },
+    setHasAwardedCycleXP(state, action: PayloadAction<boolean>) { // New reducer
+      state.hasAwardedCycleXP = action.payload;
+    },
   },
 });
 
@@ -75,6 +95,10 @@ export const {
   setBackgroundImage,
   setShowAdditionalSetting,
   setStudyTime,
+  setTodayXP, // Export new action
+  setTotalXP, // Export new action
+  setHasAwardedDailyTimeXP, // Export new action
+  setHasAwardedCycleXP, // Export new action
 } = timerSlice.actions;
 
 export default timerSlice.reducer;

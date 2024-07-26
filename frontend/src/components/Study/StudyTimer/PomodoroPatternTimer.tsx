@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "@/store/store";
-import { setpomodoroCycleLeft } from "@/store/timerSlice";
+import { setpomodoroCycleLeft, setTodayXP, setTotalXP, setHasAwardedCycleXP } from "@/store/timerSlice"; // Import XP actions
 import { useTimer } from "react-timer-hook";
 import { FaPause, FaPlay } from "react-icons/fa6";
-import { collection, getDocs, query, updateDoc, where, Timestamp } from "firebase/firestore";
+import { collection, getDocs, query, updateDoc, where, Timestamp, addDoc } from "firebase/firestore";
 import { firestore } from "../../../../firebase/firebase";
 import { useAuth } from "../../Auth/AuthContext";
 
@@ -25,7 +25,7 @@ export default function PomodoroPatternTimer({
   const router = useRouter();
   const [isPaused, setIsPaused] = useState(false);
   const dispatch: AppDispatch = useDispatch();
-  const { pomodoroCycleLeft } = useSelector((state: RootState) => state.timer);
+  const { pomodoroCycleLeft, hasAwardedCycleXP } = useSelector((state: RootState) => state.timer);
   const { currentUser } = useAuth();
 
   const studyTimer = new Date();
@@ -34,17 +34,42 @@ export default function PomodoroPatternTimer({
   const { seconds, minutes, pause, resume, restart } = useTimer({
     expiryTimestamp: studyTimer,
     onExpire: async () => {
+      const today = getTodayDate();
       if (isStudyCycle) {
-        // Study cycle completed
-        const today = new Date().toISOString().split("T")[0];
         try {
           const q = query(collection(firestore, "rewards"), where("userId", "==", currentUser?.uid), where("date", "==", today));
           const querySnapshot = await getDocs(q);
           if (!querySnapshot.empty) {
             const docRef = querySnapshot.docs[0].ref;
-            const currentDailyCycle = querySnapshot.docs[0].data().dailyCycle || 0;
-            await updateDoc(docRef, {
-              dailyCycle: currentDailyCycle + 1,
+            const data = querySnapshot.docs[0].data();
+            const currentDailyCycle = data.dailyCycle || 0;
+            const totalDailyCycle = currentDailyCycle + 1;
+
+            const updates: any = {
+              dailyCycle: totalDailyCycle,
+              timestamp: Timestamp.now(),
+            };
+
+            if (totalDailyCycle >= 2 && !hasAwardedCycleXP) {
+              updates.dailyXP = (data.dailyXP || 0) + 10;
+              updates.totalXP = (data.totalXP || 0) + 10;
+              dispatch(setTodayXP((data.dailyXP || 0) + 10));
+              dispatch(setTotalXP((data.totalXP || 0) + 10));
+              dispatch(setHasAwardedCycleXP(true)); // Set state to true
+            }
+
+            await updateDoc(docRef, updates);
+          } else {
+            // Create a new document for today
+            await addDoc(collection(firestore, "rewards"), {
+              userId: currentUser?.uid,
+              dailyXP: 0,
+              totalXP: 0,
+              dailyTime: 0,
+              date: today,
+              dailyCycle: 1,
+              hasAwardedDailyTimeXP: false,
+              hasAwardedCycleXP: false,
               timestamp: Timestamp.now(),
             });
           }
@@ -59,7 +84,6 @@ export default function PomodoroPatternTimer({
         resume();
         router.push("/study/background/break");
       } else {
-        // Break cycle completed
         onCycleComplete();
         if (pomodoroCycleLeft == 1) {
           onTimeUp();
@@ -76,6 +100,18 @@ export default function PomodoroPatternTimer({
       }
     },
   });
+
+  const getTodayDate = () => {
+    const today = new Date();
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      timeZone: 'Asia/Singapore'
+    };
+    const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(today).split('/').reverse().join('-');
+    return formattedDate;
+  };
 
   const handlePause = () => {
     pause();
