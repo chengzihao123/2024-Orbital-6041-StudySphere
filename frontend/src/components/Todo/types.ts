@@ -8,6 +8,7 @@ export interface Todo {
   taskDescription: string;
   userId: string;
   notified: boolean;
+  completedAt: string | null; 
 }
 
 export interface Filter {
