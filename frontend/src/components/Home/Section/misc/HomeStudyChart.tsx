@@ -16,7 +16,7 @@ interface StudyData {
   study_minutes: number;
 }
 
-export default function VSSstudyGraph() {
+export default function Home() {
   const [weeklyStudyData, setWeeklyStudyData] = useState<StudyData[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
 
@@ -58,7 +58,7 @@ export default function VSSstudyGraph() {
           const month = (date.getMonth() + 1).toString().padStart(2, '0');
           return {
             name: `${day}-${month}`,
-            study_minutes: Math.round(data.dailyTime || 0),
+            study_minutes: Math.round(data.dailyTime / 60 || 0),
           };
         }).reverse();
 

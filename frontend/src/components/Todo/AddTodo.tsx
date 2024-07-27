@@ -36,7 +36,6 @@ const AddTodo: React.FC = () => {
       taskDescriptionRef.current &&
       deadlineRef.current
     ) {
-      console.log(status);
       await addDoc(collection(firestore, "todos"), {
         userId: currentUser?.uid,
         taskName: taskNameRef.current.value,
@@ -45,6 +44,7 @@ const AddTodo: React.FC = () => {
         status: status,
         priority: priority,
         completed: status === "Completed" ? true : false,
+        completedAt: status === "Completed" ? new Date() : null, // Set completedAt if the status is completed
         notified: false,
       });
 

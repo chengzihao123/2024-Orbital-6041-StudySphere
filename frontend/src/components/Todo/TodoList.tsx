@@ -10,6 +10,7 @@ import {
   onSnapshot,
   updateDoc,
   doc,
+  Timestamp,
 } from "firebase/firestore";
 import { firestore } from "../../../firebase/firebase";
 import { useAuth } from "../Auth/AuthContext";
@@ -22,6 +23,11 @@ import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { checkDeadlinesAndNotify } from "./notificationUtils";
 import { Todo } from "./types";
+
+// Type guard to check if an object is a Firestore Timestamp
+function isFirestoreTimestamp(obj: any): obj is Timestamp {
+  return obj && typeof obj.toDate === "function";
+}
 
 export const filterTodos = (todos: Todo[], filter: any): Todo[] => {
   return todos
@@ -83,10 +89,14 @@ const TodoList: React.FC = () => {
         console.log("No todos found.");
         dispatch(setTodos([]));
       } else {
-        const fetchedTodos = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...(doc.data() as Omit<Todo, "id">),
-        }));
+        const fetchedTodos = snapshot.docs.map((doc) => {
+          const data = doc.data() as Omit<Todo, "id">;
+          return {
+            id: doc.id,
+            ...data,
+            completedAt: isFirestoreTimestamp(data.completedAt) ? data.completedAt.toDate().toISOString() : data.completedAt, // Convert Firestore Timestamp to ISO string if necessary
+          };
+        });
 
         const updatedTodos = fetchedTodos.map((todo) => {
           if (
