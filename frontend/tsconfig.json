@@ -20,7 +20,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     // for testing, use "jsx": "react-jsx" instead
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "incremental": true,
     "paths": {
       "@/*": [
