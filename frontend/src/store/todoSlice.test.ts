@@ -25,7 +25,7 @@ describe("todoSlice", () => {
     });
   });
 
-  test.skip("check initial state", () => {
+  test("check initial state", () => {
     const initialState: TodoState = {
       todos: [],
       filter: {
@@ -38,7 +38,7 @@ describe("todoSlice", () => {
     expect(store.getState().todo).toEqual(initialState);
   });
 
-  test.skip("setTodos is able to correctly set todos", () => {
+  test("setTodos is able to correctly set todos", () => {
     const newTodos = [
       {
         id: "1",
@@ -50,6 +50,7 @@ describe("todoSlice", () => {
         taskDescription: "Description",
         userId: "user123",
         notified: false,
+        completedAt: null,
       },
     ];
 
@@ -57,25 +58,25 @@ describe("todoSlice", () => {
     expect(store.getState().todo.todos).toEqual(newTodos);
   });
 
-  test.skip("filter for priority", () => {
+  test("filter for priority", () => {
     const newFilter = { priority: "High" };
     store.dispatch(setFilter(newFilter));
     expect(store.getState().todo.filter.priority).toEqual("High");
   });
 
-  test.skip("filter for status", () => {
+  test("filter for status", () => {
     const newFilter = { status: "completed" };
     store.dispatch(setFilter(newFilter));
     expect(store.getState().todo.filter.status).toEqual("completed");
   });
 
-  test.skip("filter for order of dates", () => {
+  test("filter for order of dates", () => {
     const newFilter = { date: "oldest" };
     store.dispatch(setFilter(newFilter));
     expect(store.getState().todo.filter.date).toEqual("oldest");
   });
 
-  test.skip("update of completion status", () => {
+  test("update of completion status", () => {
     const todo = {
       id: "1",
       deadline: "2024-06-29",
@@ -84,16 +85,18 @@ describe("todoSlice", () => {
       completed: false,
       taskName: "New Task",
       taskDescription: "Description",
-      userId: "user123", // Add userId here
-      notified: false, // Add notified here
+      userId: "user123", 
+      notified: false, 
+      completedAt: null,
     };
 
     store.dispatch(setTodos([todo]));
     store.dispatch(setCompleted({ id: "1", completed: true }));
     expect(store.getState().todo.todos[0].completed).toBe(true);
+    expect(store.getState().todo.todos[0].completedAt).not.toBeNull(); // Check that completedAt is set
   });
 
-  test.skip("should handle setStatus", () => {
+  test("should handle setStatus", () => {
     const todo = {
       id: "1",
       deadline: "2024-06-29",
@@ -104,6 +107,7 @@ describe("todoSlice", () => {
       taskDescription: "Description",
       userId: "user123",
       notified: false,
+      completedAt: null,
     };
 
     store.dispatch(setTodos([todo]));
@@ -111,7 +115,7 @@ describe("todoSlice", () => {
     expect(store.getState().todo.todos[0].status).toEqual("Completed");
   });
 
-  test.skip("should handle updateTodo", () => {
+  test("should handle updateTodo", () => {
     const todo = {
       id: "1",
       deadline: "2024-06-29",
@@ -122,6 +126,7 @@ describe("todoSlice", () => {
       taskDescription: "Description",
       userId: "user123",
       notified: false,
+      completedAt: null,
     };
 
     const updatedData = {
@@ -143,7 +148,7 @@ describe("todoSlice", () => {
     expect(updatedTodo.status).toEqual("In Progress");
   });
 
-  test.skip("should handle removeTodo", () => {
+  test("should handle removeTodo", () => {
     const todo = {
       id: "1",
       deadline: "2024-06-29",
@@ -154,6 +159,7 @@ describe("todoSlice", () => {
       taskDescription: "Description",
       userId: "user123",
       notified: false,
+      completedAt: null,
     };
 
     store.dispatch(setTodos([todo]));

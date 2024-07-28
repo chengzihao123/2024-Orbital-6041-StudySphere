@@ -1,119 +1,76 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import "@testing-library/jest-dom";
-import Navbar from "./Navbar";
-import { useRouter } from "next/navigation";
-import { useAuth } from "../Auth/AuthContext";
-import configureStore from "redux-mock-store";
-import { Provider } from "react-redux";
-import { RootState } from "@/store/store";
+// src/components/Home/Navbar.test.tsx
 
-// Mock hooks and actions
-jest.mock("next/navigation", () => ({
-  useRouter: jest.fn(),
-}));
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { Provider } from 'react-redux';
+import configureStore from 'redux-mock-store';
+import Navbar from './Navbar';
+import { useAuth } from '../Auth/AuthContext';
+import { useRouter } from 'next/navigation';
 
-jest.mock("../Auth/AuthContext", () => ({
+// Mock the useAuth hook
+jest.mock('../Auth/AuthContext', () => ({
   useAuth: jest.fn(),
 }));
 
-const mockStore = configureStore([]);
+// Mock the useRouter hook
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(),
+}));
 
-describe("Navbar Component", () => {
+const mockStore = configureStore([]);
+const initialState = {
+  userInfo: {
+    userId: '1',
+    nickname: 'TestNick',
+    yearOfStudy: '2',
+    faculty: 'Engineering',
+    major: 'Computer Science',
+    hobby: 'Gaming',
+    cca: 'Robotics',
+    birthday: null,
+    todayXP: 20,
+    totalXP: 100,
+  },
+};
+
+describe('Navbar Component', () => {
   const mockPush = jest.fn();
-  const mockCurrentUser = { uid: "testUserId" };
+  const mockLogout = jest.fn();
 
   beforeEach(() => {
-    (useRouter as jest.Mock).mockReturnValue({ push: mockPush });
+    jest.clearAllMocks();
     (useAuth as jest.Mock).mockReturnValue({
-      currentUser: mockCurrentUser,
-      logout: () => {},
+      currentUser: { uid: 'testUserId' },
+      logout: mockLogout,
+    });
+    (useRouter as jest.Mock).mockReturnValue({
+      push: mockPush,
     });
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  const initialState: RootState = {
-    userInfo: {
-      userId: "testUserId",
-      nickname: "TestUser",
-      yearOfStudy: "2",
-      faculty: "Science",
-      major: "Computer Science",
-      hobby: "Reading",
-      cca: "Chess Club",
-      birthday: null,
-      todayXP: 10,
-      totalXP: 100,
-    },
-    timer: {
-      isFullscreen: false,
-      isUserTime: false,
-      pomodoroCycleLeft: 0,
-      pomodoroCycleCompleted: 0,
-      countdownSeconds: 0,
-      backgroundSettings: {
-        backgroundImage: "",
-      },
-      showAdditionalSetting: false,
-      studyTime: 0,
-    },
-    todo: {
-      todos: [],
-      filter: {
-        date: "mostRecent",
-        priority: "all",
-        status: "all",
-      },
-    },
+  const renderWithProvider = (ui: React.ReactElement, store: any) => {
+    return render(<Provider store={store}>{ui}</Provider>);
   };
 
-  const store = mockStore(initialState);
+  test('renders Navbar for authenticated user', () => {
+    const store = mockStore(initialState);
 
-  test.skip("navigates to /todos when Todos link is clicked", () => {
-    render(
-      <Provider store={store}>
-        <Navbar />
-      </Provider>
-    );
+    renderWithProvider(<Navbar />, store);
 
-    fireEvent.click(screen.getByText("Todos"));
-    expect(mockPush).toHaveBeenCalledWith("/todos");
+    expect(screen.getByText('Todos')).toBeInTheDocument();
+    expect(screen.getByText('Study')).toBeInTheDocument();
+    expect(screen.getByText('Community')).toBeInTheDocument();
+    expect(screen.getByText('Logout')).toBeInTheDocument();
   });
 
-  test.skip("navigates to /study when Study link is clicked", () => {
-    render(
-      <Provider store={store}>
-        <Navbar />
-      </Provider>
-    );
+  test('renders Navbar for unauthenticated user', () => {
+    (useAuth as jest.Mock).mockReturnValue({ currentUser: null });
+    const store = mockStore(initialState);
 
-    fireEvent.click(screen.getByText("Study"));
-    expect(mockPush).toHaveBeenCalledWith("/study");
-  });
+    renderWithProvider(<Navbar />, store);
 
-  test.skip("navigates to /chatrooms when Community link is clicked", () => {
-    render(
-      <Provider store={store}>
-        <Navbar />
-      </Provider>
-    );
-
-    fireEvent.click(screen.getByText("Community"));
-    expect(mockPush).toHaveBeenCalledWith("/community");
-  });
-
-  test.skip("logs out and navigates to / when Logout button is clicked", async () => {
-    render(
-      <Provider store={store}>
-        <Navbar />
-      </Provider>
-    );
-
-    fireEvent.click(screen.getByText("Logout"));
-    await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/");
-    });
+    expect(screen.getByText('Login')).toBeInTheDocument();
   });
 });
