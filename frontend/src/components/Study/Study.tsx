@@ -91,6 +91,8 @@ export default function Study() {
   const handleStudyPattern = (e: string) => {
     if (e !== "custom") {
       setCustomPattern(true);
+    } else {
+      setCustomPattern(false);
     }
   };
 

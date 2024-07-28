@@ -120,6 +120,7 @@ export default function Profile() {
                   <FaEdit
                     className="text-xl cursor-pointer"
                     onClick={handleEditProfile}
+                    data-testid="edit-profile-icon"
                   />
                 </div>
               </Tooltip>

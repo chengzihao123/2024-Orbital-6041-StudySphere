@@ -4,7 +4,7 @@ import { RootState } from "@/store/store";
 import TodoItem from "@/components/Todo/TodoItem";
 import HomeButton from "@/components/Home/HomeButton";
 
-export default function HomeStudySection({ style }: { style: string }) {
+export default function HomeTodoSection({ style }: { style: string }) {
   const { todos, filter } = useSelector((state: RootState) => state.todo);
 
   return (
