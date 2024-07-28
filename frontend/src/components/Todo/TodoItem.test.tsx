@@ -6,6 +6,7 @@ import configureStore from "redux-mock-store";
 import TodoItem from "@/components/Todo/TodoItem";
 import { removeTodo, updateTodo } from "@/store/todoSlice";
 import { deleteDoc, updateDoc } from "firebase/firestore";
+import { Todo } from "@/components/Todo/types";
 
 // mock firestore functions
 jest.mock("firebase/firestore", () => {
@@ -22,7 +23,7 @@ const mockStore = configureStore([]);
 
 describe("TodoItem", () => {
   // sample todo to be used for testing
-  const todo = {
+  const todo: Todo = {
     id: "1",
     taskName: "Test Todo",
     taskDescription: "This is a test todo",
@@ -30,6 +31,9 @@ describe("TodoItem", () => {
     status: "Not Started",
     priority: "Medium",
     completed: false,
+    completedAt: null,
+    userId: "user123",
+    notified: false,
   };
 
   // mock store with initial state + sample todo
@@ -49,7 +53,7 @@ describe("TodoItem", () => {
     render(<Provider store={store}>{component}</Provider>);
   };
 
-  test.skip("renders the todo item", () => {
+  test("renders the todo item", () => {
     renderWithProvider(<TodoItem todo={todo} isHome={false} />);
     expect(screen.getByText("Test Todo")).toBeInTheDocument();
     expect(screen.getByText("This is a test todo")).toBeInTheDocument();
@@ -58,7 +62,7 @@ describe("TodoItem", () => {
     expect(screen.getByText("Medium")).toBeInTheDocument();
   });
 
-  test.skip("toggles the todo item's completion status", async () => {
+  test("toggles the todo item's completion status", async () => {
     renderWithProvider(<TodoItem todo={todo} isHome={false} />);
     fireEvent.change(screen.getByRole("combobox"), {
       target: { value: "Completed" },
@@ -71,6 +75,7 @@ describe("TodoItem", () => {
           // this is referring to the obj
           status: "Completed",
           completed: true,
+          completedAt: expect.any(String),
         })
       );
     });
@@ -80,12 +85,13 @@ describe("TodoItem", () => {
         data: {
           status: "Completed",
           completed: true,
+          completedAt: expect.any(String),
         },
       })
     );
   });
 
-  test.skip("deletes the todo item", async () => {
+  test("deletes the todo item", async () => {
     renderWithProvider(<TodoItem todo={todo} isHome={false} />);
     fireEvent.click(screen.getByAltText("Delete"));
     await waitFor(() => {
@@ -94,7 +100,7 @@ describe("TodoItem", () => {
     expect(store.getActions()).toContainEqual(removeTodo("1"));
   });
 
-  test.skip("edits the todo item", async () => {
+  test("edits the todo item", async () => {
     renderWithProvider(<TodoItem todo={todo} isHome={false} />);
     fireEvent.click(screen.getByAltText("Edit"));
     fireEvent.change(screen.getByDisplayValue("Test Todo"), {
@@ -123,12 +129,60 @@ describe("TodoItem", () => {
     );
   });
 
-  test.skip("handles overdue deadline change", () => {
+  test("handles overdue deadline change", () => {
     renderWithProvider(<TodoItem todo={todo} isHome={false} />);
     fireEvent.click(screen.getByAltText("Edit"));
     fireEvent.change(screen.getByDisplayValue("2024-06-29"), {
       target: { value: "2023-06-29" },
     });
     expect(screen.getByDisplayValue("Overdue")).toBeInTheDocument();
+  });
+
+  // Additional test for editing an existing todo item
+  test("edits the existing todo item", async () => {
+    renderWithProvider(<TodoItem todo={todo} isHome={false} />);
+    fireEvent.click(screen.getByAltText("Edit"));
+    fireEvent.change(screen.getByDisplayValue("Test Todo"), {
+      target: { value: "Existing Todo Updated" },
+    });
+    fireEvent.change(screen.getByDisplayValue("This is a test todo"), {
+      target: { value: "Updated description" },
+    });
+    fireEvent.change(screen.getByDisplayValue("2024-06-29"), {
+      target: { value: "2024-07-01" },
+    });
+    fireEvent.change(screen.getAllByRole("combobox")[0], {
+      target: { value: "High" },
+    });
+    fireEvent.change(screen.getAllByRole("combobox")[1], {
+      target: { value: "In Progress" },
+    });
+    fireEvent.click(screen.getByText("Save"));
+
+    await waitFor(() => {
+      expect(updateDoc).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({
+          taskName: "Existing Todo Updated",
+          taskDescription: "Updated description",
+          deadline: "2024-07-01",
+          priority: "High",
+          status: "In Progress",
+        })
+      );
+    });
+
+    expect(store.getActions()).toContainEqual(
+      updateTodo({
+        id: "1",
+        data: {
+          taskName: "Existing Todo Updated",
+          taskDescription: "Updated description",
+          deadline: "2024-07-01",
+          priority: "High",
+          status: "In Progress",
+        },
+      })
+    );
   });
 });
