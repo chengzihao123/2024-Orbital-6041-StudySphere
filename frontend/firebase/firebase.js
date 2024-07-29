@@ -1,7 +1,7 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+import { initializeApp } from &aposfirebase/app&apos;
+import { getAuth, GoogleAuthProvider } from &aposfirebase/auth&apos;
+import { getFirestore } from &aposfirebase/firestore&apos;
+import { getStorage } from &aposfirebase/storage&apos;
 const firebaseConfig = {
   apiKey: "AIzaSyAEofu98DGbh2hwkS2uhQrWdCPkdfiddyw",
   authDomain: "orbital-5f0b8.firebaseapp.com",

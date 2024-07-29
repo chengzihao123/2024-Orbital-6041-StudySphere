@@ -20,17 +20,17 @@ export default function HomeSignInButton() {
   const getTodayDate = () => {
     const today = new Date();
     const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      timeZone: 'Asia/Singapore'
+      year: &aposnumeric&apos,
+      month: &apos2-digit&apos,
+      day: &apos2-digit&apos,
+      timeZone: &aposAsia/Singapore&apos
     };
-    const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(today).split('/').reverse().join('-');
+    const formattedDate = new Intl.DateTimeFormat(&aposen-GB&apos, options).format(today).split(&apos/&apos).reverse().join(&apos-&apos);
     return formattedDate;
   };
 
   const today = getTodayDate();
-  console.log('Formatted Today\'s Date:', today);
+  console.log(&aposFormatted Today\&aposs Date:&apos, today);
 
   const checkLastSignIn = async () => {
     if (!currentUser) {
@@ -45,17 +45,17 @@ export default function HomeSignInButton() {
         where("date", "==", today)
       );
       const querySnapshot = await getDocs(q);
-      console.log('Query snapshot size:', querySnapshot.size);
+      console.log(&aposQuery snapshot size:&apos, querySnapshot.size);
 
       if (!querySnapshot.empty) {
         const docData = querySnapshot.docs[0].data();
         setDocRefId(querySnapshot.docs[0].id);
         setIsDisabled(docData.clickedSignIn);
-        console.log('Existing document for today found:', docData);
+        console.log(&aposExisting document for today found:&apos, docData);
         dispatch(setTodayXP(docData.dailyXP));
         dispatch(setTotalXP(docData.totalXP));
       } else {
-        console.log('No document found for today.');
+        console.log(&aposNo document found for today.&apos);
         const docRef = await addDoc(collection(firestore, "rewards"), {
           userId: currentUser.uid,
           dailyXP: 0,
@@ -65,13 +65,13 @@ export default function HomeSignInButton() {
           date: today,
           clickedSignIn: false,
           hasAnsweredQuestion: false,
-          timestamp: new Date().toLocaleString('en-US', { timeZone: 'Asia/Singapore' })
+          timestamp: new Date().toLocaleString(&aposen-US&apos, { timeZone: &aposAsia/Singapore&apos })
         });
         setDocRefId(docRef.id);
         setIsDisabled(false);
         dispatch(setTodayXP(0));
         dispatch(setTotalXP(totalXP));
-        console.log('New document created:', docRef.id);
+        console.log(&aposNew document created:&apos, docRef.id);
       }
     } catch (error) {
       console.error("Error checking last sign-in date from Firestore:", error);
@@ -125,12 +125,12 @@ export default function HomeSignInButton() {
             dailyXP: data.dailyXP + 10,
             totalXP: data.totalXP + 10,
             clickedSignIn: true,
-            timestamp: new Date().toLocaleString('en-US', { timeZone: 'Asia/Singapore' })
+            timestamp: new Date().toLocaleString(&aposen-US&apos, { timeZone: &aposAsia/Singapore&apos })
           });
 
           dispatch(setTodayXP(data.dailyXP + 10));
           dispatch(setTotalXP(data.totalXP + 10));
-          console.log('Document updated successfully:', data);
+          console.log(&aposDocument updated successfully:&apos, data);
         } else {
           console.error("Document does not exist.");
         }

@@ -1,6 +1,6 @@
 "use client";
-import React from 'react';
-import Privacy from '../../components/Auth/Privacy'; 
+import React from &aposreact&apos;
+import Privacy from &apos../../components/Auth/Privacy&apos; 
 
 const PrivacyPage = () => {
   return <Privacy />;

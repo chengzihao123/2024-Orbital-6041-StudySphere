@@ -1,22 +1,22 @@
-import type { Config } from '@jest/types';
+import type { Config } from &apos@jest/types&apos;
 
 const config: Config.InitialOptions = {
-  preset: 'ts-jest',
-  testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  preset: &aposts-jest&apos,
+  testEnvironment: &aposjsdom&apos,
+  setupFilesAfterEnv: [&apos<rootDir>/jest.setup.ts&apos],
   moduleNameMapper: {
-    '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    '^@/(.*)$': '<rootDir>/src/$1',
+    &apos\\.(css|less|scss|sass)$&apos: &aposidentity-obj-proxy&apos,
+    &apos^@/(.*)$&apos: &apos<rootDir>/src/$1&apos,
   },
   transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest',
-    '^.+\\.(js|jsx)$': 'ts-jest',
+    &apos^.+\\.(ts|tsx)$&apos: &aposts-jest&apos,
+    &apos^.+\\.(js|jsx)$&apos: &aposts-jest&apos,
   },
   transformIgnorePatterns: [
-    '/node_modules/(?!firebase/.*)', // Ignore node_modules except for firebase
-    '^.+\\.module\\.(css|sass|scss)$',
+    &apos/node_modules/(?!firebase/.*)&apos, // Ignore node_modules except for firebase
+    &apos^.+\\.module\\.(css|sass|scss)$&apos,
   ],
-  testPathIgnorePatterns: ['/node_modules/', '/.next/'],
+  testPathIgnorePatterns: [&apos/node_modules/&apos, &apos/.next/&apos],
 };
 
 export default config;

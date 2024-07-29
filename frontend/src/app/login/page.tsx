@@ -1,6 +1,6 @@
 "use client";
-import React from 'react';
-import Login from '../../components/Auth/Login'; 
+import React from &aposreact&apos;
+import Login from &apos../../components/Auth/Login&apos; 
 
 const LoginPage = () => {
   return <Login />;

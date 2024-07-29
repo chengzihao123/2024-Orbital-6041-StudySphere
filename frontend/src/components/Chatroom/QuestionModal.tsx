@@ -1,4 +1,4 @@
-import React from 'react';
+import React from &aposreact&apos;
 
 interface QuestionModalProps {
   isOpen: boolean;

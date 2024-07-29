@@ -1,6 +1,6 @@
 "use client";
-import React from 'react';
-import { useAuth } from './AuthContext';
+import React from &aposreact&apos;
+import { useAuth } from &apos./AuthContext&apos;
 
 const UserProfile: React.FC = () => {
   const { currentUser, logout } = useAuth()!;

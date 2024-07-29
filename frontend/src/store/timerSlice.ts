@@ -19,7 +19,7 @@ export interface TimerState {
     backgroundImage: BackgroundImageType;
   };
   showAdditionalSetting: boolean;
-  todayXP: number; // New property for today's XP
+  todayXP: number; // New property for today&aposs XP
   totalXP: number; // New property for total XP
   hasAwardedDailyTimeXP: boolean; // New property
   hasAwardedCycleXP: boolean; // New property
@@ -70,16 +70,20 @@ export const timerSlice = createSlice({
     setShowAdditionalSetting(state, action: PayloadAction<boolean>) {
       state.showAdditionalSetting = action.payload;
     },
-    setTodayXP(state, action: PayloadAction<number>) { // New reducer
+    setTodayXP(state, action: PayloadAction<number>) {
+      // New reducer
       state.todayXP = action.payload;
     },
-    setTotalXP(state, action: PayloadAction<number>) { // New reducer
+    setTotalXP(state, action: PayloadAction<number>) {
+      // New reducer
       state.totalXP = action.payload;
     },
-    setHasAwardedDailyTimeXP(state, action: PayloadAction<boolean>) { // New reducer
+    setHasAwardedDailyTimeXP(state, action: PayloadAction<boolean>) {
+      // New reducer
       state.hasAwardedDailyTimeXP = action.payload;
     },
-    setHasAwardedCycleXP(state, action: PayloadAction<boolean>) { // New reducer
+    setHasAwardedCycleXP(state, action: PayloadAction<boolean>) {
+      // New reducer
       state.hasAwardedCycleXP = action.payload;
     },
   },

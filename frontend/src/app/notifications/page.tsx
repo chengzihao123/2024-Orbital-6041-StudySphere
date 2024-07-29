@@ -1,9 +1,9 @@
 "use client";
-import React, { useEffect, useState } from 'react';
-import { collection, query, where, onSnapshot, updateDoc, doc } from 'firebase/firestore';
-import { firestore } from '../../../firebase/firebase';
-import { useAuth } from '../../components/Auth/AuthContext';
-import { FaCheckCircle, FaRegCircle } from 'react-icons/fa';
+import React, { useEffect, useState } from &aposreact&apos;
+import { collection, query, where, onSnapshot, updateDoc, doc } from &aposfirebase/firestore&apos;
+import { firestore } from &apos../../../firebase/firebase&apos;
+import { useAuth } from &apos../../components/Auth/AuthContext&apos;
+import { FaCheckCircle, FaRegCircle } from &aposreact-icons/fa&apos;
 
 interface Notification {
   id: string;
@@ -21,10 +21,10 @@ const AllNotifications: React.FC = () => {
   useEffect(() => {
     if (!currentUser) return;
 
-    const notificationsCollection = collection(firestore, 'notifications');
+    const notificationsCollection = collection(firestore, &aposnotifications&apos);
     const q = query(
       notificationsCollection,
-      where('userId', '==', currentUser.uid)
+      where(&aposuserId&apos, &apos==&apos, currentUser.uid)
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -43,7 +43,7 @@ const AllNotifications: React.FC = () => {
   }, [currentUser]);
 
   const markAsRead = async (id: string) => {
-    const notificationRef = doc(firestore, 'notifications', id);
+    const notificationRef = doc(firestore, &aposnotifications&apos, id);
     await updateDoc(notificationRef, { read: true });
   };
 
@@ -66,9 +66,9 @@ const AllNotifications: React.FC = () => {
         <>
           <ul className="space-y-2">
             {currentNotifications.map((notification) => (
-              <li key={notification.id} className={`p-2 rounded flex items-center ${notification.read ? 'bg-gray-100' : 'bg-green-300'}`}>
+              <li key={notification.id} className={`p-2 rounded flex items-center ${notification.read ? &aposbg-gray-100&apos : &aposbg-green-300&apos}`}>
                 <button
-                  className={`mr-2 ${notification.read ? 'text-gray-400' : 'text-green-600'}`}
+                  className={`mr-2 ${notification.read ? &apostext-gray-400&apos : &apostext-green-600&apos}`}
                   onClick={() => markAsRead(notification.id)}
                   title={notification.read ? "Marked as read" : "Mark as read"}
                 >

@@ -148,7 +148,7 @@ const ChatroomPage: React.FC = () => {
     if (currentUser) {
       await addDoc(collection(firestore, `chatrooms/${chatroomId}/messages`), {
         text: message,
-        imageUrl: imageUrl || '',
+        imageUrl: imageUrl || &apos&apos,
         userId: currentUser.uid,
         displayName: currentUser.displayName,
         createdAt: serverTimestamp(),

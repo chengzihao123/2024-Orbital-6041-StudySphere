@@ -1,48 +1,48 @@
 // src/components/Home/Navbar.test.tsx
 
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import { Provider } from 'react-redux';
-import configureStore from 'redux-mock-store';
-import Navbar from './Navbar';
-import { useAuth } from '../Auth/AuthContext';
-import { useRouter } from 'next/navigation';
+import React from &aposreact&apos;
+import { render, screen, fireEvent } from &apos@testing-library/react&apos;
+import &apos@testing-library/jest-dom&apos;
+import { Provider } from &aposreact-redux&apos;
+import configureStore from &aposredux-mock-store&apos;
+import Navbar from &apos./Navbar&apos;
+import { useAuth } from &apos../Auth/AuthContext&apos;
+import { useRouter } from &aposnext/navigation&apos;
 
 // Mock the useAuth hook
-jest.mock('../Auth/AuthContext', () => ({
+jest.mock(&apos../Auth/AuthContext&apos, () => ({
   useAuth: jest.fn(),
 }));
 
 // Mock the useRouter hook
-jest.mock('next/navigation', () => ({
+jest.mock(&aposnext/navigation&apos, () => ({
   useRouter: jest.fn(),
 }));
 
 const mockStore = configureStore([]);
 const initialState = {
   userInfo: {
-    userId: '1',
-    nickname: 'TestNick',
-    yearOfStudy: '2',
-    faculty: 'Engineering',
-    major: 'Computer Science',
-    hobby: 'Gaming',
-    cca: 'Robotics',
+    userId: &apos1&apos,
+    nickname: &aposTestNick&apos,
+    yearOfStudy: &apos2&apos,
+    faculty: &aposEngineering&apos,
+    major: &aposComputer Science&apos,
+    hobby: &aposGaming&apos,
+    cca: &aposRobotics&apos,
     birthday: null,
     todayXP: 20,
     totalXP: 100,
   },
 };
 
-describe('Navbar Component', () => {
+describe(&aposNavbar Component&apos, () => {
   const mockPush = jest.fn();
   const mockLogout = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
     (useAuth as jest.Mock).mockReturnValue({
-      currentUser: { uid: 'testUserId' },
+      currentUser: { uid: &apostestUserId&apos },
       logout: mockLogout,
     });
     (useRouter as jest.Mock).mockReturnValue({
@@ -54,23 +54,23 @@ describe('Navbar Component', () => {
     return render(<Provider store={store}>{ui}</Provider>);
   };
 
-  test('renders Navbar for authenticated user', () => {
+  test(&aposrenders Navbar for authenticated user&apos, () => {
     const store = mockStore(initialState);
 
     renderWithProvider(<Navbar />, store);
 
-    expect(screen.getByText('Todos')).toBeInTheDocument();
-    expect(screen.getByText('Study')).toBeInTheDocument();
-    expect(screen.getByText('Community')).toBeInTheDocument();
-    expect(screen.getByText('Logout')).toBeInTheDocument();
+    expect(screen.getByText(&aposTodos&apos)).toBeInTheDocument();
+    expect(screen.getByText(&aposStudy&apos)).toBeInTheDocument();
+    expect(screen.getByText(&aposCommunity&apos)).toBeInTheDocument();
+    expect(screen.getByText(&aposLogout&apos)).toBeInTheDocument();
   });
 
-  test('renders Navbar for unauthenticated user', () => {
+  test(&aposrenders Navbar for unauthenticated user&apos, () => {
     (useAuth as jest.Mock).mockReturnValue({ currentUser: null });
     const store = mockStore(initialState);
 
     renderWithProvider(<Navbar />, store);
 
-    expect(screen.getByText('Login')).toBeInTheDocument();
+    expect(screen.getByText(&aposLogin&apos)).toBeInTheDocument();
   });
 });

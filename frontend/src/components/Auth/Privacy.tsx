@@ -1,5 +1,5 @@
 "use client";
-import React from 'react';
+import React from &aposreact&apos;
 
 const Privacy: React.FC = () => {
   return (

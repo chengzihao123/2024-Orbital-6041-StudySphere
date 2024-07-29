@@ -1,4 +1,4 @@
-import React from 'react';
+import React from &aposreact&apos;
 
 interface ChatroomHeaderProps {
   chatroom: any;
@@ -9,9 +9,9 @@ const ChatroomHeader: React.FC<ChatroomHeaderProps> = ({ chatroom, chatroomId })
 
   const handleCopyChatroomId = () => {
     navigator.clipboard.writeText(chatroomId).then(() => {
-      alert('Chatroom ID copied to clipboard');
+      alert(&aposChatroom ID copied to clipboard&apos);
     }).catch((err) => {
-      console.error('Failed to copy chatroom ID: ', err);
+      console.error(&aposFailed to copy chatroom ID: &apos, err);
     });
   };
 

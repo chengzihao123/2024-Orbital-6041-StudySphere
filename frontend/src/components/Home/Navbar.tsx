@@ -27,7 +27,7 @@ const Navbar: React.FC = () => {
 
         try {
           const today = new Date().toISOString().split("T")[0];
-          console.log("Today's date:", today);
+          console.log("Today&aposs date:", today);
           const q = query(
             collection(firestore, "rewards"),
             where("userId", "==", currentUser.uid),

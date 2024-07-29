@@ -31,7 +31,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, isHome }) => {
   };
 
   const handleStatusChange = async (newStatus: string | React.ChangeEvent<HTMLSelectElement>) => {
-    const statusValue = typeof newStatus === 'string' ? newStatus : newStatus.target.value;
+    const statusValue = typeof newStatus === &aposstring&apos ? newStatus : newStatus.target.value;
     const isCompleted = statusValue === "Completed";
 
     try {
@@ -206,13 +206,13 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, isHome }) => {
                   onClick={() => setIsEditing(true)}
                   className="focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2"
                 >
-                  <img src='/icons/edit-246.svg' alt="Edit" className="w-6 h-6" />
+                  <img src=&apos/icons/edit-246.svg&apos alt="Edit" className="w-6 h-6" />
                 </button>
                 <button
                   onClick={handleDelete}
                   className="text-red-600 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                 >
-                  <img src='/icons/delete.svg' alt="Delete" className="w-6 h-6" />
+                  <img src=&apos/icons/delete.svg&apos alt="Delete" className="w-6 h-6" />
                 </button>
               </div>
             </>

@@ -62,7 +62,7 @@ describe("TodoItem", () => {
     expect(screen.getByText("Medium")).toBeInTheDocument();
   });
 
-  test("toggles the todo item's completion status", async () => {
+  test("toggles the todo item&aposs completion status", async () => {
     renderWithProvider(<TodoItem todo={todo} isHome={false} />);
     fireEvent.change(screen.getByRole("combobox"), {
       target: { value: "Completed" },

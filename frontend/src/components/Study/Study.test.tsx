@@ -118,7 +118,9 @@ describe("Study Component", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText("Time can't be set as 0. Please enter a valid time.")
+        screen.getByText(
+          "Time can&apost be set as 0. Please enter a valid time."
+        )
       ).toBeInTheDocument();
     });
   });
@@ -237,7 +239,7 @@ describe("Study Component", () => {
     fireEvent.change(screen.getByLabelText("Number of Pomodoro cycles:"), {
       target: { value: "1" },
     });
-    fireEvent.click(screen.getByText("Let's Go"));
+    fireEvent.click(screen.getByText("Let&aposs Go"));
     await waitFor(() => {
       expect(global.Element.prototype.requestFullscreen).toHaveBeenCalled();
       expect(mockDispatch).toHaveBeenCalledWith(setpomodoroCycleLeft(1));

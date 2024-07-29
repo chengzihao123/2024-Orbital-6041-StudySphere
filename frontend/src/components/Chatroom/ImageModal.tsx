@@ -1,7 +1,7 @@
-import React from 'react';
+import React from &aposreact&apos;
 import { Modal, ModalOverlay, ModalContent, ModalBody } from "@chakra-ui/react";
-import Zoom from 'react-medium-image-zoom';
-import 'react-medium-image-zoom/dist/styles.css';
+import Zoom from &aposreact-medium-image-zoom&apos;
+import &aposreact-medium-image-zoom/dist/styles.css&apos;
 
 interface ImageModalProps {
   isOpen: boolean;
@@ -16,7 +16,7 @@ const ImageModal: React.FC<ImageModalProps> = ({ isOpen, onClose, imageUrl }) =>
       <ModalContent>
         <ModalBody>
           <Zoom>
-            <img src={imageUrl} alt="Enlarged view" style={{ width: '100%', maxHeight: '80vh' }} />
+            <img src={imageUrl} alt="Enlarged view" style={{ width: &apos100%&apos, maxHeight: &apos80vh&apos }} />
           </Zoom>
         </ModalBody>
       </ModalContent>

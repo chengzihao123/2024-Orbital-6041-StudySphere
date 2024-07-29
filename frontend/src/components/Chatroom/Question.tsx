@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { collection, query, orderBy, onSnapshot, updateDoc, doc, getDoc, addDoc, where, getDocs } from 'firebase/firestore';
-import { firestore } from '../../../firebase/firebase';
-import { FaThumbsUp } from 'react-icons/fa';
+import React, { useState, useEffect } from &aposreact&apos;
+import { collection, query, orderBy, onSnapshot, updateDoc, doc, getDoc, addDoc, where, getDocs } from &aposfirebase/firestore&apos;
+import { firestore } from &apos../../../firebase/firebase&apos;
+import { FaThumbsUp } from &aposreact-icons/fa&apos;
 
 interface QuestionProps {
   question: {
@@ -25,8 +25,8 @@ interface Answer {
 
 const Question: React.FC<QuestionProps> = ({ question, currentUser, onAnswerSubmit }) => {
   const [answers, setAnswers] = useState<Answer[]>([]);
-  const [newAnswer, setNewAnswer] = useState('');
-  const [nickname, setNickname] = useState<string>('');
+  const [newAnswer, setNewAnswer] = useState(&apos&apos);
+  const [nickname, setNickname] = useState<string>(&apos&apos);
   const [page, setPage] = useState(0);
   const [userUpvotes, setUserUpvotes] = useState<{ [key: string]: boolean }>({});
   const answersPerPage = 5;
@@ -109,19 +109,19 @@ const Question: React.FC<QuestionProps> = ({ question, currentUser, onAnswerSubm
     if (newAnswer.trim()) {
       onAnswerSubmit(newAnswer, question.id);
       await grantDailyXP();
-      setNewAnswer('');
+      setNewAnswer(&apos&apos);
     }
   };
 
   const getTodayDate = () => {
     const today = new Date();
     const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      timeZone: 'Asia/Singapore'
+      year: &aposnumeric&apos,
+      month: &apos2-digit&apos,
+      day: &apos2-digit&apos,
+      timeZone: &aposAsia/Singapore&apos
     };
-    const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(today).split('/').reverse().join('-');
+    const formattedDate = new Intl.DateTimeFormat(&aposen-GB&apos, options).format(today).split(&apos/&apos).reverse().join(&apos-&apos);
     return formattedDate;
   };
 
@@ -129,13 +129,13 @@ const Question: React.FC<QuestionProps> = ({ question, currentUser, onAnswerSubm
     const today = getTodayDate();
     const rewardsRef = collection(firestore, "rewards");
     const q = query(rewardsRef, where("userId", "==", currentUser), where("date", "==", today));
-    console.log('Query:', q);
+    console.log(&aposQuery:&apos, q);
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
       const rewardDoc = querySnapshot.docs[0];
       const rewardData = rewardDoc.data();
-      console.log('Reward Document Data:', rewardData);
+      console.log(&aposReward Document Data:&apos, rewardData);
 
       if (!rewardData.hasAnsweredQuestion) {
         await updateDoc(rewardDoc.ref, {
@@ -143,16 +143,16 @@ const Question: React.FC<QuestionProps> = ({ question, currentUser, onAnswerSubm
           totalXP: (rewardData.totalXP || 0) + 10,
           hasAnsweredQuestion: true,
         });
-        console.log('Updated Reward Document Data:', {
+        console.log(&aposUpdated Reward Document Data:&apos, {
           dailyXP: (rewardData.dailyXP || 0) + 10,
           totalXP: (rewardData.totalXP || 0) + 10,
           hasAnsweredQuestion: true,
         });
       } else {
-        console.log('User has already been awarded for answering a question today.');
+        console.log(&aposUser has already been awarded for answering a question today.&apos);
       }
     } else {
-      console.log('No reward document found for today.');
+      console.log(&aposNo reward document found for today.&apos);
     }
   };
 

@@ -1,7 +1,7 @@
 "use client"
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from './Auth/AuthContext'; 
+import { useEffect } from &aposreact&apos;
+import { useRouter } from &aposnext/navigation&apos;
+import { useAuth } from &apos./Auth/AuthContext&apos; 
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { currentUser } = useAuth()!;
@@ -9,7 +9,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
   useEffect(() => {
     if (!currentUser) {
-      router.replace('/');
+      router.replace(&apos/&apos);
     }
   }, [currentUser, router]);
 

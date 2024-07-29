@@ -1,6 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import { collection, addDoc, setDoc, arrayUnion, doc } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  setDoc,
+  arrayUnion,
+  doc,
+} from "firebase/firestore";
 import { firestore } from "../../../firebase/firebase";
 import { useAuth } from "@/components/Auth/AuthContext";
 import { useChatroom } from "@/components/Chatroom/ChatroomContext";
@@ -23,7 +29,7 @@ const CreateChatroom: React.FC = () => {
           createdBy: currentUser.uid,
         });
 
-        // Update user's chatroom list
+        // Update user&aposs chatroom list
         const userDocRef = doc(firestore, "usersChatrooms", currentUser.uid);
         await setDoc(
           userDocRef,
@@ -35,7 +41,7 @@ const CreateChatroom: React.FC = () => {
 
         setChatroomName("");
         setIsMaxLengthReached(false);
-        updateChatroomCount();  // Update chatroom count
+        updateChatroomCount(); // Update chatroom count
       } catch (error) {
         console.error("Error creating chatroom:", error);
       }
@@ -63,7 +69,9 @@ const CreateChatroom: React.FC = () => {
         disabled={isLimitReached}
       />
       {isMaxLengthReached && (
-        <p className="text-red-500 text-sm mt-1">Character limit reached (15 characters).</p>
+        <p className="text-red-500 text-sm mt-1">
+          Character limit reached (15 characters).
+        </p>
       )}
       <button
         type="submit"
@@ -73,7 +81,9 @@ const CreateChatroom: React.FC = () => {
         Create Chatroom
       </button>
       {isLimitReached && (
-        <p className="text-red-600 mt-2">Max limit of 5 chatrooms reached. You cannot create more.</p>
+        <p className="text-red-600 mt-2">
+          Max limit of 5 chatrooms reached. You cannot create more.
+        </p>
       )}
     </form>
   );

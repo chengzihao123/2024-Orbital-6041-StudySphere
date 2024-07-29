@@ -104,12 +104,12 @@ export default function PomodoroPatternTimer({
   const getTodayDate = () => {
     const today = new Date();
     const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      timeZone: 'Asia/Singapore'
+      year: &aposnumeric&apos,
+      month: &apos2-digit&apos,
+      day: &apos2-digit&apos,
+      timeZone: &aposAsia/Singapore&apos
     };
-    const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(today).split('/').reverse().join('-');
+    const formattedDate = new Intl.DateTimeFormat(&aposen-GB&apos, options).format(today).split(&apos/&apos).reverse().join(&apos-&apos);
     return formattedDate;
   };
 

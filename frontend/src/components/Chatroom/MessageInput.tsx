@@ -1,7 +1,7 @@
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import React, { useRef, useState } from 'react';
-import { FaPaperPlane, FaPlus } from 'react-icons/fa';
-import { storage } from '../../../firebase/firebase';
+import { ref, uploadBytes, getDownloadURL } from &aposfirebase/storage&apos;
+import React, { useRef, useState } from &aposreact&apos;
+import { FaPaperPlane, FaPlus } from &aposreact-icons/fa&apos;
+import { storage } from &apos../../../firebase/firebase&apos;
 
 interface MessageInputProps {
   onSendMessage: (message: string, imageUrl?: string) => void;
@@ -11,23 +11,23 @@ interface MessageInputProps {
 const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, onPostQuestion }) => {
   const messageRef = useRef<HTMLInputElement>(null);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [question, setQuestion] = useState('');
-  const [topic, setTopic] = useState('');
+  const [question, setQuestion] = useState(&apos&apos);
+  const [topic, setTopic] = useState(&apos&apos);
   const [uploading, setUploading] = useState(false);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (messageRef.current && messageRef.current.value.trim()) {
       onSendMessage(messageRef.current.value);
-      messageRef.current.value = '';
+      messageRef.current.value = &apos&apos;
     }
   };
 
   const handlePostQuestion = async () => {
     if (question.trim() && topic.trim()) {
       onPostQuestion(question, topic);
-      setQuestion('');
-      setTopic('');
+      setQuestion(&apos&apos);
+      setTopic(&apos&apos);
       setModalOpen(false);
     }
   };
@@ -40,7 +40,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, onPostQuesti
         const storageRef = ref(storage, `images/${imageFile.name}`);
         await uploadBytes(storageRef, imageFile);
         const imageUrl = await getDownloadURL(storageRef);
-        onSendMessage('', imageUrl);
+        onSendMessage(&apos&apos, imageUrl);
       } catch (error) {
         console.error("Error uploading image:", error);
       }
@@ -60,7 +60,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage, onPostQuesti
         <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" id="fileInput" />
         <label htmlFor="fileInput" className="ml-2 p-2 bg-gray-200 text-black rounded-md cursor-pointer">Attach Image</label>
         <button type="submit" className="send-button ml-2 p-2 bg-blue-500 text-white rounded-md hover:bg-blue-700" disabled={uploading}>
-          {uploading ? 'Uploading...' : 'Send'}
+          {uploading ? &aposUploading...&apos : &aposSend&apos}
         </button>
         <button type="button" onClick={() => setModalOpen(true)} className="post-button ml-2 p-2 bg-green-500 text-white rounded-md hover:bg-green-700">
           <FaPlus /> Post

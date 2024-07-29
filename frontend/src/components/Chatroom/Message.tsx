@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from &aposreact&apos;
 import { doc, getDoc } from "firebase/firestore";
 import { firestore } from "../../../firebase/firebase";
-import ImageModal from './ImageModal';
+import ImageModal from &apos./ImageModal&apos;
 
 interface MessageProps {
   message: {
@@ -15,7 +15,7 @@ interface MessageProps {
 
 const Message: React.FC<MessageProps> = ({ message, currentUser }) => {
   const [isModalOpen, setModalOpen] = useState(false);
-  const [nickname, setNickname] = useState<string>('');
+  const [nickname, setNickname] = useState<string>(&apos&apos);
   const isCurrentUser = message.userId === currentUser;
 
   const handleImageClick = () => {
@@ -35,8 +35,8 @@ const Message: React.FC<MessageProps> = ({ message, currentUser }) => {
 
   return (
     <>
-      <div className={`flex ${isCurrentUser ? 'justify-end' : 'justify-start'} mb-2`}>
-        <div className={`p-2 rounded-md shadow-md max-w-[75%] break-words ${isCurrentUser ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}>
+      <div className={`flex ${isCurrentUser ? &aposjustify-end&apos : &aposjustify-start&apos} mb-2`}>
+        <div className={`p-2 rounded-md shadow-md max-w-[75%] break-words ${isCurrentUser ? &aposbg-blue-500 text-white&apos : &aposbg-gray-200 text-black&apos}`}>
           <p className="text-xs font-semibold mb-1">{nickname}</p>
           {message.text && <p>{message.text}</p>}
           {message.imageUrl && (
@@ -44,7 +44,7 @@ const Message: React.FC<MessageProps> = ({ message, currentUser }) => {
               src={message.imageUrl}
               alt="Sent Image"
               className="mt-2 rounded-md cursor-pointer"
-              style={{ maxWidth: '600px', maxHeight: '600px', objectFit: 'contain' }}
+              style={{ maxWidth: &apos600px&apos, maxHeight: &apos600px&apos, objectFit: &aposcontain&apos }}
               onClick={handleImageClick}
             />
           )}
@@ -53,7 +53,7 @@ const Message: React.FC<MessageProps> = ({ message, currentUser }) => {
       <ImageModal
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
-        imageUrl={message.imageUrl || ''}
+        imageUrl={message.imageUrl || &apos&apos}
       />
     </>
   );

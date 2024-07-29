@@ -7,7 +7,7 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
-import { firestore, auth } from '../../../../../firebase/firebase';
+import { firestore, auth } from &apos../../../../../firebase/firebase&apos;
 import { collection, query, where, orderBy, limit, getDocs } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 
@@ -54,8 +54,8 @@ export default function Home() {
         const studyData = querySnapshot.docs.map(doc => {
           const data = doc.data();
           const date = new Date(data.date);
-          const day = date.getDate().toString().padStart(2, '0');
-          const month = (date.getMonth() + 1).toString().padStart(2, '0');
+          const day = date.getDate().toString().padStart(2, &apos0&apos);
+          const month = (date.getMonth() + 1).toString().padStart(2, &apos0&apos);
           return {
             name: `${day}-${month}`,
             study_minutes: Math.round(data.dailyTime / 60 || 0),

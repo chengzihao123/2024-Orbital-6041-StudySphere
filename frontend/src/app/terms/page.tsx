@@ -1,6 +1,6 @@
 "use client";
-import React from 'react';
-import Terms from '../../components/Auth/Terms'; 
+import React from &aposreact&apos;
+import Terms from &apos../../components/Auth/Terms&apos; 
 
 const TermsPage = () => {
   return <Terms />;

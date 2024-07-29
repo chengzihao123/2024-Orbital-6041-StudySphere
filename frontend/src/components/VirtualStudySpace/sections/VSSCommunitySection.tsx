@@ -31,7 +31,7 @@ export default function VSSCommunitySection() {
         }
 
         querySnapshot.forEach(doc => {
-          console.log('Retrieved doc:', doc.data());
+          console.log(&aposRetrieved doc:&apos, doc.data());
         });
 
         const answersCount = querySnapshot.size;

@@ -1,12 +1,12 @@
 "use client"
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect } from &aposreact&apos;
+import { useRouter } from &aposnext/navigation&apos;
 
 const NotFoundPage: React.FC = () => {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/');
+    router.replace(&apos/&apos);
   }, [router]);
 
   return null;
