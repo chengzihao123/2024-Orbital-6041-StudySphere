@@ -1,53 +1,45 @@
-// src/components/Chatroom/ChatroomContext.tsx
-"use client";
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { useAuth } from "../Auth/AuthContext";
-import { doc, getDoc } from "firebase/firestore";
-import { firestore } from "../../../firebase/firebase";
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { doc, getDoc } from 'firebase/firestore';
+import { firestore } from '../../../firebase/firebase';
+import { useAuth } from '@/components/Auth/AuthContext';
 
-interface ChatroomContextType {
-  chatroomCount: number;
-  updateChatroomCount: (count: number) => void;
+interface ChatroomContextProps {
+  isLimitReached: boolean;
+  updateChatroomCount: () => void;
 }
 
-const ChatroomContext = createContext<ChatroomContextType | undefined>(
-  undefined
-);
+const ChatroomContext = createContext<ChatroomContextProps | undefined>(undefined);
 
-export const ChatroomProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
+export const useChatroom = () => {
+  const context = useContext(ChatroomContext);
+  if (!context) {
+    throw new Error('useChatroom must be used within a ChatroomProvider');
+  }
+  return context;
+};
+
+export const ChatroomProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { currentUser } = useAuth() || {};
-  const [chatroomCount, setChatroomCount] = useState<number>(0);
+  const [isLimitReached, setIsLimitReached] = useState(false);
 
-  useEffect(() => {
-    const fetchChatroomCount = async () => {
-      if (currentUser) {
-        const userDocRef = doc(firestore, "usersChatrooms", currentUser.uid);
-        const userDoc = await getDoc(userDocRef);
-        const userChatrooms = userDoc.data()?.chatrooms || [];
-        setChatroomCount(userChatrooms.length);
-      }
-    };
-
-    fetchChatroomCount();
-  }, [currentUser]);
-
-  const updateChatroomCount = (count: number) => {
-    setChatroomCount(count);
+  const updateChatroomCount = async () => {
+    if (currentUser) {
+      const userDocRef = doc(firestore, 'usersChatrooms', currentUser.uid);
+      const userDoc = await getDoc(userDocRef);
+      const userChatrooms = userDoc.data()?.chatrooms || [];
+      setIsLimitReached(userChatrooms.length >= 5);
+    }
   };
 
+  useEffect(() => {
+    if (currentUser) {
+      updateChatroomCount();
+    }
+  }, [currentUser]);
+
   return (
-    <ChatroomContext.Provider value={{ chatroomCount, updateChatroomCount }}>
+    <ChatroomContext.Provider value={{ isLimitReached, updateChatroomCount }}>
       {children}
     </ChatroomContext.Provider>
   );
-};
-
-export const useChatroomCount = (): ChatroomContextType => {
-  const context = useContext(ChatroomContext);
-  if (context === undefined) {
-    throw new Error("useChatroomCount must be used within a ChatroomProvider");
-  }
-  return context;
 };

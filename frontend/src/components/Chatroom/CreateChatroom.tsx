@@ -1,75 +1,43 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import {
-  collection,
-  addDoc,
-  getDoc,
-  doc,
-  setDoc,
-  arrayUnion,
-} from "firebase/firestore";
+import React, { useState } from "react";
+import { collection, addDoc, setDoc, arrayUnion, doc } from "firebase/firestore";
 import { firestore } from "../../../firebase/firebase";
 import { useAuth } from "@/components/Auth/AuthContext";
+import { useChatroom } from "@/components/Chatroom/ChatroomContext";
 
 const CreateChatroom: React.FC = () => {
   const { currentUser } = useAuth() || {};
+  const { isLimitReached, updateChatroomCount } = useChatroom();
   const [chatroomName, setChatroomName] = useState("");
-  const [chatroomCount, setChatroomCount] = useState(0);
   const [isMaxLengthReached, setIsMaxLengthReached] = useState(false);
   const maxChatroomNameLength = 15;
 
-  useEffect(() => {
-    if (currentUser) {
-      const checkUserChatrooms = async () => {
-        try {
-          const userDocRef = doc(firestore, "usersChatrooms", currentUser.uid);
-          const userDoc = await getDoc(userDocRef);
-          if (userDoc.exists()) {
-            const userChatrooms = userDoc.data()?.chatrooms || [];
-            setChatroomCount(userChatrooms.length);
-          } else {
-            // Create a new user document with an empty chatrooms array
-            await setDoc(userDocRef, { chatrooms: [] });
-            setChatroomCount(0);
-          }
-        } catch (error) {
-          console.error("Error checking user chatrooms:", error);
-        }
-      };
-
-      checkUserChatrooms();
-    }
-  }, [currentUser]);
-
   const handleCreateChatroom = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (chatroomName && currentUser) {
-      if (chatroomCount < 5) {
-        try {
-          const chatroomDoc = await addDoc(collection(firestore, "chatrooms"), {
-            name: chatroomName,
-            createdAt: new Date(),
-            members: [currentUser.uid],
-            createdBy: currentUser.uid,
-          });
+    if (chatroomName && currentUser && !isLimitReached) {
+      try {
+        const chatroomDoc = await addDoc(collection(firestore, "chatrooms"), {
+          name: chatroomName,
+          createdAt: new Date(),
+          members: [currentUser.uid],
+          createdBy: currentUser.uid,
+        });
 
-          // Update user's chatroom list
-          const userDocRef = doc(firestore, "usersChatrooms", currentUser.uid);
-          await setDoc(
-            userDocRef,
-            {
-              chatrooms: arrayUnion(chatroomDoc.id),
-            },
-            { merge: true }
-          );
+        // Update user's chatroom list
+        const userDocRef = doc(firestore, "usersChatrooms", currentUser.uid);
+        await setDoc(
+          userDocRef,
+          {
+            chatrooms: arrayUnion(chatroomDoc.id),
+          },
+          { merge: true }
+        );
 
-          setChatroomName("");
-          setIsMaxLengthReached(false);
-        } catch (error) {
-          console.error("Error creating chatroom:", error);
-        }
-      } else {
-        alert("You can only join or create up to 5 chatrooms.");
+        setChatroomName("");
+        setIsMaxLengthReached(false);
+        updateChatroomCount();  // Update chatroom count
+      } catch (error) {
+        console.error("Error creating chatroom:", error);
       }
     }
   };
@@ -92,16 +60,21 @@ const CreateChatroom: React.FC = () => {
         className="p-2 border rounded-md w-full"
         maxLength={maxChatroomNameLength}
         required
+        disabled={isLimitReached}
       />
       {isMaxLengthReached && (
         <p className="text-red-500 text-sm mt-1">Character limit reached (15 characters).</p>
       )}
       <button
         type="submit"
-        className="mt-2 p-2 bg-green-500 text-white rounded-md w-full"
+        className="w-full bg-black text-white py-2 rounded hover:bg-gray-600"
+        disabled={isLimitReached}
       >
         Create Chatroom
       </button>
+      {isLimitReached && (
+        <p className="text-red-600 mt-2">Max limit of 5 chatrooms reached. You cannot create more.</p>
+      )}
     </form>
   );
 };

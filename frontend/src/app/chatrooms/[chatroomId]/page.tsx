@@ -3,27 +3,44 @@ import React, { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import {
   doc,
-  getDoc,
-  collection,
   onSnapshot,
+  collection,
   orderBy,
   query,
   addDoc,
   serverTimestamp,
-  deleteDoc,
-  updateDoc,
-  arrayRemove,
-  getDocs,
+  where,
 } from "firebase/firestore";
 import { firestore } from "../../../../firebase/firebase";
 import { useAuth } from "@/components/Auth/AuthContext";
 import ChatMessages from "@/components/Chatroom/ChatMessages";
 import MessageInput from "@/components/Chatroom/MessageInput";
-import DeleteChatroomButton from "@/components/Chatroom/DeleteChatroomButton";
+import ChatroomHeader from "@/components/Chatroom/ChatroomHeader";
+import Modal from "@/components/Chatroom/Modal";
+import ChatroomMembers from "@/components/Chatroom/ChatroomMembers";
+import { Box } from "@chakra-ui/react";
+import TabsNavigation from "@/components/Chatroom/TabsNavigation";
+import ChatroomActions from "@/components/Chatroom/ChatroomActions";
+import {
+  handleDeleteRoom,
+  handleLeaveRoom,
+} from "@/components/Chatroom/chatroomUtils";
 
 interface Message {
   id: string;
+  type: "message";
   text: string;
+  imageUrl?: string;
+  userId: string;
+  createdAt: any;
+  displayName: string;
+}
+
+interface Question {
+  id: string;
+  type: "question";
+  question: string;
+  topic: string;
   userId: string;
   createdAt: any;
 }
@@ -33,8 +50,11 @@ const ChatroomPage: React.FC = () => {
   const params = useParams();
   const chatroomId = params.chatroomId as string;
   const { currentUser } = useAuth() || {};
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [items, setItems] = useState<(Message | Question)[]>([]);
   const [chatroom, setChatroom] = useState<any>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showLeaveModal, setShowLeaveModal] = useState(false);
+  const [activeTab, setActiveTab] = useState(0); // State to manage active tab index
 
   useEffect(() => {
     if (!currentUser) {
@@ -49,104 +69,114 @@ const ChatroomPage: React.FC = () => {
 
     const chatroomRef = doc(firestore, "chatrooms", chatroomId);
 
-    getDoc(chatroomRef)
-      .then((docSnapshot) => {
-        if (docSnapshot.exists()) {
-          setChatroom(docSnapshot.data());
-        } else {
-          router.push("/chatroom");
+    const unsubscribeChatroom = onSnapshot(chatroomRef, (docSnapshot) => {
+      if (docSnapshot.exists()) {
+        const chatroomData = docSnapshot.data();
+        setChatroom(chatroomData);
+
+        if (!chatroomData.members.includes(currentUser.uid)) {
+          router.push("/chatrooms");
         }
-      })
-      .catch((error) => {
-        console.error("Error fetching chatroom data:", error);
-        router.push("/chatroom");
-      });
+      } else {
+        router.push("/chatrooms");
+      }
+    });
 
-    const messagesRef = collection(
-      firestore,
-      `chatrooms/${chatroomId}/messages`
-    );
-    const q = query(messagesRef, orderBy("createdAt"));
+    const messagesRef = collection(firestore, `chatrooms/${chatroomId}/messages`);
+    const questionsRef = collection(firestore, "quests");
 
-    const unsubscribe = onSnapshot(
-      q,
+    const qMessages = query(messagesRef, orderBy("createdAt"));
+    const qQuestions = query(questionsRef, where("chatroomId", "==", chatroomId), orderBy("createdAt"));
+
+    const unsubscribeMessages = onSnapshot(
+      qMessages,
       (snapshot) => {
         const msgs: Message[] = snapshot.docs.map((doc) => {
           const data = doc.data();
           return {
             id: doc.id,
+            type: "message",
             text: data.text,
+            imageUrl: data.imageUrl,
             userId: data.userId,
             createdAt: data.createdAt,
+            displayName: data.displayName,
           };
         });
-        setMessages(msgs);
+        setItems((prevItems) => {
+          const newItems = [...prevItems.filter(item => item.type !== "message"), ...msgs];
+          return newItems.sort((a, b) => a.createdAt - b.createdAt);
+        });
       },
       (error) => {
         console.error("Error fetching messages:", error);
       }
     );
 
-    return () => unsubscribe();
+    const unsubscribeQuestions = onSnapshot(
+      qQuestions,
+      (snapshot) => {
+        const qsts: Question[] = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            type: "question",
+            question: data.question,
+            topic: data.topic,
+            userId: data.userId,
+            createdAt: data.createdAt,
+          };
+        });
+        setItems((prevItems) => {
+          const newItems = [...prevItems.filter(item => item.type !== "question"), ...qsts];
+          return newItems.sort((a, b) => a.createdAt - b.createdAt);
+        });
+      },
+      (error) => {
+        console.error("Error fetching questions:", error);
+      }
+    );
+
+    return () => {
+      unsubscribeChatroom();
+      unsubscribeMessages();
+      unsubscribeQuestions();
+    };
   }, [chatroomId, currentUser, router]);
 
-  const handleSendMessage = async (message: string) => {
+  const handleSendMessage = async (message: string, imageUrl?: string) => {
     if (currentUser) {
       await addDoc(collection(firestore, `chatrooms/${chatroomId}/messages`), {
         text: message,
+        imageUrl: imageUrl || '',
         userId: currentUser.uid,
+        displayName: currentUser.displayName,
         createdAt: serverTimestamp(),
       });
     }
   };
 
-  const handleDeleteRoom = async () => {
-    if (chatroom && currentUser && chatroom.createdBy === currentUser.uid) {
-      try {
-        const chatroomRef = doc(firestore, "chatrooms", chatroomId);
+  const handlePostQuestion = async (question: string, topic: string) => {
+    if (currentUser) {
+      await addDoc(collection(firestore, `quests`), {
+        question,
+        topic,
+        userId: currentUser.uid,
+        createdAt: serverTimestamp(),
+        chatroomId,
+      });
+    }
+  };
 
-        // get all msgs in the chatroom and delete them
-        const messagesRef = collection(
-          firestore,
-          `chatrooms/${chatroomId}/messages`
-        );
-        const messageSnapshot = await getDocs(messagesRef);
-        const deleteMessagePromises = messageSnapshot.docs.map((messageDoc) =>
-          deleteDoc(messageDoc.ref)
-        );
-
-        // wait for all message deletions to complete
-        await Promise.all(deleteMessagePromises);
-
-        // remove chatroom references from usersChatrooms
-        const members = chatroom.members || [];
-        for (const memberId of members) {
-          const userRef = doc(firestore, "usersChatrooms", memberId);
-          const userDoc = await getDoc(userRef);
-          if (userDoc.exists()) {
-            await updateDoc(userRef, {
-              chatrooms: arrayRemove(chatroomId),
-            });
-          } else {
-            console.warn(`User document for ${memberId} does not exist.`);
-          }
-        }
-
-        // delete the chatroom itself
-        await deleteDoc(chatroomRef);
-
-        // redirect to chatroom list
-        router.push("/chatrooms");
-      } catch (error) {
-        console.error("Error deleting the chatroom:", error);
-        alert(
-          "Error deleting the chatroom. Please check your permissions and try again."
-        );
-      }
-    } else {
-      console.warn(
-        "You are not the owner of this chatroom or no chatroom found."
-      );
+  const handlePostAnswer = async (answer: string, questionId: string) => {
+    if (currentUser) {
+      const answersRef = collection(firestore, "quests", questionId, "answers");
+      await addDoc(answersRef, {
+        answer,
+        userId: currentUser.uid,
+        createdAt: serverTimestamp(),
+        upvotes: 0,
+      });
     }
   };
 
@@ -156,12 +186,40 @@ const ChatroomPage: React.FC = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">{chatroom.name}</h1>
-      <ChatMessages messages={messages} />
-      <MessageInput onSendMessage={handleSendMessage} />
-      {chatroom.createdBy === currentUser?.uid && (
-        <DeleteChatroomButton onDelete={handleDeleteRoom} isOwner={true} />
-      )}
+      <ChatroomHeader chatroom={chatroom} chatroomId={chatroomId} />
+      <Box width="100%" display="flex" justifyContent="center" mt={4}>
+        <TabsNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
+      </Box>
+      <div className="mt-4">
+        {activeTab === 0 ? (
+          <>
+            <ChatMessages items={items} currentUser={currentUser} onAnswerSubmit={handlePostAnswer} />
+            <MessageInput onSendMessage={handleSendMessage} onPostQuestion={handlePostQuestion} />
+          </>
+        ) : (
+          <ChatroomMembers chatroomId={chatroomId} />
+        )}
+      </div>
+      <ChatroomActions
+        chatroom={chatroom}
+        currentUser={currentUser}
+        handleDeleteRoom={() => setShowDeleteModal(true)}
+        handleLeaveRoom={() => setShowLeaveModal(true)}
+      />
+      <Modal
+        isOpen={showDeleteModal}
+        title="Delete Chatroom"
+        message="Are you sure you want to delete this chatroom? This action cannot be undone."
+        onConfirm={() => handleDeleteRoom(chatroomId, currentUser, chatroom, router)}
+        onCancel={() => setShowDeleteModal(false)}
+      />
+      <Modal
+        isOpen={showLeaveModal}
+        title="Leave Chatroom"
+        message="Are you sure you want to leave this chatroom?"
+        onConfirm={() => handleLeaveRoom(chatroomId, currentUser, router)}
+        onCancel={() => setShowLeaveModal(false)}
+      />
     </div>
   );
 };
