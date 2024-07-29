@@ -136,7 +136,7 @@ export const FullScreenTopBar = () => {
             <Tabs position="relative" variant="unstyled">
               <TabList>
                 <Link href="/study/background">
-                  <Tab>None</Tab>
+                  <Tab>Study</Tab>
                 </Link>
                 <Link href="/todos">
                   <Tab>Todo</Tab>
