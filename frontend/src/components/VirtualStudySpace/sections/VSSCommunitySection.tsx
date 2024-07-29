@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { firestore } from "../../../../firebase/firebase";
-import { collectionGroup, query, where, getDocs, Timestamp } from "firebase/firestore";
+import {
+  collectionGroup,
+  query,
+  where,
+  getDocs,
+  Timestamp,
+} from "firebase/firestore";
 import { useAuth } from "@/components/Auth/AuthContext";
 
 export default function VSSCommunitySection() {
@@ -13,14 +19,14 @@ export default function VSSCommunitySection() {
     const fetchCommunityData = async () => {
       const today = new Date();
       const startDate = new Date();
-      startDate.setDate(today.getDate() - 6); 
+      startDate.setDate(today.getDate() - 6);
 
       const startTimestamp = Timestamp.fromDate(startDate);
 
       try {
         const answersQuery = query(
           collectionGroup(firestore, "answers"),
-          where("userId", "==", currentUser.uid),
+          where("userId", "==", currentUser.uid)
         );
         const querySnapshot = await getDocs(answersQuery);
 
@@ -30,8 +36,8 @@ export default function VSSCommunitySection() {
           return;
         }
 
-        querySnapshot.forEach(doc => {
-          console.log(&aposRetrieved doc:&apos, doc.data());
+        querySnapshot.forEach((doc) => {
+          console.log("Retrieved doc:", doc.data());
         });
 
         const answersCount = querySnapshot.size;

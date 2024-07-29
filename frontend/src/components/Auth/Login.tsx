@@ -62,7 +62,7 @@ const Login: React.FC = () => {
     <div
       className="min-h-screen flex flex-col items-center justify-center bg-cover bg-center"
       style={{
-        backgroundImage: "url(&apos/images/background-home.jpg&apos)",
+        backgroundImage: "url('/images/background-home.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
@@ -118,7 +118,7 @@ const Login: React.FC = () => {
           Google
         </button>
         <p className="text-xs text-gray-600 mt-4">
-          Don&apos;t have an account?{" "}
+          Don';t have an account?{" "}
           <a href="/" className="underline">
             Sign up here
           </a>

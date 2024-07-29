@@ -82,11 +82,18 @@ const ChatroomPage: React.FC = () => {
       }
     });
 
-    const messagesRef = collection(firestore, `chatrooms/${chatroomId}/messages`);
+    const messagesRef = collection(
+      firestore,
+      `chatrooms/${chatroomId}/messages`
+    );
     const questionsRef = collection(firestore, "quests");
 
     const qMessages = query(messagesRef, orderBy("createdAt"));
-    const qQuestions = query(questionsRef, where("chatroomId", "==", chatroomId), orderBy("createdAt"));
+    const qQuestions = query(
+      questionsRef,
+      where("chatroomId", "==", chatroomId),
+      orderBy("createdAt")
+    );
 
     const unsubscribeMessages = onSnapshot(
       qMessages,
@@ -104,7 +111,10 @@ const ChatroomPage: React.FC = () => {
           };
         });
         setItems((prevItems) => {
-          const newItems = [...prevItems.filter(item => item.type !== "message"), ...msgs];
+          const newItems = [
+            ...prevItems.filter((item) => item.type !== "message"),
+            ...msgs,
+          ];
           return newItems.sort((a, b) => a.createdAt - b.createdAt);
         });
       },
@@ -128,7 +138,10 @@ const ChatroomPage: React.FC = () => {
           };
         });
         setItems((prevItems) => {
-          const newItems = [...prevItems.filter(item => item.type !== "question"), ...qsts];
+          const newItems = [
+            ...prevItems.filter((item) => item.type !== "question"),
+            ...qsts,
+          ];
           return newItems.sort((a, b) => a.createdAt - b.createdAt);
         });
       },
@@ -148,7 +161,7 @@ const ChatroomPage: React.FC = () => {
     if (currentUser) {
       await addDoc(collection(firestore, `chatrooms/${chatroomId}/messages`), {
         text: message,
-        imageUrl: imageUrl || &apos&apos,
+        imageUrl: imageUrl || "",
         userId: currentUser.uid,
         displayName: currentUser.displayName,
         createdAt: serverTimestamp(),
@@ -193,8 +206,15 @@ const ChatroomPage: React.FC = () => {
       <div className="mt-4">
         {activeTab === 0 ? (
           <>
-            <ChatMessages items={items} currentUser={currentUser} onAnswerSubmit={handlePostAnswer} />
-            <MessageInput onSendMessage={handleSendMessage} onPostQuestion={handlePostQuestion} />
+            <ChatMessages
+              items={items}
+              currentUser={currentUser}
+              onAnswerSubmit={handlePostAnswer}
+            />
+            <MessageInput
+              onSendMessage={handleSendMessage}
+              onPostQuestion={handlePostQuestion}
+            />
           </>
         ) : (
           <ChatroomMembers chatroomId={chatroomId} />
@@ -210,7 +230,9 @@ const ChatroomPage: React.FC = () => {
         isOpen={showDeleteModal}
         title="Delete Chatroom"
         message="Are you sure you want to delete this chatroom? This action cannot be undone."
-        onConfirm={() => handleDeleteRoom(chatroomId, currentUser, chatroom, router)}
+        onConfirm={() =>
+          handleDeleteRoom(chatroomId, currentUser, chatroom, router)
+        }
         onCancel={() => setShowDeleteModal(false)}
       />
       <Modal

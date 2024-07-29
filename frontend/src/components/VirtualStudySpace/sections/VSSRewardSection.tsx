@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { firestore, auth } from &apos../../../../firebase/firebase&apos;
-import { collection, query, where, orderBy, limit, getDocs } from "firebase/firestore";
+import { firestore, auth } from "../../../../firebase/firebase";
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  limit,
+  getDocs,
+} from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 
 const VSSRewardSection: React.FC = () => {
@@ -50,7 +57,7 @@ const VSSRewardSection: React.FC = () => {
 
         let totalXp = 0;
 
-        querySnapshot.docs.forEach(doc => {
+        querySnapshot.docs.forEach((doc) => {
           const data = doc.data();
           console.log("Document data:", data);
           if (data.dailyXP) {

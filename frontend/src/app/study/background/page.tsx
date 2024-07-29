@@ -6,7 +6,7 @@ export default function TodosPage() {
   const backgroundImage = localStorage.getItem("backgroundImage");
 
   const backgroundImageStyle = backgroundImage
-    ? `url(&apos/images/background/${backgroundImage}.jpg&apos)`
+    ? `url('/images/background/${backgroundImage}.jpg')`
     : "";
 
   return (

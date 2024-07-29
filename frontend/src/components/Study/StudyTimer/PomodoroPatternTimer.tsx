@@ -2,10 +2,23 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "@/store/store";
-import { setpomodoroCycleLeft, setTodayXP, setTotalXP, setHasAwardedCycleXP } from "@/store/timerSlice"; // Import XP actions
+import {
+  setpomodoroCycleLeft,
+  setTodayXP,
+  setTotalXP,
+  setHasAwardedCycleXP,
+} from "@/store/timerSlice"; // Import XP actions
 import { useTimer } from "react-timer-hook";
 import { FaPause, FaPlay } from "react-icons/fa6";
-import { collection, getDocs, query, updateDoc, where, Timestamp, addDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+  Timestamp,
+  addDoc,
+} from "firebase/firestore";
 import { firestore } from "../../../../firebase/firebase";
 import { useAuth } from "../../Auth/AuthContext";
 
@@ -25,7 +38,9 @@ export default function PomodoroPatternTimer({
   const router = useRouter();
   const [isPaused, setIsPaused] = useState(false);
   const dispatch: AppDispatch = useDispatch();
-  const { pomodoroCycleLeft, hasAwardedCycleXP } = useSelector((state: RootState) => state.timer);
+  const { pomodoroCycleLeft, hasAwardedCycleXP } = useSelector(
+    (state: RootState) => state.timer
+  );
   const { currentUser } = useAuth();
 
   const studyTimer = new Date();
@@ -37,7 +52,11 @@ export default function PomodoroPatternTimer({
       const today = getTodayDate();
       if (isStudyCycle) {
         try {
-          const q = query(collection(firestore, "rewards"), where("userId", "==", currentUser?.uid), where("date", "==", today));
+          const q = query(
+            collection(firestore, "rewards"),
+            where("userId", "==", currentUser?.uid),
+            where("date", "==", today)
+          );
           const querySnapshot = await getDocs(q);
           if (!querySnapshot.empty) {
             const docRef = querySnapshot.docs[0].ref;
@@ -104,12 +123,16 @@ export default function PomodoroPatternTimer({
   const getTodayDate = () => {
     const today = new Date();
     const options: Intl.DateTimeFormatOptions = {
-      year: &aposnumeric&apos,
-      month: &apos2-digit&apos,
-      day: &apos2-digit&apos,
-      timeZone: &aposAsia/Singapore&apos
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      timeZone: "Asia/Singapore",
     };
-    const formattedDate = new Intl.DateTimeFormat(&aposen-GB&apos, options).format(today).split(&apos/&apos).reverse().join(&apos-&apos);
+    const formattedDate = new Intl.DateTimeFormat("en-GB", options)
+      .format(today)
+      .split("/")
+      .reverse()
+      .join("-");
     return formattedDate;
   };
 

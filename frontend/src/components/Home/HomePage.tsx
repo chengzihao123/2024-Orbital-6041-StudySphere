@@ -82,7 +82,7 @@ const HomePage: React.FC = () => {
     <div
       className="min-h-screen flex flex-col items-center justify-center bg-cover bg-center"
       style={{
-        backgroundImage: "url(&apos/images/background-home.jpg&apos)",
+        backgroundImage: "url('/images/background-home.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",

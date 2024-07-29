@@ -1,4 +1,4 @@
-import React from &aposreact&apos;
+import React from "react";
 
 interface QuestionModalProps {
   isOpen: boolean;
@@ -6,15 +6,17 @@ interface QuestionModalProps {
   children: React.ReactNode;
 }
 
-const QuestionModal: React.FC<QuestionModalProps> = ({ isOpen, onClose, children }) => {
+const QuestionModal: React.FC<QuestionModalProps> = ({
+  isOpen,
+  onClose,
+  children,
+}) => {
   if (!isOpen) return null;
 
   return (
     <>
       <div className="question-modal-overlay" onClick={onClose} />
-      <div className="question-modal-content">
-        {children}
-      </div>
+      <div className="question-modal-content">{children}</div>
       <style jsx>{`
         .question-modal-overlay {
           position: fixed;

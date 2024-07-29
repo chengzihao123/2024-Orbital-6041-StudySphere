@@ -19,7 +19,7 @@ export interface TimerState {
     backgroundImage: BackgroundImageType;
   };
   showAdditionalSetting: boolean;
-  todayXP: number; // New property for today&aposs XP
+  todayXP: number; // New property for today's XP
   totalXP: number; // New property for total XP
   hasAwardedDailyTimeXP: boolean; // New property
   hasAwardedCycleXP: boolean; // New property

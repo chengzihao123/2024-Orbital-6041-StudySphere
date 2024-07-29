@@ -1,7 +1,18 @@
-import React, { useState, useEffect } from &aposreact&apos;
-import { collection, query, orderBy, onSnapshot, updateDoc, doc, getDoc, addDoc, where, getDocs } from &aposfirebase/firestore&apos;
-import { firestore } from &apos../../../firebase/firebase&apos;
-import { FaThumbsUp } from &aposreact-icons/fa&apos;
+import React, { useState, useEffect } from "react";
+import {
+  collection,
+  query,
+  orderBy,
+  onSnapshot,
+  updateDoc,
+  doc,
+  getDoc,
+  addDoc,
+  where,
+  getDocs,
+} from "firebase/firestore";
+import { firestore } from "../../../firebase/firebase";
+import { FaThumbsUp } from "react-icons/fa";
 
 interface QuestionProps {
   question: {
@@ -23,18 +34,33 @@ interface Answer {
   upvotes: number;
 }
 
-const Question: React.FC<QuestionProps> = ({ question, currentUser, onAnswerSubmit }) => {
+const Question: React.FC<QuestionProps> = ({
+  question,
+  currentUser,
+  onAnswerSubmit,
+}) => {
   const [answers, setAnswers] = useState<Answer[]>([]);
-  const [newAnswer, setNewAnswer] = useState(&apos&apos);
-  const [nickname, setNickname] = useState<string>(&apos&apos);
+  const [newAnswer, setNewAnswer] = useState("");
+  const [nickname, setNickname] = useState<string>("");
   const [page, setPage] = useState(0);
-  const [userUpvotes, setUserUpvotes] = useState<{ [key: string]: boolean }>({});
+  const [userUpvotes, setUserUpvotes] = useState<{ [key: string]: boolean }>(
+    {}
+  );
   const answersPerPage = 5;
 
   useEffect(() => {
     const fetchAnswers = () => {
-      const answersRef = collection(firestore, "quests", question.id, "answers");
-      const q = query(answersRef, orderBy("upvotes", "desc"), orderBy("createdAt", "desc"));
+      const answersRef = collection(
+        firestore,
+        "quests",
+        question.id,
+        "answers"
+      );
+      const q = query(
+        answersRef,
+        orderBy("upvotes", "desc"),
+        orderBy("createdAt", "desc")
+      );
 
       const unsubscribe = onSnapshot(q, (snapshot) => {
         const ans: Answer[] = snapshot.docs.map((doc) => {
@@ -71,8 +97,18 @@ const Question: React.FC<QuestionProps> = ({ question, currentUser, onAnswerSubm
       const upvoteStatus: { [key: string]: boolean } = {};
 
       for (const answer of answers) {
-        const upvoteRef = collection(firestore, "quests", question.id, "answers", answer.id, "upvotes");
-        const userUpvoteQuery = query(upvoteRef, where("userId", "==", currentUser));
+        const upvoteRef = collection(
+          firestore,
+          "quests",
+          question.id,
+          "answers",
+          answer.id,
+          "upvotes"
+        );
+        const userUpvoteQuery = query(
+          upvoteRef,
+          where("userId", "==", currentUser)
+        );
 
         const userUpvoteSnapshot = await getDocs(userUpvoteQuery);
         upvoteStatus[answer.id] = !userUpvoteSnapshot.empty;
@@ -89,12 +125,28 @@ const Question: React.FC<QuestionProps> = ({ question, currentUser, onAnswerSubm
   const handleUpvote = async (answerId: string) => {
     if (userUpvotes[answerId]) return;
 
-    const answerRef = doc(firestore, "quests", question.id, "answers", answerId);
+    const answerRef = doc(
+      firestore,
+      "quests",
+      question.id,
+      "answers",
+      answerId
+    );
     const answerDoc = await getDoc(answerRef);
     if (answerDoc.exists()) {
       const currentUpvotes = answerDoc.data().upvotes || 0;
-      const upvoteRef = collection(firestore, "quests", question.id, "answers", answerId, "upvotes");
-      const userUpvoteQuery = query(upvoteRef, where("userId", "==", currentUser));
+      const upvoteRef = collection(
+        firestore,
+        "quests",
+        question.id,
+        "answers",
+        answerId,
+        "upvotes"
+      );
+      const userUpvoteQuery = query(
+        upvoteRef,
+        where("userId", "==", currentUser)
+      );
 
       const userUpvoteSnapshot = await getDocs(userUpvoteQuery);
       if (userUpvoteSnapshot.empty) {
@@ -109,33 +161,41 @@ const Question: React.FC<QuestionProps> = ({ question, currentUser, onAnswerSubm
     if (newAnswer.trim()) {
       onAnswerSubmit(newAnswer, question.id);
       await grantDailyXP();
-      setNewAnswer(&apos&apos);
+      setNewAnswer("");
     }
   };
 
   const getTodayDate = () => {
     const today = new Date();
     const options: Intl.DateTimeFormatOptions = {
-      year: &aposnumeric&apos,
-      month: &apos2-digit&apos,
-      day: &apos2-digit&apos,
-      timeZone: &aposAsia/Singapore&apos
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      timeZone: "Asia/Singapore",
     };
-    const formattedDate = new Intl.DateTimeFormat(&aposen-GB&apos, options).format(today).split(&apos/&apos).reverse().join(&apos-&apos);
+    const formattedDate = new Intl.DateTimeFormat("en-GB", options)
+      .format(today)
+      .split("/")
+      .reverse()
+      .join("-");
     return formattedDate;
   };
 
   const grantDailyXP = async () => {
     const today = getTodayDate();
     const rewardsRef = collection(firestore, "rewards");
-    const q = query(rewardsRef, where("userId", "==", currentUser), where("date", "==", today));
-    console.log(&aposQuery:&apos, q);
+    const q = query(
+      rewardsRef,
+      where("userId", "==", currentUser),
+      where("date", "==", today)
+    );
+    console.log("Query:", q);
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
       const rewardDoc = querySnapshot.docs[0];
       const rewardData = rewardDoc.data();
-      console.log(&aposReward Document Data:&apos, rewardData);
+      console.log("Reward Document Data:", rewardData);
 
       if (!rewardData.hasAnsweredQuestion) {
         await updateDoc(rewardDoc.ref, {
@@ -143,20 +203,25 @@ const Question: React.FC<QuestionProps> = ({ question, currentUser, onAnswerSubm
           totalXP: (rewardData.totalXP || 0) + 10,
           hasAnsweredQuestion: true,
         });
-        console.log(&aposUpdated Reward Document Data:&apos, {
+        console.log("Updated Reward Document Data:", {
           dailyXP: (rewardData.dailyXP || 0) + 10,
           totalXP: (rewardData.totalXP || 0) + 10,
           hasAnsweredQuestion: true,
         });
       } else {
-        console.log(&aposUser has already been awarded for answering a question today.&apos);
+        console.log(
+          "User has already been awarded for answering a question today."
+        );
       }
     } else {
-      console.log(&aposNo reward document found for today.&apos);
+      console.log("No reward document found for today.");
     }
   };
 
-  const paginatedAnswers = answers.slice(page * answersPerPage, (page + 1) * answersPerPage);
+  const paginatedAnswers = answers.slice(
+    page * answersPerPage,
+    (page + 1) * answersPerPage
+  );
 
   return (
     <div className="p-4 mb-4 border rounded-lg shadow-md bg-white">
@@ -171,7 +236,10 @@ const Question: React.FC<QuestionProps> = ({ question, currentUser, onAnswerSubm
           onChange={(e) => setNewAnswer(e.target.value)}
           className="w-full p-2 border rounded-md mb-2"
         />
-        <button onClick={handleSubmitAnswer} className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-700">
+        <button
+          onClick={handleSubmitAnswer}
+          className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-700"
+        >
           Submit Answer
         </button>
       </div>
@@ -180,10 +248,16 @@ const Question: React.FC<QuestionProps> = ({ question, currentUser, onAnswerSubm
           <div key={ans.id} className="mb-2">
             <p>{ans.answer}</p>
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Upvotes: {ans.upvotes}</span>
+              <span className="text-sm text-gray-600">
+                Upvotes: {ans.upvotes}
+              </span>
               <button
                 onClick={() => handleUpvote(ans.id)}
-                className={`${userUpvotes[ans.id] ? "text-gray-500" : "text-blue-500"} hover:${userUpvotes[ans.id] ? "text-gray-700" : "text-blue-700"}`}
+                className={`${
+                  userUpvotes[ans.id] ? "text-gray-500" : "text-blue-500"
+                } hover:${
+                  userUpvotes[ans.id] ? "text-gray-700" : "text-blue-700"
+                }`}
                 disabled={userUpvotes[ans.id]}
               >
                 <FaThumbsUp />
@@ -194,12 +268,18 @@ const Question: React.FC<QuestionProps> = ({ question, currentUser, onAnswerSubm
       </div>
       <div className="flex justify-between mt-2">
         {page > 0 && (
-          <button onClick={() => setPage(page - 1)} className="text-blue-500 hover:text-blue-700">
+          <button
+            onClick={() => setPage(page - 1)}
+            className="text-blue-500 hover:text-blue-700"
+          >
             Previous
           </button>
         )}
         {answers.length > (page + 1) * answersPerPage && (
-          <button onClick={() => setPage(page + 1)} className="text-blue-500 hover:text-blue-700">
+          <button
+            onClick={() => setPage(page + 1)}
+            className="text-blue-500 hover:text-blue-700"
+          >
             Next
           </button>
         )}

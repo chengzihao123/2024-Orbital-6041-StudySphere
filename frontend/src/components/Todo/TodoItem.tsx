@@ -15,7 +15,9 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, isHome }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [isEditing, setIsEditing] = useState(false);
   const [editTaskName, setEditTaskName] = useState(todo.taskName);
-  const [editTaskDescription, setEditTaskDescription] = useState(todo.taskDescription);
+  const [editTaskDescription, setEditTaskDescription] = useState(
+    todo.taskDescription
+  );
   const [editDeadline, setEditDeadline] = useState(todo.deadline);
   const [editPriority, setEditPriority] = useState(todo.priority);
   const [editStatus, setEditStatus] = useState(todo.status);
@@ -30,17 +32,28 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, isHome }) => {
     }
   };
 
-  const handleStatusChange = async (newStatus: string | React.ChangeEvent<HTMLSelectElement>) => {
-    const statusValue = typeof newStatus === &aposstring&apos ? newStatus : newStatus.target.value;
+  const handleStatusChange = async (
+    newStatus: string | React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    const statusValue =
+      typeof newStatus === "string" ? newStatus : newStatus.target.value;
     const isCompleted = statusValue === "Completed";
 
     try {
       const todoRef = doc(firestore, "todos", todo.id);
-      await updateDoc(todoRef, { status: statusValue, completed: isCompleted, completedAt: isCompleted ? new Date().toISOString() : null });
+      await updateDoc(todoRef, {
+        status: statusValue,
+        completed: isCompleted,
+        completedAt: isCompleted ? new Date().toISOString() : null,
+      });
       dispatch(
         updateTodo({
           id: todo.id,
-          data: { status: statusValue, completed: isCompleted, completedAt: isCompleted ? new Date().toISOString() : null },
+          data: {
+            status: statusValue,
+            completed: isCompleted,
+            completedAt: isCompleted ? new Date().toISOString() : null,
+          },
         })
       );
       setEditStatus(statusValue);
@@ -51,7 +64,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, isHome }) => {
 
   const handleEdit = async () => {
     try {
-      await handleStatusChange(editStatus);  // update the status first
+      await handleStatusChange(editStatus); // update the status first
       const todoRef = doc(firestore, "todos", todo.id);
       await updateDoc(todoRef, {
         taskName: editTaskName,
@@ -60,16 +73,18 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, isHome }) => {
         priority: editPriority,
         status: editStatus,
       });
-      dispatch(updateTodo({
-        id: todo.id,
-        data: {
-          taskName: editTaskName,
-          taskDescription: editTaskDescription,
-          deadline: editDeadline,
-          priority: editPriority,
-          status: editStatus,
-        },
-      }));
+      dispatch(
+        updateTodo({
+          id: todo.id,
+          data: {
+            taskName: editTaskName,
+            taskDescription: editTaskDescription,
+            deadline: editDeadline,
+            priority: editPriority,
+            status: editStatus,
+          },
+        })
+      );
       setIsEditing(false);
     } catch (error) {
       console.error("Error updating todo:", error);
@@ -81,7 +96,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, isHome }) => {
     setEditDeadline(newDeadline);
 
     const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);  // Reset hours, minutes, and seconds to compare only dates
+    currentDate.setHours(0, 0, 0, 0); // Reset hours, minutes, and seconds to compare only dates
     const selectedDate = new Date(newDeadline);
     selectedDate.setHours(0, 0, 0, 0);
 
@@ -166,8 +181,12 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, isHome }) => {
       ) : (
         <>
           <div className="col-span-2 overflow-hidden">
-            <h3 className="text-lg font-semibold text-gray-900 truncate">{todo.taskName}</h3>
-            <p className="text-sm text-gray-600 truncate">{todo.taskDescription}</p>
+            <h3 className="text-lg font-semibold text-gray-900 truncate">
+              {todo.taskName}
+            </h3>
+            <p className="text-sm text-gray-600 truncate">
+              {todo.taskDescription}
+            </p>
           </div>
           <div className="col-span-1">
             <p className="text-sm text-gray-700">
@@ -206,13 +225,21 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, isHome }) => {
                   onClick={() => setIsEditing(true)}
                   className="focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mr-2"
                 >
-                  <img src=&apos/icons/edit-246.svg&apos alt="Edit" className="w-6 h-6" />
+                  <img
+                    src="/icons/edit-246.svg"
+                    alt="Edit"
+                    className="w-6 h-6"
+                  />
                 </button>
                 <button
                   onClick={handleDelete}
                   className="text-red-600 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                 >
-                  <img src=&apos/icons/delete.svg&apos alt="Delete" className="w-6 h-6" />
+                  <img
+                    src="/icons/delete.svg"
+                    alt="Delete"
+                    className="w-6 h-6"
+                  />
                 </button>
               </div>
             </>

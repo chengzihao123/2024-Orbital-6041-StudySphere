@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 export default function VirtualSpace() {
   const router = useRouter();
   return (
-    <div className="col-span-2 md:col-span-1 ml-5 mb-4 mt-3 rounded-xl p-4 md:px-4 py-10 bg-[url(&apos/images/notebook.jpg&apos)] bg-cover bg-center">
+    <div className="col-span-2 md:col-span-1 ml-5 mb-4 mt-3 rounded-xl p-4 md:px-4 py-10 bg-[url('/images/notebook.jpg')] bg-cover bg-center">
       <div>
         <div className="text-sm md:text-lg">
           Wanna check your study progress?

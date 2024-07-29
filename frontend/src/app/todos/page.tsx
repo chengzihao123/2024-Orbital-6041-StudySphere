@@ -1,5 +1,5 @@
-import ProtectedRoute from &apos@/components/ProtectedRoute&apos;
-import TodoList from &apos@/components/Todo/TodoList&apos;
+import ProtectedRoute from "@/components/ProtectedRoute";
+import TodoList from "@/components/Todo/TodoList";
 
 export default function TodosPage() {
   return (

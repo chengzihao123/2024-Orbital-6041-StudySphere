@@ -29,7 +29,7 @@ const CreateChatroom: React.FC = () => {
           createdBy: currentUser.uid,
         });
 
-        // Update user&aposs chatroom list
+        // Update user's chatroom list
         const userDocRef = doc(firestore, "usersChatrooms", currentUser.uid);
         await setDoc(
           userDocRef,

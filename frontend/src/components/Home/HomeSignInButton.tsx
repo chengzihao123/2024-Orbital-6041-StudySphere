@@ -5,7 +5,17 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispatch } from "@/store/store";
 import { setTodayXP, setTotalXP } from "@/store/userProfileSlice";
 import { firestore } from "../../../firebase/firebase";
-import { collection, addDoc, getDocs, query, where, updateDoc, doc, getDoc, Timestamp } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  updateDoc,
+  doc,
+  getDoc,
+  Timestamp,
+} from "firebase/firestore";
 import { useAuth } from "../Auth/AuthContext";
 
 export default function HomeSignInButton() {
@@ -15,22 +25,26 @@ export default function HomeSignInButton() {
   const dispatch: AppDispatch = useDispatch();
   const [isDisabled, setIsDisabled] = useState(false);
   const [docRefId, setDocRefId] = useState<string | null>(null);
-  const initialLoad = useRef(true); 
+  const initialLoad = useRef(true);
 
   const getTodayDate = () => {
     const today = new Date();
     const options: Intl.DateTimeFormatOptions = {
-      year: &aposnumeric&apos,
-      month: &apos2-digit&apos,
-      day: &apos2-digit&apos,
-      timeZone: &aposAsia/Singapore&apos
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      timeZone: "Asia/Singapore",
     };
-    const formattedDate = new Intl.DateTimeFormat(&aposen-GB&apos, options).format(today).split(&apos/&apos).reverse().join(&apos-&apos);
+    const formattedDate = new Intl.DateTimeFormat("en-GB", options)
+      .format(today)
+      .split("/")
+      .reverse()
+      .join("-");
     return formattedDate;
   };
 
   const today = getTodayDate();
-  console.log(&aposFormatted Today\&aposs Date:&apos, today);
+  console.log("Formatted Today's Date:", today);
 
   const checkLastSignIn = async () => {
     if (!currentUser) {
@@ -45,33 +59,35 @@ export default function HomeSignInButton() {
         where("date", "==", today)
       );
       const querySnapshot = await getDocs(q);
-      console.log(&aposQuery snapshot size:&apos, querySnapshot.size);
+      console.log("Query snapshot size:", querySnapshot.size);
 
       if (!querySnapshot.empty) {
         const docData = querySnapshot.docs[0].data();
         setDocRefId(querySnapshot.docs[0].id);
         setIsDisabled(docData.clickedSignIn);
-        console.log(&aposExisting document for today found:&apos, docData);
+        console.log("Existing document for today found:", docData);
         dispatch(setTodayXP(docData.dailyXP));
         dispatch(setTotalXP(docData.totalXP));
       } else {
-        console.log(&aposNo document found for today.&apos);
+        console.log("No document found for today.");
         const docRef = await addDoc(collection(firestore, "rewards"), {
           userId: currentUser.uid,
           dailyXP: 0,
           totalXP: totalXP,
           dailyTime: 0,
-          dailyCycle:0,
+          dailyCycle: 0,
           date: today,
           clickedSignIn: false,
           hasAnsweredQuestion: false,
-          timestamp: new Date().toLocaleString(&aposen-US&apos, { timeZone: &aposAsia/Singapore&apos })
+          timestamp: new Date().toLocaleString("en-US", {
+            timeZone: "Asia/Singapore",
+          }),
         });
         setDocRefId(docRef.id);
         setIsDisabled(false);
         dispatch(setTodayXP(0));
         dispatch(setTotalXP(totalXP));
-        console.log(&aposNew document created:&apos, docRef.id);
+        console.log("New document created:", docRef.id);
       }
     } catch (error) {
       console.error("Error checking last sign-in date from Firestore:", error);
@@ -125,12 +141,14 @@ export default function HomeSignInButton() {
             dailyXP: data.dailyXP + 10,
             totalXP: data.totalXP + 10,
             clickedSignIn: true,
-            timestamp: new Date().toLocaleString(&aposen-US&apos, { timeZone: &aposAsia/Singapore&apos })
+            timestamp: new Date().toLocaleString("en-US", {
+              timeZone: "Asia/Singapore",
+            }),
           });
 
           dispatch(setTodayXP(data.dailyXP + 10));
           dispatch(setTotalXP(data.totalXP + 10));
-          console.log(&aposDocument updated successfully:&apos, data);
+          console.log("Document updated successfully:", data);
         } else {
           console.error("Document does not exist.");
         }

@@ -150,7 +150,7 @@ export default function Study() {
         )}
         {showAlert && (
           <TimeZeroAlert
-            message="Time can&apost be set as 0. Please enter a valid time."
+            message="Time can't be set as 0. Please enter a valid time."
             onClose={() => setShowAlert(false)}
           />
         )}

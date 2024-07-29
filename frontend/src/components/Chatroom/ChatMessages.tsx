@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from &aposreact&apos;
-import Message from &apos./Message&apos;
-import Question from &apos./Question&apos;
+import React, { useEffect, useRef } from "react";
+import Message from "./Message";
+import Question from "./Question";
 
 interface Message {
   id: string;
@@ -27,12 +27,16 @@ interface ChatMessagesProps {
   onAnswerSubmit: (answer: string, questionId: string) => void;
 }
 
-const ChatMessages: React.FC<ChatMessagesProps> = ({ items, currentUser, onAnswerSubmit }) => {
+const ChatMessages: React.FC<ChatMessagesProps> = ({
+  items,
+  currentUser,
+  onAnswerSubmit,
+}) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: &apossmooth&apos });
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -44,10 +48,23 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ items, currentUser, onAnswe
     <div className="messages-container overflow-auto mb-4 max-h-96">
       {items.map((item) => {
         if (item.type === "message") {
-          return <Message key={item.id} message={item} currentUser={currentUser?.uid || &apos&apos} />;
+          return (
+            <Message
+              key={item.id}
+              message={item}
+              currentUser={currentUser?.uid || ""}
+            />
+          );
         }
         if (item.type === "question") {
-          return <Question key={item.id} question={item} currentUser={currentUser?.uid || &apos&apos} onAnswerSubmit={onAnswerSubmit} />;
+          return (
+            <Question
+              key={item.id}
+              question={item}
+              currentUser={currentUser?.uid || ""}
+              onAnswerSubmit={onAnswerSubmit}
+            />
+          );
         }
         return null;
       })}

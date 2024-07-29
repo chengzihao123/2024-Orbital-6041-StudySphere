@@ -1,6 +1,12 @@
-import { collection, addDoc, Timestamp, updateDoc, doc } from &aposfirebase/firestore&apos;
-import { firestore } from &apos../../../firebase/firebase&apos;
-import { Todo } from &apos./types&apos; 
+import {
+  collection,
+  addDoc,
+  Timestamp,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
+import { firestore } from "../../../firebase/firebase";
+import { Todo } from "./types";
 
 interface Notification {
   userId: string;
@@ -11,7 +17,11 @@ interface Notification {
 
 export const checkDeadlinesAndNotify = async (todos: Todo[]) => {
   const now = new Date();
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const todayStart = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  ).getTime();
   const tomorrowStart = todayStart + 24 * 60 * 60 * 1000;
   const twoDaysLaterStart = tomorrowStart + 24 * 60 * 60 * 1000;
 
@@ -19,13 +29,16 @@ export const checkDeadlinesAndNotify = async (todos: Todo[]) => {
     const deadlineDate = new Date(todo.deadline).getTime();
 
     if (!todo.completed && !todo.notified) {
-      let message = &apos&apos;
+      let message = "";
       if (deadlineDate >= todayStart && deadlineDate < tomorrowStart) {
-        message = `Reminder: Your task &apos${todo.taskName}&apos is due today.`;
-      } else if (deadlineDate >= tomorrowStart && deadlineDate < twoDaysLaterStart) {
-        message = `Reminder: Your task &apos${todo.taskName}&apos is due tomorrow.`;
+        message = `Reminder: Your task '${todo.taskName}' is due today.`;
+      } else if (
+        deadlineDate >= tomorrowStart &&
+        deadlineDate < twoDaysLaterStart
+      ) {
+        message = `Reminder: Your task '${todo.taskName}' is due tomorrow.`;
       } else if (deadlineDate < todayStart) {
-        message = `The task &apos${todo.taskName}&apos is overdue.`;
+        message = `The task '${todo.taskName}' is overdue.`;
       }
 
       if (message) {
@@ -35,9 +48,9 @@ export const checkDeadlinesAndNotify = async (todos: Todo[]) => {
           read: false,
           timestamp: Timestamp.fromDate(new Date()),
         };
-        await addDoc(collection(firestore, &aposnotifications&apos), notification);
+        await addDoc(collection(firestore, "notifications"), notification);
 
-        const todoRef = doc(firestore, &apostodos&apos, todo.id);
+        const todoRef = doc(firestore, "todos", todo.id);
         await updateDoc(todoRef, { notified: true });
       }
     }
